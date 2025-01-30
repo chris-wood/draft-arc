@@ -1015,6 +1015,11 @@ Inputs:
   - m1Enc: Element, first encrypted secret.
   - m2Enc: Element, second encrypted secret.
   - requestProof: ZKProof, a proof of correct generation of m1Enc and m2Enc.
+    - challenge: Scalar, the challenge used in the proof of valid encryption.
+    - response0: Scalar, the response corresponding to m1.
+    - response1: Scalar, the response corresponding to m2.
+    - response2: Scalar, the response corresponding to r1.
+    - response3: Scalar, the response corresponding to r2.
 
 Outputs:
 - validity: Boolean, True if the proof verifies correctly, False otherwise.
@@ -1186,6 +1191,14 @@ Inputs:
   - X2Aux: Element, auxiliary point for X2.
   - HAux: Element, auxiliary point for generatorH.
   - responseProof: ZKProof, a proof of correct generation of U, encUPrime, server public keys, and auxiliary points.
+    - challenge: Scalar, the challenge used in the proof of valid response.
+    - response0: Scalar, the response corresponding to x0.
+    - response1: Scalar, the response corresponding to x1.
+    - response2: Scalar, the response corresponding to x2.
+    - response3: Scalar, the response corresponding to x0Blinding.
+    - response4: Scalar, the response corresponding to b.
+    - response5: Scalar, the response corresponding to t1.
+    - response6: Scalar, the response corresponding to t2.
 - request:
   - m1Enc: Element, first encrypted secret.
   - m2Enc: Element, second encrypted secret.
@@ -1296,9 +1309,9 @@ Outputs:
 - proof: ZKProof
   - challenge: Scalar, the challenge used in the proof of valid presentation.
   - response0: Scalar, the response corresponding to m1.
-  - response1: Scalar, the response corresponding to r.
-  - response2: Scalar, the response corresponding to z.
-  - response3: Scalar, the response corresponding to m1Tag.
+  - response1: Scalar, the response corresponding to z.
+  - response2: Scalar, the response corresponding to -r.
+  - response3: Scalar, the response corresponding to nonce.
 
 Parameters:
 - G: Group
@@ -1360,6 +1373,11 @@ Inputs:
   - m1Commit: Element, a public key to the client secret (m1).
   - tag: Element, the tag element used for enforcing rate limiting and reuse.
   - presentationProof: ZKProof, a proof of correct generation of the presentation.
+    - challenge: Scalar, the challenge used in the proof of valid presentation.
+    - response0: Scalar, the response corresponding to m1.
+    - response1: Scalar, the response corresponding to z.
+    - response2: Scalar, the response corresponding to -r.
+    - response3: Scalar, the response corresponding to nonce.
 - m1Tag: Element, helper to validate the presentation proof.
 
 Outputs:
