@@ -1,6 +1,6 @@
-# Anonymous Rate-Limited Tokens
+# Anonymous Rate-Limited Credentials
 
-This is the working area for the individual Internet-Draft, "Anonymous Rate-Limited Tokens".
+This is the working area for the individual Internet-Draft, "Anonymous Rate-Limited Credentials".
 
 * [Editor's Copy](https://chris-wood.github.io/draft-kvac/#go.draft-yun-cfrg-arc.html)
 * [Datatracker Page](https://datatracker.ietf.org/doc/draft-yun-cfrg-arc)
