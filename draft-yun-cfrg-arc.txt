@@ -8,35 +8,37 @@ Intended status: Informational                               Apple, Inc.
 Expires: 3 August 2025                                   30 January 2025
 
 
-                Keyed-Verification Anonymous Credentials
-                       draft-yun-cfrg-kvac-latest
+                     Anonymous Rate-Limited Tokens
+                       draft-yun-cfrg-arc-latest
 
 Abstract
 
-   This document specifies the Keyed-Verification Anonymous Credential
-   [KVAC] protocol, a scheme for k-show anonymous credentials with zero-
-   knowledge statements that are cryptographically bound client secrets
-   and agreed-upon public information.  The KVAC protocol issues
-   credentials that are anonymously presented from clients to servers
-   for a fixed number of unlinkable redemptions, where applications can
-   control the maximum number of presentations.  This functionality lets
-   servers use credentials in applications that need throttled or rate-
-   limited access from anonymous clients.
+   This document specifies the Anonymous Rate-Limited Credential (ARC)
+   protocol, a specialization of keyed verification anonymous
+   credentials with support for rate limiting.  ARC credentials can be
+   presented from client to server up to some fixed number of times,
+   where each presentation is cryptographically bound to client secrets
+   and application-specific public information, such that each
+   presentation is unlinkable from the others as well as the original
+   credential creation.  ARC is useful in applications where a server
+   needs to throttle or rate-limit access from anonymous clients.
 
 About This Document
 
    This note is to be removed before publishing as an RFC.
 
-   The latest revision of this draft can be found at
-   https://example.com/LATEST.  Status information for this document may
-   be found at https://datatracker.ietf.org/doc/draft-yun-cfrg-kvac/.
+   The latest revision of this draft can be found at https://chris-
+   wood.github.io/draft-kvac/draft-yun-cfrg-kvac.html.  Status
+   information for this document may be found at
+   https://datatracker.ietf.org/doc/draft-yun-cfrg-arc/.
 
-   Discussion of this document takes place on the CFRG Crypto Forum
-   Research Group mailing list (mailto:WG@example.com), which is
-   archived at https://example.com/WG.
+   Discussion of this document takes place on the Crypto Forum mailing
+   list (mailto:cfrg@ietf.org), which is archived at
+   https://mailarchive.ietf.org/arch/browse/cfrg.  Subscribe at
+   https://www.ietf.org/mailman/listinfo/cfrg/.
 
    Source for this draft and an issue tracker can be found at
-   https://github.com/USER/REPO.
+   https://github.com/chris-wood/draft-kvac.
 
 Status of This Memo
 
@@ -73,7 +75,7 @@ Table of Contents
      2.1.  Notation and Terminology
    3.  Preliminaries
      3.1.  Prime-Order Group
-   4.  KVAC Protocol
+   4.  ARC Protocol
      4.1.  Key Generation
      4.2.  Issuance
        4.2.1.  Credential Request
@@ -85,6 +87,8 @@ Table of Contents
      4.6.  Presentation Verification
    5.  Zero-Knowledge Proofs
      5.1.  Schnorr Compiler
+       5.1.1.  Prover
+       5.1.2.  Verifier
      5.2.  CredentialRequest Proof
        5.2.1.  CredentialRequest Proof Creation
        5.2.2.  CredentialRequest Proof Verification
@@ -95,7 +99,7 @@ Table of Contents
        5.4.1.  Presentation Proof Creation
        5.4.2.  Presentation Proof Verification
    6.  Ciphersuites
-     6.1.  KVAC(P-384, SHA-384)
+     6.1.  ARC(P-384, SHA-384)
      6.2.  Random Scalar Generation
        6.2.1.  Rejection Sampling
        6.2.2.  Random Number Generation Using Extra Random Bits
@@ -112,24 +116,26 @@ Table of Contents
 
 1.  Introduction
 
-   This document specifies the Keyed-Verification Anonymous Credential
-   [KVAC] protocol, a scheme for k-show anonymous credentials with zero-
-   knowledge statements that are cryptographically bound client secrets
-   and agreed-upon public information.
+   This document specifies the Anonymous Rate-Limited Credential (ARC)
+   protocol, a specialization of keyed verification anonymous
+   credentials with support for rate limiting.
 
-   KVAC is privately verifiable (keyed-verification), yet differs from
+   ARC is privately verifiable (keyed-verification), yet differs from
    similar token-based protocols in that each credential can be
    presented multiple times without violating unlinkability of different
-   presentations.  Redeemers issue credentials to clients that are
-   cryptographically bound to client secrets.  Afterwards, clients can
-   present this credential to the server up to some fixed number of
-   times.  Each presentation is pairwise unlinkable, meaning the server
-   cannot link any two presentations to the same client credential, nor
-   can the server link a presentation to the preceding credential
-   issuance flow.  Notably, the maximum number of presentations from a
-   credential is fixed by the application.
+   presentations.  Servers issue credentials to clients that are
+   cryptographically bound to client secrets and some public
+   information.  Afterwards, clients can present this credential to the
+   server up to some fixed number of times, where each presentation
+   provides proof that it was derived from a valid (previously issued)
+   credential and bound to some public information.  Each presentation
+   is pairwise unlinkable, meaning the server cannot link any two
+   presentations to the same client credential, nor can the server link
+   a presentation to the preceding credential issuance flow.  Notably,
+   the maximum number of presentations from a credential is fixed by the
+   application.
 
-   KVAC is useful in settings where applications require a fixed number
+   ARC is useful in settings where applications require a fixed number
    of zero-knowledge proofs about client secrets that can also be
    cryptographically bound to some public information.  This capability
    lets servers use credentials in applications that need throttled or
@@ -206,7 +212,7 @@ Table of Contents
    order group Group for performing all mathematical operations.  In
    prime-order groups, any element (other than the identity) can
    generate the other elements of the group.  Usually, one element is
-   fixed and defined as the group generator.  In the KVAC setting, there
+   fixed and defined as the group generator.  In the ARC setting, there
    are two fixed generator elements (generatorG, generatorH).  Such
    groups are uniquely determined by the choice of the prime p that
    defines the order of the group.  (There may, however, exist different
@@ -281,9 +287,9 @@ Table of Contents
    Section 6 contains details for the implementation of this interface
    for different prime-order groups instantiated over elliptic curves.
 
-4.  KVAC Protocol
+4.  ARC Protocol
 
-   The KVAC protocol is a two-party protocol run between client and
+   The ARC protocol is a two-party protocol run between client and
    server consisting of three distinct phases:
 
    1.  Key generation.  In this phase, the server generates its private
@@ -317,7 +323,7 @@ Table of Contents
    is not exceeded.  Clients that exceed the agreed-upon presentation
    limit break the unlinkability guarantees provided by the protocol.
 
-   The rest of this section describes the three phases of the KVAC
+   The rest of this section describes the three phases of the ARC
    protocol.
 
 4.1.  Key Generation
@@ -612,7 +618,7 @@ def FinalizeCredential(clientSecrets, serverPublicKey, request, response):
 4.4.  Presentation State
 
    Presentation state is used to track the number of presentations for a
-   given credential.  This state is important for KVAC's unlinkability
+   given credential.  This state is important for ARC's unlinkability
    goals: reuse of state can break unlinkability properties of
    credential presentations.  State is initialized with a credential,
    presentation context, and presentation limit.  It is then mutated
@@ -797,11 +803,265 @@ def VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presen
 5.  Zero-Knowledge Proofs
 
    This section describes a Schnorr proof compiler that is used for the
-   construction of other proofs needed throughout the KVAC protocol.
+   construction of other proofs needed throughout the ARC protocol.
    Section 5.1 describes the compiler, and the remaining sections
-   describe how it is used for the purposes of producing KVAC proofs.
+   describe how it is used for the purposes of producing ARC proofs.
 
 5.1.  Schnorr Compiler
+
+   The compiler specified in this section automates the Fiat-Shamir
+   transform that is often used to transform interactive zero-knowledge
+   proofs into non-interactive proofs such that they can be used to non-
+   interactively prove various statements of importance in higher-level
+   protocols, such as ARC.  The compiler consists of a prover and
+   verifier role.  The prover constructs a transcript for the proof and
+   then applies the Fiat-Shamir heuristic to generate the resulting
+   challenge and response values.  The verifier reconstructs the same
+   transcript to verify the proof.
+
+   The prover and verifier roles are specified below in Section 5.1.1
+   and Section 5.1.2, respectively.
+
+5.1.1.  Prover
+
+   The prover role consists of four functions:
+
+   *  AppendScalar: This function adds a scalar representation to the
+      transcript.
+
+   *  AppendElement: This function adds an element representation to the
+      transcript.
+
+   *  Constrain: This function applies an explicit constraint to the
+      proof, where the constraint is expressed as equality between some
+      element and a linear combination of scalar and element
+      representations.  An example constraint might be y = mx + b, for
+      scalar m and elements y, x, and b.
+
+   *  Prove: This function applies the Fiat-Shamir heuristic to the
+      protocol transcript and set of constraints to produce a zero-
+      knowledge proof that can be verified.
+
+   These functions are defined in the following sub-sections.
+
+   In addition, the prover role consists of the following state:
+
+   *  label: Data, a value representing the context in which the proof
+      will be used
+
+   *  scalars: [Integer], An ordered set of representation of scalar
+      variables to use in the proof.  Each scalar has a label associated
+      with it, stored in a list called scalar_labels.
+
+   *  elements: [Integer], An ordered set of representation of element
+      variables to use in the proof.  Each element has a label
+      associated with it, stored in a list called element_labels.
+
+   *  constraints: a set of constraints, where each constraint consists
+      of a constraint element and a linear combination of variables.
+
+5.1.1.1.  AppendScalar
+
+   AppendScalar(label, assignment)
+
+   Inputs:
+   - label: Data, Scalar variable label
+   - assignment: Scalar variable
+
+   Outputs:
+   - Integer: Integer representation of the new scalar variable
+
+   def AppendScalar(label, assignment):
+     state.scalars.append(assignment)
+     state.scalar_labels.append(label)
+     return len(state.scalars) - 1
+
+5.1.1.2.  AppendElement
+
+   AppendElement(label, assignment)
+
+   Inputs:
+   - label: Data, Element variable label
+   - assignment: Element variable
+
+   Outputs:
+   - Integer: Integer representation of the new element variable
+
+   def AppendElement(label, assignment):
+     state.elements.append(assignment)
+     state.element_labels.append(label)
+     return len(state.elements) - 1
+
+5.1.1.3.  Constrain
+
+Constrain(result, linearCombination)
+
+Inputs:
+- result: Integer, representation of constraint element
+- assignment: linear combination of scalar and element variable (representations)
+
+def Constrain(label, linearCombination):
+  state.constraints.append((result, linearCombination))
+
+5.1.1.4.  Prove
+
+   The Prove function is defined below.
+
+Prove()
+
+Outputs:
+- ZKProof, a proof consisting of a challenge Scalar and then fixed number of response Scalar values
+
+Parameters:
+- G: Group
+- generatorG: Element, equivalent to G.GeneratorG()
+- generatorH: Element, equivalent to G.GeneratorH()
+
+Exceptions:
+- InvalidVariableAllocationError, raised when the prover was incorrectly configured
+
+def Prove():
+  blindings = [G.RandomScalar() for i in range(len(state.scalars))]
+
+  blinded_elements = []
+  for (constraint_point, linear_combination) in state.constraints:
+    if constraint_point.index > len(state.elements):
+      raise InvalidVariableAllocationError
+
+    for (scalar_var, element_var) in linear_combination:
+      if scalar_var.index > len(state.scalars):
+        raise InvalidVariableAllocationError
+      if element_var.index > len(state.elements):
+        raise InvalidVariableAllocationError
+
+    scalar_index = linear_combination[0][0]
+    element_index = linear_combination[0][1]
+    blinded_element = blindings[scalar_index] * state.elements[element_index]
+
+    for i, pair in enumerate(linear_combination):
+      if i > 0:
+        scalar_index = pair[0]
+        element_index = pair[1]
+        blinded_element += blindings[scalar_index] * state.elements[element_index]
+
+        blinded_elements.append(blinded_element)
+
+  # Obtain a scalar challenge
+  challenge = ComposeChalenge(state.label, state.elements, blinded_elements)
+
+  # Compute response scalars from the challenge, scalars, and blindings.
+  responses = []
+  for (index, scalar) in enumerate(state.scalars):
+    blinding = blindings[index]
+    responses.append(blinding - challenge * scalar)
+
+  return ZKProof(challenge, responses)
+
+   The function ComposeChalenge is defined below.
+
+ComposeChalenge(label, elements, blinded_elements)
+
+Inputs:
+- label: Data, the proof label
+- elements: [Element], ordered list of elements
+- blinded_elements: [Element], ordered list of blinded elements
+
+Outputs:
+- challenge, Scalar
+
+Parameters:
+- G: Group
+- generatorG: Element, equivalent to G.GeneratorG()
+- generatorH: Element, equivalent to G.GeneratorH()
+
+def ComposeChallenge(label, elements, blinded_elements):
+  challenge_input = Data() # Empty Data
+
+  for element in elements:
+    serialized_element = G.SerializeElement(element)
+    challenge_input += I2OSP(len(serialized_element), 2) + serialized_element
+
+  for blinded_element in blinded_elements:
+    serialized_blinded_element = G.SerializeElement(blinded_element)
+    challenge_input += I2OSP(len(serialized_blinded_element), 2) + serialized_blinded_element
+
+  return G.HashToScalar(challenge_input, label)
+
+5.1.2.  Verifier
+
+   The verifier role consists of four functions:
+
+   *  AppendScalar: This function adds a scalar representation to the
+      transcript.
+
+   *  AppendElement: This function adds an element representation to the
+      transcript.
+
+   *  Constrain: This function applies an explicit constraint to the
+      proof, where the constraint is expressed as equality between some
+      element and a linear combination of scalar and element
+      representations.  An example constraint might be y = mx + b, for
+      scalar m and elements y, x, and b.
+
+   *  Verify: This function applies the Fiat-Shamir heuristic to verify
+      the zero-knowledge proof.
+
+   AppendScalar and Verify are defined in the following sub-sections.
+   AppendElement and Constrain matches the functionality used in the
+   prover role.
+
+5.1.2.1.  AppendScalar
+
+   AppendScalar(label)
+
+   Inputs:
+   - label: Data, Scalar variable label
+
+   Outputs:
+   - Integer: Integer representation of the new scalar variable
+
+   def AppendScalar(label):
+     state.scalar_labels.append(label)
+     return len(state.scalar_labels) - 1
+
+5.1.2.2.  Verify
+
+Verify(proof)
+
+Inputs:
+- ZKProof, a proof consisting of a challenge Scalar and then fixed number of response Scalar values
+
+Outputs:
+- Boolean, True if the proof is valid, False otherwise.
+
+Parameters:
+- G: Group
+- generatorG: Element, equivalent to G.GeneratorG()
+- generatorH: Element, equivalent to G.GeneratorH()
+
+Exceptions:
+- InvalidVariableAllocationError, raised when the prover was incorrectly configured
+
+def Verify(proof):
+  if len(state.elements) != len(state.element_labels):
+    raise InvalidVariableAllocationError
+
+  blinded_elements = []
+  for (constraint_element, linear_combination) in state.constraints:
+    if constraint_element > len(state.elements):
+      raise InvalidVariableAllocationError
+    for (_, element_var) in linear_combination:
+      if element_var > len(state.elements):
+        raise InvalidVariableAllocationError
+
+    challenge_element = proof.challenge * state.elements[constraint_element]
+    for i, pair in enumerate(linear_combination):
+      challenge_element += proof.responses[pair[0]] * state.elements[pair[1]]
+
+    blinded_elements.append(challenge_element)
+
+  challenge = ComposeChallenge(state.label, self.elements, blinded_elements)
+  return challenge == proof.challenge
 
 5.2.  CredentialRequest Proof
 
@@ -840,23 +1100,23 @@ Parameters:
 def MakeCredentialRequestProof(m1, m2, r1, r2, m1Enc, m2Enc):
   prover = Prover(contextString + "CredentialRequest")
 
-  m1Var = prover.appendScalar("m1", m1)
-  m2Var = prover.appendScalar("m2", m2)
-  r1Var = prover.appendScalar("r1", r1)
-  r2Var = prover.appendScalar("r2", r2)
+  m1Var = prover.AppendScalar("m1", m1)
+  m2Var = prover.AppendScalar("m2", m2)
+  r1Var = prover.AppendScalar("r1", r1)
+  r2Var = prover.AppendScalar("r2", r2)
 
-  genGVar = prover.appendElement("genG", generatorG)
-  genHVar = prover.appendElement("genH", generatorH)
-  m1EncVar = prover.appendElement("m1Enc", m1Enc)
-  m2EncVar = prover.appendElement("m2Enc", m2Enc)
+  genGVar = prover.AppendElement("genG", generatorG)
+  genHVar = prover.AppendElement("genH", generatorH)
+  m1EncVar = prover.AppendElement("m1Enc", m1Enc)
+  m2EncVar = prover.AppendElement("m2Enc", m2Enc)
 
   # 1. m1Enc = m1 * generatorG + r1 * generatorH
-  prover.constrain(m1EncVar, [(m1Var, genGVar), (r1Var, genHVar)])
+  prover.Constrain(m1EncVar, [(m1Var, genGVar), (r1Var, genHVar)])
 
   # 2. m2Enc = m2 * generatorG + r2 * generatorH
-  prover.constrain(m2EncVar, [(m2Var, genGVar), (r2Var, genHVar)])
+  prover.Constrain(m2EncVar, [(m2Var, genGVar), (r2Var, genHVar)])
 
-  return prover.prove()
+  return prover.Prove()
 
 5.2.2.  CredentialRequest Proof Verification
 
@@ -880,22 +1140,22 @@ Parameters:
 def VerifyCredentialRequestProof(request):
   verifier = Verifier(contextString + "CredentialRequest")
 
-  m1Var = verifier.appendScalar("m1")
-  m2Var = verifier.appendScalar("m2")
-  r1Var = verifier.appendScalar("r1")
-  r2Var = verifier.appendScalar("r2")
-  genGVar = verifier.appendElement("genG", generatorG)
-  genHVar = verifier.appendElement("genH", generatorH)
-  m1EncVar = verifier.appendElement("m1Enc", request.m1Enc)
-  m2EncVar = verifier.appendElement("m2Enc", request.m2Enc)
+  m1Var = verifier.AppendScalar("m1")
+  m2Var = verifier.AppendScalar("m2")
+  r1Var = verifier.AppendScalar("r1")
+  r2Var = verifier.AppendScalar("r2")
+  genGVar = verifier.AppendElement("genG", generatorG)
+  genHVar = verifier.AppendElement("genH", generatorH)
+  m1EncVar = verifier.AppendElement("m1Enc", request.m1Enc)
+  m2EncVar = verifier.AppendElement("m2Enc", request.m2Enc)
 
   # 1. m1Enc = m1 * generatorG + r1 * generatorH
-  verifier.constrain(m1EncVar, [(m1Var, genGVar), (r1Var, genHVar)])
+  verifier.Constrain(m1EncVar, [(m1Var, genGVar), (r1Var, genHVar)])
 
   # 2. m2Enc = m2 * generatorG + r2 * generatorH
-  verifier.constrain(m2EncVar, [(m2Var, genGVar), (r2Var, genHVar)])
+  verifier.Constrain(m2EncVar, [(m2Var, genGVar), (r2Var, genHVar)])
 
-  return verifier.verify(request.proof)
+  return verifier.Verify(request.proof)
 
 5.3.  CreentialResponse Proof
 
@@ -962,60 +1222,60 @@ Parameters:
 def MakeCredentialResponseProof(serverPrivateKey, serverPublicKey, request, b, U, encUPrime, X0Aux, X1Aux, X2Aux, HAux):
   prover = Prover(contextString + "CredentialResponse")
 
-  x0Var = prover.appendScalar("x0", serverPrivateKey.x0)
-  x1Var = prover.appendScalar("x1", serverPrivateKey.x1)
-  x2Var = prover.appendScalar("x2", serverPrivateKey.x2)
-  x0BlindingVar = prover.appendScalar("x0Blinding", serverPrivateKey.x0Blinding)
-  bVar = prover.appendScalar("b", b)
-  t1Var = prover.appendScalar("t1", b * serverPrivateKey.x1)
-  t2Var = prover.appendScalar("t2", b * serverPrivateKey.x2)
+  x0Var = prover.AppendScalar("x0", serverPrivateKey.x0)
+  x1Var = prover.AppendScalar("x1", serverPrivateKey.x1)
+  x2Var = prover.AppendScalar("x2", serverPrivateKey.x2)
+  x0BlindingVar = prover.AppendScalar("x0Blinding", serverPrivateKey.x0Blinding)
+  bVar = prover.AppendScalar("b", b)
+  t1Var = prover.AppendScalar("t1", b * serverPrivateKey.x1)
+  t2Var = prover.AppendScalar("t2", b * serverPrivateKey.x2)
 
-  genGVar = prover.appendElement("genG", generatorG)
-  genHVar = prover.appendElement("genH", generatorH)
-  m1EncVar = prover.appendElement("m1Enc", request.m1Enc)
-  m2EncVar = prover.appendElement("m2Enc", request.m2Enc)
-  UVar = prover.appendElement("U", U)
-  encUPrimeVar = prover.appendElement("encUPrime", encUPrime)
-  X0Var = prover.appendElement("X0", serverPublicKeys.X0)
-  X1Var = prover.appendElement("X1", serverPublicKeys.X1)
-  X2Var = prover.appendElement("X2", serverPublicKeys.X2)
-  X0AuxVar = prover.appendElement("X0Aux", X0Aux)
-  X1AuxVar = prover.appendElement("X1Aux", X1Aux)
-  X2AuxVar = prover.appendElement("X2Aux", X2Aux)
-  HAuxVar = prover.appendElement("HAux", HAux)
+  genGVar = prover.AppendElement("genG", generatorG)
+  genHVar = prover.AppendElement("genH", generatorH)
+  m1EncVar = prover.AppendElement("m1Enc", request.m1Enc)
+  m2EncVar = prover.AppendElement("m2Enc", request.m2Enc)
+  UVar = prover.AppendElement("U", U)
+  encUPrimeVar = prover.AppendElement("encUPrime", encUPrime)
+  X0Var = prover.AppendElement("X0", serverPublicKeys.X0)
+  X1Var = prover.AppendElement("X1", serverPublicKeys.X1)
+  X2Var = prover.AppendElement("X2", serverPublicKeys.X2)
+  X0AuxVar = prover.AppendElement("X0Aux", X0Aux)
+  X1AuxVar = prover.AppendElement("X1Aux", X1Aux)
+  X2AuxVar = prover.AppendElement("X2Aux", X2Aux)
+  HAuxVar = prover.AppendElement("HAux", HAux)
 
   # 1. X0 = x0 * generatorG + x0Blinding * generatorH
-  prover.constrain(X0Var, [(x0Var, genGVar), (x0BlindingVar, genHVar)])
+  prover.Constrain(X0Var, [(x0Var, genGVar), (x0BlindingVar, genHVar)])
   # 2. 2. X1 = x1 * generatorH
-  prover.constrain(X1Var, [(x1Var, genHVar)])
+  prover.Constrain(X1Var, [(x1Var, genHVar)])
   # 3. X2 = x2 * generatorH
-  prover.constrain(X2Var, [(x2Var, genHVar)])
+  prover.Constrain(X2Var, [(x2Var, genHVar)])
 
   # 4. X0Aux = b * x0Blinding * generatorH
   # 4a. HAux = b * generatorH
-  prover.constrain(HAuxVar, [(bVar, genHVar)])
+  prover.Constrain(HAuxVar, [(bVar, genHVar)])
   # 4b: X0Aux = x0Blinding * HAux (= b * x0Blinding * generatorH)
-  prover.constrain(X0AuxVar, [(x0BlindingVar, HAuxVar)])
+  prover.Constrain(X0AuxVar, [(x0BlindingVar, HAuxVar)])
 
   #5. X1Aux = b * x1 * generatorH
   # 5a. X1Aux = b * X1 (X1 = x1 * generatorH)
-  prover.constrain(X1AuxVar, [(t1Var, genHVar)])
+  prover.Constrain(X1AuxVar, [(t1Var, genHVar)])
   # 5b. X1Aux = t1 * generatorH (t1 = b * x1)
-  prover.constrain(X1AuxVar, [(bVar, X1Var)])
+  prover.Constrain(X1AuxVar, [(bVar, X1Var)])
 
   # 6. X2Aux = b * x2 * generatorH
   # 6a. X2Aux = b * X2 (X2 = x2 * generatorH)
-  prover.constrain(X2AuxVar, [(bVar, X2Var)])
+  prover.Constrain(X2AuxVar, [(bVar, X2Var)])
   # 6b. X2Aux = t2 * H (t2 = b * x2)
-  prover.constrain(X2AuxVar, [(t2Var, genHVar)])
+  prover.Constrain(X2AuxVar, [(t2Var, genHVar)])
 
   # 7. U = b * generatorG
-  prover.constrain(UVar, [(bVar, genGVar)])
+  prover.Constrain(UVar, [(bVar, genGVar)])
   # 8. encUPrime = b * (X0 + x1 * Enc(m1) + x2 * Enc(m2))
   # simplified: encUPrime = b * X0 + t1 * m1Enc + t2 * m2Enc, since t1 = b * x1 and t2 = b * x2
-  prover.constrain(encUPrimeVar, [(bVar, X0Var), (t1Var, m1EncVar), (t2Var, m2EncVar)])
+  prover.Constrain(encUPrimeVar, [(bVar, X0Var), (t1Var, m1EncVar), (t2Var, m2EncVar)])
 
-  return prover.prove()
+  return prover.Prove()
 
 5.3.2.  CredentialResponse Proof Verification
 
@@ -1046,65 +1306,64 @@ Parameters:
 - G: Group
 - generatorG: Element, equivalent to G.GeneratorG()
 - generatorH: Element, equivalent to G.GeneratorH()
-- contextString: public input
 
 def VerifyCredentialResponseProof(serverPublicKey, response, request):
   verifier = Verifier(contextString + "CredentialResponse")
 
-  x0Var = verifier.appendScalar("x0")
-  x1Var = verifier.appendScalar("x1")
-  x2Var = verifier.appendScalar("x2")
-  x0BlindingVar = verifier.appendScalar("x0Blinding")
-  bVar = verifier.appendScalar("b", b)
-  t1Var = verifier.appendScalar("t1")
-  t2Var = verifier.appendScalar("t2")
+  x0Var = verifier.AppendScalar("x0")
+  x1Var = verifier.AppendScalar("x1")
+  x2Var = verifier.AppendScalar("x2")
+  x0BlindingVar = verifier.AppendScalar("x0Blinding")
+  bVar = verifier.AppendScalar("b", b)
+  t1Var = verifier.AppendScalar("t1")
+  t2Var = verifier.AppendScalar("t2")
 
-  genGVar = verifier.appendElement("genG", generatorG)
-  genHVar = verifier.appendElement("genH", generatorH)
-  m1EncVar = verifier.appendElement("m1Enc", request.m1Enc)
-  m2EncVar = verifier.appendElement("m2Enc", request.m2Enc)
-  UVar = verifier.appendElement("U", response.U)
-  encUPrimeVar = verifier.appendElement("encUPrime", response.encUPrime)
-  X0Var = verifier.appendElement("X0", serverPublicKey.X0)
-  X1Var = verifier.appendElement("X1", serverPublicKey.X1)
-  X2Var = verifier.appendElement("X2", serverPublicKey.X2)
-  X0AuxVar = verifier.appendElement("X0Aux", response.X0Aux)
-  X1AuxVar = verifier.appendElement("X1Aux", response.X1Aux)
-  X2AuxVar = verifier.appendElement("X2Aux", response.X2Aux)
-  HAuxVar = verifier.appendElement("HAux", response.HAux)
+  genGVar = verifier.AppendElement("genG", generatorG)
+  genHVar = verifier.AppendElement("genH", generatorH)
+  m1EncVar = verifier.AppendElement("m1Enc", request.m1Enc)
+  m2EncVar = verifier.AppendElement("m2Enc", request.m2Enc)
+  UVar = verifier.AppendElement("U", response.U)
+  encUPrimeVar = verifier.AppendElement("encUPrime", response.encUPrime)
+  X0Var = verifier.AppendElement("X0", serverPublicKey.X0)
+  X1Var = verifier.AppendElement("X1", serverPublicKey.X1)
+  X2Var = verifier.AppendElement("X2", serverPublicKey.X2)
+  X0AuxVar = verifier.AppendElement("X0Aux", response.X0Aux)
+  X1AuxVar = verifier.AppendElement("X1Aux", response.X1Aux)
+  X2AuxVar = verifier.AppendElement("X2Aux", response.X2Aux)
+  HAuxVar = verifier.AppendElement("HAux", response.HAux)
 
   # 1. X0 = x0 * generatorG + x0Blinding * generatorH
-  verifier.constrain(X0Var, [(x0Var, genGVar), (x0BlindingVar, genHVar)])
+  verifier.Constrain(X0Var, [(x0Var, genGVar), (x0BlindingVar, genHVar)])
   # 2. 2. X1 = x1 * generatorH
-  verifier.constrain(X1Var, [(x1Var, genHVar)])
+  verifier.Constrain(X1Var, [(x1Var, genHVar)])
   # 3. X2 = x2 * generatorH
-  verifier.constrain(X2Var, [(x2Var, genHVar)])
+  verifier.Constrain(X2Var, [(x2Var, genHVar)])
 
   # 4. X0Aux = b * x0Blinding * generatorH
   # 4a. HAux = b * generatorH
-  verifier.constrain(HAuxVar, [(bVar, genHVar)])
+  verifier.Constrain(HAuxVar, [(bVar, genHVar)])
   # 4b: X0Aux = x0Blinding * HAux (= b * x0Blinding * generatorH)
-  verifier.constrain(X0AuxVar, [(x0BlindingVar, HAuxVar)])
+  verifier.Constrain(X0AuxVar, [(x0BlindingVar, HAuxVar)])
 
   #5. X1Aux = b * x1 * generatorH
   # 5a. X1Aux = b * X1 (X1 = x1 * generatorH)
-  verifier.constrain(X1AuxVar, [(t1Var, genHVar)])
+  verifier.Constrain(X1AuxVar, [(t1Var, genHVar)])
   # 5b. X1Aux = t1 * generatorH (t1 = b * x1)
-  verifier.constrain(X1AuxVar, [(bVar, X1Var)])
+  verifier.Constrain(X1AuxVar, [(bVar, X1Var)])
 
   # 6. X2Aux = b * x2 * generatorH
   # 6a. X2Aux = b * X2 (X2 = x2 * generatorH)
-  verifier.constrain(X2AuxVar, [(bVar, X2Var)])
+  verifier.Constrain(X2AuxVar, [(bVar, X2Var)])
   # 6b. X2Aux = t2 * H (t2 = b * x2)
-  verifier.constrain(X2AuxVar, [(t2Var, genHVar)])
+  verifier.Constrain(X2AuxVar, [(t2Var, genHVar)])
 
   # 7. U = b * generatorG
-  verifier.constrain(UVar, [(bVar, genGVar)])
+  verifier.Constrain(UVar, [(bVar, genGVar)])
   # 8. encUPrime = b * (X0 + x1 * Enc(m1) + x2 * Enc(m2))
   # simplified: encUPrime = b * X0 + t1 * m1Enc + t2 * m2Enc, since t1 = b * x1 and t2 = b * x2
-  verifier.constrain(encUPrimeVar, [(bVar, X0Var), (t1Var, m1EncVar), (t2Var, m2EncVar)])
+  verifier.Constrain(encUPrimeVar, [(bVar, X0Var), (t1Var, m1EncVar), (t2Var, m2EncVar)])
 
-  return verifier.verify(response.proof)
+  return verifier.Verify(response.proof)
 
 5.4.  Presentation Proof
 
@@ -1154,32 +1413,32 @@ Parameters:
 def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, presentationContext, credential, V, r, z, nonce, m1Tag)
   prover = Prover(contextString + "PresentationProof")
 
-  m1Var = prover.appendScalar("m1", credential.m1)
-  zVar = prover.appendScalar("z", z)
-  rNegVar = prover.appendScalar("-r", -r)
-  nonceVar = prover.appendScalar("nonce", nonce)
+  m1Var = prover.AppendScalar("m1", credential.m1)
+  zVar = prover.AppendScalar("z", z)
+  rNegVar = prover.AppendScalar("-r", -r)
+  nonceVar = prover.AppendScalar("nonce", nonce)
 
-  genGVar = prover.appendElement("genG", generatorG)
-  genHVar = prover.appendElement("genH", generatorH)
-  UVar = prover.appendElement("U", U)
-  _ = prover.appendElement("UPrimeCommit", UPrimeCommit)
-  m1CommitVar = prover.appendElement("m1Commit", m1Commit)
-  VVar = prover.appendElement("V", V)
-  X1Var = prover.appendElement("X1", credential.X1)
-  tagVar = prover.appendElement("tag", tag)
-  genTVar = prover.appendElement("genT", generatorT)
-  m1TagVar = prover.appendElement("m1Tag", m1Tag)
+  genGVar = prover.AppendElement("genG", generatorG)
+  genHVar = prover.AppendElement("genH", generatorH)
+  UVar = prover.AppendElement("U", U)
+  _ = prover.AppendElement("UPrimeCommit", UPrimeCommit)
+  m1CommitVar = prover.AppendElement("m1Commit", m1Commit)
+  VVar = prover.AppendElement("V", V)
+  X1Var = prover.AppendElement("X1", credential.X1)
+  tagVar = prover.AppendElement("tag", tag)
+  genTVar = prover.AppendElement("genT", generatorT)
+  m1TagVar = prover.AppendElement("m1Tag", m1Tag)
 
   # 1. m1Commit = m1 * U + z * generatorH
-  prover.constrain(m1CommitVar, [(m1Var, UVar), (zVar, genHVar)])
+  prover.Constrain(m1CommitVar, [(m1Var, UVar), (zVar, genHVar)])
   # 2. V = z * X1 - r * generatorG
-  prover.constrain(VVar, [(zVar, X1Var), (rNegVar, genGVar)])
+  prover.Constrain(VVar, [(zVar, X1Var), (rNegVar, genGVar)])
   # 3. G.HashToGroup(presentationContext, "Tag") = m1 * tag + counter * tag
-  prover.constrain(genTVar, [(m1Var, tagVar), (nonceVar, tagVar)])
+  prover.Constrain(genTVar, [(m1Var, tagVar), (nonceVar, tagVar)])
   # 4. m1Tag = m1 * tag
-  prover.constrain(m1TagVar, [(m1Var, tagVar)])
+  prover.Constrain(m1TagVar, [(m1Var, tagVar)])
 
-  return prover.prove()
+  return prover.Prove()
 
 5.4.2.  Presentation Proof Verification
 
@@ -1221,32 +1480,32 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
 
   verifier = Verifier(contextString + "PresentationProof")
 
-  m1Var = verifier.appendScalar("m1")
-  zVar = verifier.appendScalar("z")
-  rNegVar = verifier.appendScalar("-r")
-  nonceVar = verifier.appendScalar("nonce")
+  m1Var = verifier.AppendScalar("m1")
+  zVar = verifier.AppendScalar("z")
+  rNegVar = verifier.AppendScalar("-r")
+  nonceVar = verifier.AppendScalar("nonce")
 
-  genGVar = verifier.appendElement("genG", generatorG)
-  genHVar = verifier.appendElement("genH", generatorH)
-  UVar = verifier.appendElement("U", presentation.U)
-  _ = verifier.appendElement("UPrimeCommit", presentation.UPrimeCommit)
-  m1CommitVar = verifier.appendElement("m1Commit", presentation.m1Commit)
-  VVar = verifier.appendElement("V", presentation.V)
-  X1Var = verifier.appendElement("X1", serverPublicKey.X1)
-  tagVar = prover.appendElement("tag", presentation.tag)
-  genTVar = verifier.appendElement("genT", generatorT)
-  m1TagVar = prover.appendElement("m1Tag", m1Tag)
+  genGVar = verifier.AppendElement("genG", generatorG)
+  genHVar = verifier.AppendElement("genH", generatorH)
+  UVar = verifier.AppendElement("U", presentation.U)
+  _ = verifier.AppendElement("UPrimeCommit", presentation.UPrimeCommit)
+  m1CommitVar = verifier.AppendElement("m1Commit", presentation.m1Commit)
+  VVar = verifier.AppendElement("V", presentation.V)
+  X1Var = verifier.AppendElement("X1", serverPublicKey.X1)
+  tagVar = prover.AppendElement("tag", presentation.tag)
+  genTVar = verifier.AppendElement("genT", generatorT)
+  m1TagVar = prover.AppendElement("m1Tag", m1Tag)
 
   # 1. m1Commit = m1 * U + z * generatorH
-  verifier.constrain(m1CommitVar, [(m1Var, UVar), (zVar, genHVar)])
+  verifier.Constrain(m1CommitVar, [(m1Var, UVar), (zVar, genHVar)])
   # 2. V = z * X1 - r * generatorG
-  verifier.constrain(VVar, [(zVar, X1Var), (rNegVar, genGVar)])
+  verifier.Constrain(VVar, [(zVar, X1Var), (rNegVar, genGVar)])
   # 3. G.HashToGroup(presentationContext, "Tag") = m1 * tag + nonceVar * tag
-  verifier.constrain(genTVar, [(m1Var, tagVar), (nonceVar, tagVar)])
+  verifier.Constrain(genTVar, [(m1Var, tagVar), (nonceVar, tagVar)])
   # 4. m1Tag = m1 * tag
-  prover.constrain(m1TagVar, [(m1Var, tagVar)])
+  prover.Constrain(m1TagVar, [(m1Var, tagVar)])
 
-  return verifier.verify(presentation.proof)
+  return verifier.Verify(presentation.proof)
 
 6.  Ciphersuites
 
@@ -1276,11 +1535,11 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
    groups and hash functions.  It also includes implementation details
    for each ciphersuite, focusing on input validation.
 
-6.1.  KVAC(P-384, SHA-384)
+6.1.  ARC(P-384, SHA-384)
 
    This ciphersuite uses P-384 [NISTCurves] for the Group and SHA-384
    for the Hash function.  The value of the ciphersuite identifier is
-   "P384-SHA384".  The value of contextString is "KVACV1-P384-SHA384".
+   "P384-SHA384".  The value of contextString is "ARCV1-P384-SHA384".
 
    *  Group: P-256 (secp256r1) [NISTCurves]
 
@@ -1366,11 +1625,11 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
 7.  Security Considerations
 
    For arguments about correctness, unforgeability, anonymity, and blind
-   issuance of the KVAC protocol, see the "Formal Security Definitions
+   issuance of the ARC protocol, see the "Formal Security Definitions
    for Keyed-Verification Anonymous Credentials" in [KVAC].
 
-   This section elaborates on unlinkability properties for KVAC and
-   other implementation details necessary for these properties to hold.
+   This section elaborates on unlinkability properties for ARC and other
+   implementation details necessary for these properties to hold.
 
 7.1.  Credential Issuance Unlinkability
 
