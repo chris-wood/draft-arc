@@ -8,7 +8,7 @@ Intended status: Informational                               Apple, Inc.
 Expires: 3 August 2025                                   30 January 2025
 
 
-                     Anonymous Rate-Limited Tokens
+                   Anonymous Rate-Limited Credentials
                        draft-yun-cfrg-arc-latest
 
 Abstract
