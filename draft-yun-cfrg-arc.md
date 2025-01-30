@@ -13,8 +13,8 @@ venue:
   type: ""
   mail: "cfrg@ietf.org"
   arch: "https://mailarchive.ietf.org/arch/browse/cfrg"
-  github: "chris-wood/draft-kvac"
-  latest: "https://chris-wood.github.io/draft-kvac/draft-yun-cfrg-kvac.html"
+  github: "chris-wood/draft-arc"
+  latest: "https://chris-wood.github.io/draft-arc/draft-yun-cfrg-arc.html"
 
 author:
  -
@@ -49,7 +49,7 @@ informative:
 --- abstract
 
 This document specifies the Anonymous Rate-Limited Credential (ARC) protocol,
-a specialization of keyed verification anonymous credentials with support for
+a specialization of keyed-verification anonymous credentials with support for
 rate limiting. ARC credentials can be presented from client to server up to
 some fixed number of times, where each presentation is cryptographically bound
 to client secrets and application-specific public information, such that each
@@ -62,7 +62,7 @@ rate-limit access from anonymous clients.
 # Introduction
 
 This document specifies the Anonymous Rate-Limited Credential (ARC) protocol,
-a specialization of keyed verification anonymous credentials with support for
+a specialization of keyed-verification anonymous credentials with support for
 rate limiting.
 
 ARC is privately verifiable (keyed-verification), yet differs from similar token-based
@@ -135,13 +135,10 @@ and cannot link a client's request/response and presentation steps.
 
 # Preliminaries
 
-The construction in this document has two primary dependencies:
+The construction in this document has one primary dependency:
 
 - `Group`: A prime-order group implementing the API described below in {{pog}}.
   See {{ciphersuites}} for specific instances of groups.
-- `Hash`: A cryptographic hash function whose output length is `Nh` bytes.
-
-{{ciphersuites}} specifies ciphersuites as combinations of `Group` and `Hash`.
 
 ## Prime-Order Group {#pog}
 
@@ -1416,27 +1413,24 @@ wraps the functionality required for the protocol to take place. The
 ciphersuite should be available to both the client and server, and agreement
 on the specific instantiation is assumed throughout.
 
-A ciphersuite contains instantiations of the following functionalities:
+A ciphersuite contains an instantiation of the following functionality:
 
 - `Group`: A prime-order Group exposing the API detailed in {{pog}}, with the
   generator element defined in the corresponding reference for each group. Each
-  group also specifies HashToGroup, HashToScalar, and serialization
-  functionalities. For
-  HashToGroup, the domain separation tag (DST) is constructed in accordance
+  group also specifies HashToGroup, HashToScalar, and serialization functionalities.
+  For HashToGroup, the domain separation tag (DST) is constructed in accordance
   with the recommendations in {{!I-D.irtf-cfrg-hash-to-curve, Section 3.1}}.
   For HashToScalar, each group specifies an integer order that is used in
   reducing integer values to a member of the corresponding scalar field.
-- `Hash`: A cryptographic hash function whose output length is Nh bytes long.
 
-This section includes an initial set of ciphersuites with supported groups
-and hash functions. It also includes implementation details for each ciphersuite,
-focusing on input validation.
+This section includes an initial set of ciphersuites with supported groups. 
+It also includes implementation details for each ciphersuite, focusing on input validation.
 
-## ARC(P-384, SHA-384)
+## ARC(P-384)
 
-This ciphersuite uses P-384 {{NISTCurves}} for the Group and SHA-384 for the Hash
-function. The value of the ciphersuite identifier is "P384-SHA384". The value of
-contextString is "ARCV1-P384-SHA384".
+This ciphersuite uses P-384 {{NISTCurves}} for the Group. 
+The value of the ciphersuite identifier is "P384". The value of
+contextString is "ARCV1-P384".
 
 - Group: P-256 (secp256r1) {{NISTCurves}}
   - Order(): Return 0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551.
@@ -1467,7 +1461,6 @@ contextString is "ARCV1-P384-SHA384".
   - DeserializeScalar(buf): Implemented by attempting to deserialize a Scalar from a 48-byte
     string using Octet-String-to-Field-Element from {{SEC1}}. This function can fail if the
     input does not represent a Scalar in the range \[0, `G.Order()` - 1\].
-- Hash: SHA-256; Nh = 32.
 
 ## Random Scalar Generation {#random-scalar}
 
