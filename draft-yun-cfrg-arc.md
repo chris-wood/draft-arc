@@ -1527,6 +1527,12 @@ To ensure no information is leaked during protocol execution, all operations tha
 
 This document has no IANA actions.
 
+# Test Vectors
+
+This section contains test vectors for the ARC ciphersuites specified in this document.
+
+{::include ./poc/vectors/allVectors.txt}
+
 # Acknowledgments
 
 The authors would like to acknowledge helpful conversations with Tommy Pauly about rate limiting and Privacy Pass integration.
