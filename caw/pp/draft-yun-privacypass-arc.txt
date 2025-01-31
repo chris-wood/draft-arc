@@ -268,8 +268,8 @@ Table of Contents
    ID issuer_key_id, the Client first creates a credential request
    message using the CredentialRequest function from [ARC] as follows:
 
-request_context = concat(0xC7D3, tokenChallenge.issuer_name, issuer_key_id)
-(clientSecrets, request) = CredentialRequest(request_context)
+   request_context = concat(tokenChallenge.issuer_name, issuer_key_id)
+   (clientSecrets, request) = CredentialRequest(request_context)
 
    The Client then creates a TokenRequest structure as follows:
 
@@ -390,7 +390,7 @@ request_context = concat(0xC7D3, tokenChallenge.issuer_name, issuer_key_id)
    challenge, denoted credential, Clients compute a credential
    presentation value as follows:
 
-presentation_context = concat(0xC7D3, challenge_digest, issuer_key_id)
+presentation_context = concat(challenge_digest, issuer_key_id)
 state = MakePresentationState(credential, presentation_context, presentationLimit)
 newState, nonce, presentation = Present(state)
 
@@ -432,8 +432,8 @@ newState, nonce, presentation = Present(state)
    verifying a Token requires invoking the VerifyPresentation function
    from [Section 4.3.3 of ARC] in the following wayz:
 
-request_context = concat(0xC7D3, tokenChallenge.issuer_name, issuer_key_id)
-presentation_context = concat(0xC7D3, challenge_digest, issuer_key_id)
+request_context = concat(tokenChallenge.issuer_name, issuer_key_id)
+presentation_context = concat(challenge_digest, issuer_key_id)
 valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonce, presentation, presentation_limit)
 
    This function returns True if the CredentialToken is valid, and False

@@ -1480,7 +1480,7 @@ the Client first creates a credential request message using the <code>Credential
 function from <span>[<a href="#ARC" class="cite xref">ARC</a>]</span> as follows:<a href="#section-7.1-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-7.1-2">
 <pre>
-request_context = concat(0xC7D3, tokenChallenge.issuer_name, issuer_key_id)
+request_context = concat(tokenChallenge.issuer_name, issuer_key_id)
 (clientSecrets, request) = CredentialRequest(request_context)
 </pre><a href="#section-7.1-2" class="pilcrow">¶</a>
 </div>
@@ -1631,7 +1631,7 @@ for the Issuer identifier in the challenge, denoted <code>credential</code>, Cli
 a credential presentation value as follows:<a href="#section-8.1-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-8.1-2">
 <pre>
-presentation_context = concat(0xC7D3, challenge_digest, issuer_key_id)
+presentation_context = concat(challenge_digest, issuer_key_id)
 state = MakePresentationState(credential, presentation_context, presentationLimit)
 newState, nonce, presentation = Present(state)
 </pre><a href="#section-8.1-2" class="pilcrow">¶</a>
@@ -1682,8 +1682,8 @@ from a token, denoted <code>nonce</code>, and the digest of a token challenge, d
 function from [Section 4.3.3 of ARC] in the following wayz:<a href="#section-8.2-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-8.2-2">
 <pre>
-request_context = concat(0xC7D3, tokenChallenge.issuer_name, issuer_key_id)
-presentation_context = concat(0xC7D3, challenge_digest, issuer_key_id)
+request_context = concat(tokenChallenge.issuer_name, issuer_key_id)
+presentation_context = concat(challenge_digest, issuer_key_id)
 valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonce, presentation, presentation_limit)
 </pre><a href="#section-8.2-2" class="pilcrow">¶</a>
 </div>
