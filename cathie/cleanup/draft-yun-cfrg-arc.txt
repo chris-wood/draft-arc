@@ -1719,7 +1719,7 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
    doesn't use pairings, as discussed in [BBDT17] and [REVISITING_KVAC].
    However these keyed-verification BBS variants require more analysis,
    proofs of security properties, and review to be considered mature
-   enough for standardization.
+   enough for safe deployment.
 
 9.  IANA Considerations
 
