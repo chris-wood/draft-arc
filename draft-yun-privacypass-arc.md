@@ -211,7 +211,7 @@ the Client first creates a credential request message using the `CredentialReque
 function from {{ARC}} as follows:
 
 ~~~
-request_context = concat(0xC7D3, tokenChallenge.issuer_name, issuer_key_id)
+request_context = concat(tokenChallenge.issuer_name, issuer_key_id)
 (clientSecrets, request) = CredentialRequest(request_context)
 ~~~
 
@@ -333,7 +333,7 @@ for the Issuer identifier in the challenge, denoted `credential`, Clients comput
 a credential presentation value as follows:
 
 ~~~
-presentation_context = concat(0xC7D3, challenge_digest, issuer_key_id)
+presentation_context = concat(challenge_digest, issuer_key_id)
 state = MakePresentationState(credential, presentation_context, presentationLimit)
 newState, nonce, presentation = Present(state)
 ~~~
@@ -375,8 +375,8 @@ from a token, denoted `nonce`, and the digest of a token challenge, denoted
 function from [Section 4.3.3 of ARC] in the following wayz:
 
 ~~~
-request_context = concat(0xC7D3, tokenChallenge.issuer_name, issuer_key_id)
-presentation_context = concat(0xC7D3, challenge_digest, issuer_key_id)
+request_context = concat(tokenChallenge.issuer_name, issuer_key_id)
+presentation_context = concat(challenge_digest, issuer_key_id)
 valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonce, presentation, presentation_limit)
 ~~~
 
