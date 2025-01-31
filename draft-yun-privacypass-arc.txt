@@ -180,11 +180,11 @@ Table of Contents
    Otherwise, Clients invoke the issuance protocol to obtain a
    credential.  This interaction is shown below.
 
-                                     +----------------------------.
-   +--------+          +----------+  |  +--------+     +--------+  |
-   | Client |          | Attester |  |  | Issuer |     | Origin |  |
-   +---+----+          +-----+----+  |  +----+---+     +---+----+  |
-       |                     |        `------|-------------|------'
+                                         +----------------------------.
+   +--------+          +----------+      |  +--------+     +--------+  |
+   | Client |          | Attester |      |  | Issuer |     | Origin |  |
+   +---+----+          +-----+----+      |  +----+---+     +---+----+  |
+       |                     |            `------|-------------|------'
        |                     |                   |           |
        |<----- Request ------+                   |           |
        +-- TokenChallenge -->|                   |           |
