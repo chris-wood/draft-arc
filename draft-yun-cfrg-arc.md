@@ -1539,7 +1539,6 @@ To ensure no information is leaked during protocol execution, all operations tha
 
 # Alternatives considered
 
-## Alternative Algebraic MACs
 
 ARC uses the MACGGM algebraic MAC as its underlying primitive, as detailed in {{KVAC}} and {{REVISITING_KVAC}}. This offers the benefit of having a lower credential size than MACDDH, which is an alternative algebraic MAC detailed in {{KVAC}}.
 
