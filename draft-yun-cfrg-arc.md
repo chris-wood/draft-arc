@@ -1544,7 +1544,7 @@ ARC uses the MACGGM algebraic MAC as its underlying primitive, as detailed in {{
 
 The BBS anonymous credential scheme, as detailed in {{BBS}} and its variants, is efficient and publicly verifiable, but requires pairings for verification. This is problematic for adoption because pairings are not supported as widely in software and hardware as non-pairing elliptic curves.
 
-It is possible to construct a keyed-verification variant of BBS which doesn't use pairings, as discussed in {{BBDT17}} and {{REVISITING_KVAC}}. However these keyed-verification BBS variants require more analysis, proofs of security properties, and review to be considered mature enough for standardization.
+It is possible to construct a keyed-verification variant of BBS which doesn't use pairings, as discussed in {{BBDT17}} and {{REVISITING_KVAC}}. However these keyed-verification BBS variants require more analysis, proofs of security properties, and review to be considered mature enough for safe deployment.
 
 # IANA Considerations
 
