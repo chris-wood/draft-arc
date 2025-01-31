@@ -1297,11 +1297,6 @@ rate-limit access from anonymous clients.<a href="#section-abstract-1" class="pi
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
             <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-alternatives-considered" class="internal xref">Alternatives considered</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1">
-                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="auto internal xref">8.1</a>.  <a href="#name-alternative-algebraic-macs" class="internal xref">Alternative Algebraic MACs</a></p>
-</li>
-            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
             <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
@@ -3091,16 +3086,9 @@ necessary for these properties to hold.<a href="#section-7-2" class="pilcrow">¶
       <h2 id="name-alternatives-considered">
 <a href="#section-8" class="section-number selfRef">8. </a><a href="#name-alternatives-considered" class="section-name selfRef">Alternatives considered</a>
       </h2>
-<div id="alternative-algebraic-macs">
-<section id="section-8.1">
-        <h3 id="name-alternative-algebraic-macs">
-<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-alternative-algebraic-macs" class="section-name selfRef">Alternative Algebraic MACs</a>
-        </h3>
-<p id="section-8.1-1">ARC uses the MACGGM algebraic MAC as its underlying primitive, as detailed in <span>[<a href="#KVAC" class="cite xref">KVAC</a>]</span> and <span>[<a href="#REVISITING_KVAC" class="cite xref">REVISITING_KVAC</a>]</span>. This offers the benefit of having a lower credential size than MACDDH, which is an alternative algebraic MAC detailed in <span>[<a href="#KVAC" class="cite xref">KVAC</a>]</span>.<a href="#section-8.1-1" class="pilcrow">¶</a></p>
-<p id="section-8.1-2">The BBS anonymous credential scheme, as detailed in <span>[<a href="#BBS" class="cite xref">BBS</a>]</span> and its variants, is efficient and publicly verifiable, but requires pairings for verification. This is problematic for adoption because pairings are complex to implement securely, and aren't supported as widely in software and hardware as non-pairing elliptic curves.<a href="#section-8.1-2" class="pilcrow">¶</a></p>
-<p id="section-8.1-3">It is possible to construct a keyed-verification variant of BBS which doesn't use pairings, as discussed in <span>[<a href="#BBDT17" class="cite xref">BBDT17</a>]</span> and <span>[<a href="#REVISITING_KVAC" class="cite xref">REVISITING_KVAC</a>]</span>. However these keyed-verification BBS variants require more analysis, proofs of security properties, and review to be considered mature enough for standardization.<a href="#section-8.1-3" class="pilcrow">¶</a></p>
-</section>
-</div>
+<p id="section-8-1">ARC uses the MACGGM algebraic MAC as its underlying primitive, as detailed in <span>[<a href="#KVAC" class="cite xref">KVAC</a>]</span> and <span>[<a href="#REVISITING_KVAC" class="cite xref">REVISITING_KVAC</a>]</span>. This offers the benefit of having a lower credential size than MACDDH, which is an alternative algebraic MAC detailed in <span>[<a href="#KVAC" class="cite xref">KVAC</a>]</span>.<a href="#section-8-1" class="pilcrow">¶</a></p>
+<p id="section-8-2">The BBS anonymous credential scheme, as detailed in <span>[<a href="#BBS" class="cite xref">BBS</a>]</span> and its variants, is efficient and publicly verifiable, but requires pairings for verification. This is problematic for adoption because pairings are complex to implement securely, and aren't supported as widely in software and hardware as non-pairing elliptic curves.<a href="#section-8-2" class="pilcrow">¶</a></p>
+<p id="section-8-3">It is possible to construct a keyed-verification variant of BBS which doesn't use pairings, as discussed in <span>[<a href="#BBDT17" class="cite xref">BBDT17</a>]</span> and <span>[<a href="#REVISITING_KVAC" class="cite xref">REVISITING_KVAC</a>]</span>. However these keyed-verification BBS variants require more analysis, proofs of security properties, and review to be considered mature enough for standardization.<a href="#section-8-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">

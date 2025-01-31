@@ -108,7 +108,6 @@ Table of Contents
      7.2.  Presentation Unlinkability
      7.3.  Timing Leaks
    8.  Alternatives considered
-     8.1.  Alternative Algebraic MACs
    9.  IANA Considerations
    10. Test Vectors
      10.1.  ARCV1-P384-SHA384
@@ -1704,8 +1703,6 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
    and verification.
 
 8.  Alternatives considered
-
-8.1.  Alternative Algebraic MACs
 
    ARC uses the MACGGM algebraic MAC as its underlying primitive, as
    detailed in [KVAC] and [REVISITING_KVAC].  This offers the benefit of
