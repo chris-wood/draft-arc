@@ -1453,8 +1453,8 @@ This ciphersuite uses P-384 {{NISTCurves}} for the Group.
 The value of the ciphersuite identifier is "P384". The value of
 contextString is "ARCV1-P384".
 
-- Group: P-256 (secp256r1) {{NISTCurves}}
-  - Order(): Return 0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551.
+- Group: P-384 (secp384r1) {{NISTCurves}}
+  - Order(): Return 0xffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf581a0db248b0a77aecec196accc52973.
   - Identity(): As defined in {{NISTCurves}}.
   - Generator(): As defined in {{NISTCurves}}.
   - RandomScalar(): Implemented by returning a uniformly random Scalar in the range
