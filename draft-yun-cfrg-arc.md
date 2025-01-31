@@ -525,7 +525,7 @@ This phase consists of three steps:
 
 Details for each each of these steps are in the following subsections.
 
-## Presentation State
+### Presentation State
 
 Presentation state is used to track the number of presentations for a given credential.
 This state is important for ARC's unlinkability goals: reuse of state can break
@@ -556,7 +556,7 @@ def MakePresentationState(credential, presentationContext, presentationLimit):
   return PresentationState(credential, presentationContext, [nonce], presentationLimit)
 ~~~
 
-## Presentation Construction {#presentation-construction}
+### Presentation Construction {#presentation-construction}
 
 Creating a presentation requires a credential, presentation context, and presentation limit.
 This process is necessarily stateful on the client since the number of times a credential
@@ -567,7 +567,7 @@ a presentation accepts as input a presentation state and then outputs an updated
 state.
 
 ~~~
-newState, presentation = Present(state)
+newState, nonce, presentation = Present(state)
 
 Inputs:
 state: input PresentationState
@@ -578,11 +578,11 @@ state: input PresentationState
 
 Outputs:
 - newState: updated PresentationState
+- nonce: Integer, the nonce associated with this presentation.
 - presentation:
   - U: Element, re-randomized from the U in the response.
   - UPrimeCommit: Element, a public key to the issued UPrime.
   - m1Commit: Element, a public key to the client secret (m1).
-  - nonce: Integer, the nonce associated with this presentation.
   - tag: Element, the tag element used for enforcing the presentation limit.
   - presentationProof: ZKProof, a proof of correct generation of the presentation.
 
@@ -620,9 +620,9 @@ def Present(state):
 
   presentationProof = MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, credential, V, r, z, nonce, m1Tag)
 
-  presentation = (U, UPrimeCommit, m1Commit, nonce, tag, presentationProof)
+  presentation = (U, UPrimeCommit, m1Commit, tag, presentationProof)
 
-  return state, presentation
+  return state, nonce, presentation
 ~~~
 
 [[OPEN ISSUE: should the tag also fold in the presentation limit?]]
@@ -647,13 +647,13 @@ struct {
 
 The length of this structure is `Npresentation = 4*Ne + 6*Ns`.
 
-## Presentation Verification
+### Presentation Verification
 
 The server processes the presentation by verifying the presentation proof against server-computed
 values, and performing a check that the presentation conforms to the presentation limit.
 
 ~~~
-validity = VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presentationContext, presentation, presentationLimit)
+validity = VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presentationContext, nonce, presentation, presentationLimit)
 
 Inputs:
 - serverPrivateKey:
@@ -667,6 +667,7 @@ Inputs:
   - X2: Element, server public key 2.
 - requestContext: Data, context for the credential request.
 - presentationContext: Data (public), used for presentation tag computation.
+- nonce: Integer, the nonce associated with this presentation.
 - presentation:
   - U: Element, re-randomized from the U in the response.
   - UPrimeCommit: Element, a public key to the issued UPrime.
@@ -687,12 +688,12 @@ Parameters:
 Exceptions:
 - InvalidNonceError, raised when the nonce associated with the presentation is invalid
 
-def VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presentationContext, presentation, presentationLimit):
-  if presentation.nonce < 0 or presentation.nonce > presentationLimit:
+def VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presentationContext, nonce, presentation, presentationLimit):
+  if nonce < 0 or nonce > presentationLimit:
     raise InvalidNonceError
 
   generatorT = G.HashToGroup(presentationContext, "Tag")
-  m1Tag = generatorT - (presentation.nonce * presentation.tag)
+  m1Tag = generatorT - (nonce * presentation.tag)
 
   validity = VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, presentationContext, presentation, m1Tag)
   # Implementation-specific step: perform double-spending check on tag.
