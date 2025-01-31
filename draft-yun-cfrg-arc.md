@@ -225,7 +225,7 @@ consisting of three distinct phases:
 
 This protocol bears resemblance to anonymous token protocols, such as those built on
 Blind RSA {{?BLIND-RSA=RFC9474}} and Oblivious Pseudorandom Functions {{?OPRFS=RFC9497}}
-with one critical distinction: Unlike anonymous tokens, an anonymous credential can be
+with one critical distinction: unlike anonymous tokens, an anonymous credential can be
 used multiple times to create unlinkable presentations (up to the fixed presentation
 limit). This means that a single issuance invocation can drive multiple presentation
 invocations, whereas with anonymous tokens, each presentation invocation requires
@@ -280,7 +280,7 @@ struct {
 } ServerPublicKey;
 ~~~
 
-The length of this encoded response structure is `NserverPublicKeys = 3*Ne`.
+The length of this encoded response structure is `NserverPublicKey = 3*Ne`.
 
 ## Issuance {#issuance}
 
@@ -295,7 +295,7 @@ distinct steps:
 1. The client generates and sends a credential request to the server. This credential request contains a
    proof that the request is valid with respect to the client's secrets and request context. See
    {{issuance-step1}} for details about this step.
-1. The server validates the credential request. If valid, computes a credential response with the server
+1. The server validates the credential request. If valid, it computes a credential response with the server
    private keys. The response includes a proof that the credential response is valid with respect to the
    server keys. The server sends the response to the client. See {{issuance-step2}} for details about this
    step.
@@ -383,7 +383,7 @@ Inputs:
 - request:
   - m1Enc: Element, first encrypted secret.
   - m2Enc: Element, second encrypted secret.
-  - responseProof: ZKProof, a proof of correct generation of m1Enc and m2Enc.
+  - requestProof: ZKProof, a proof of correct generation of m1Enc and m2Enc.
 
 Outputs:
 - U: Element, a randomized generator for the response, `b*G`.
@@ -403,22 +403,22 @@ Parameters:
 Exceptions:
 - VerifyError, raised when response verification fails
 
-def CredentialResponse(serverPrivateKeys, serverPublicKeys, request):
+def CredentialResponse(serverPrivateKeys, serverPublicKey, request):
   if VerifyCredentialRequestProof(request) == false:
     raise VerifyError
 
   b = G.RandomScalar()
   U = b * generatorG
-  encUPrime = b * (serverPublicKeys.X0 +
+  encUPrime = b * (serverPublicKey.X0 +
         serverPrivateKeys.x1 * request.m1Enc +
         serverPrivateKeys.x2 * request.m2Enc)
   X0Aux = b * serverPrivateKeys.x0Blinding * generatorH
-  X1Aux = b * serverPublicKeys.X1
-  X2Aux = b * serverPublicKeys.X2
+  X1Aux = b * serverPublicKey.X1
+  X2Aux = b * serverPublicKey.X2
   HAux = b * generatorH
 
-  responseProof = MakeCredentialResponseProof(serverPrivateKeys,
-    serverPublicKeys, request, b, U, encUPrime, X0Aux, X1Aux, X2Aux, HAux)
+  responseProof = MakeCredentialResponseProof(serverPrivateKey,
+    serverPublicKey, request, b, U, encUPrime, X0Aux, X1Aux, X2Aux, HAux)
   return (U, encUPrime, X0Aux, X1Aux, X2Aux, HAux, responseProof)
 ~~~
 
@@ -507,14 +507,14 @@ limits.
 
 This phase consists of three steps:
 
-1. The client creates presentation state for a given presentation context and presentation limit.
+1. The client creates a presentation state for a given presentation context and presentation limit.
    This state is used to produce a fixed amount of presentations.
 1. The client creates a presentation from the presentation state and sends it to the server.
    The presentation is cryptographically bound to the state's presentation context, and
    contains proof that the presentation is valid with respect to the presentation context.
    Moreover, the presentation contains proof that the count of this presentation is within the
    presentation limit.
-1. The server verifies the presentation with respect to the presentation context and fixed-size
+1. The server verifies the presentation with respect to the presentation context and presentation
    limit.
 
 Details for each each of these steps are in the following subsections.
@@ -543,16 +543,13 @@ Outputs:
 - credential
 - presentationContext: Data (public), used for presentation tag computation.
 - presentationNonceSet: {Integer}, the set of nonces that have been used for this presentation
-- presentationNonce: Integer, the number of times this credential has been presented for this presentationContext, initialized to 0.
+- presentationCount: Integer, the number of times this credential has been presented for this presentationContext, initialized to 0.
 - presentationLimit: Integer, the fixed presentation limit.
 
 def MakePresentationState(credential, presentationContext, presentationLimit):
   nonce = random_integer_uniform(0, presentationLimit)
-  return PresentationState(credential, presentationContext, nonce, presentationLimit)
+  return PresentationState(credential, presentationContext, [nonce], presentationLimit)
 ~~~
-
-Applications which initialize more than one presentation state for the same presentation
-context
 
 ## Presentation Construction {#presentation-construction}
 
@@ -571,6 +568,7 @@ Inputs:
 state: input PresentationState
   - credential
   - presentationContext: Data (public), used for presentation tag computation.
+  - presentationNonceSet: {Integer}, the set of nonces that have been used for this presentation
   - presentationCount: Integer, the number of times this credential has been presented for this presentationContext, initialized to 0.
   - presentationLimit: Integer, the fixed presentation limit.
 
@@ -607,10 +605,10 @@ def Present(state):
 
   # This step mutates the state by keeping track of
   # what nonces have already been spent.
-  nonce = state.presentationNonce
-  state.presentationNonceSet.add(nonce)
-  state.presentationNonce = random_integer_uniform_excluding_set(0,
+  nonce = random_integer_uniform_excluding_set(0,
     state.presentationLimit, state.presentationNonceSet)
+  state.presentationNonceSet.add(nonce)
+  state.presentationCount += 1
 
   generatorT = G.HashToGroup(presentationContext, "Tag")
   tag = (credential.m1 + nonce)^(-1) * generatorT
@@ -644,12 +642,12 @@ struct {
 }
 ~~~
 
-The length of this structure is `Npresentation = 4*Ne + 4*Ns`, plus the length of the serialized range proof.
+The length of this structure is `Npresentation = 4*Ne + 6*Ns`.
 
 ## Presentation Verification
 
 The server processes the presentation by verifying the presentation proof against server-computed
-values, and performing a check that the presentation is in .
+values, and performing a check that the presentation conforms to the presentation limit.
 
 ~~~
 validity = VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presentationContext, presentation, presentationLimit)
@@ -691,7 +689,7 @@ def VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presen
     raise InvalidNonceError
 
   generatorT = G.HashToGroup(presentationContext, "Tag")
-  m1Tag = generator_T - (presentation.nonce * presentation.tag)
+  m1Tag = generatorT - (presentation.nonce * presentation.tag)
 
   validity = VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, presentationContext, presentation, m1Tag)
   # Implementation-specific step: perform double-spending check on tag.
@@ -702,7 +700,7 @@ def VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presen
 Implementation-specific steps: the server must perform a check that the tag (presentation.tag) has
 not previously been seen, to prevent double spending. It then stores the tag for use in future double
 spending checks. To reduce the overhead of performing double spend checks, the server can store and
-look up the tags corresponding to the associated presentationContext value.
+look up the tags corresponding to the associated requestContext and presentationContext values.
 
 # Zero-Knowledge Proofs
 
@@ -727,8 +725,8 @@ The prover role consists of four functions:
 
 - AppendScalar: This function adds a scalar representation to the transcript.
 - AppendElement: This function adds an element representation to the transcript.
-- Constrain: This function applies an explicit constraint to the proof, where the constraint is expressed as equality between some element and a linear combination of scalar and element representations. An example constraint might be `y = mx + b`, for scalar `m` and elements
-`y`, `x`, and `b`.
+- Constrain: This function applies an explicit constraint to the proof, where the constraint is expressed as equality between some element and a linear combination of scalar and element representations. An example constraint might be `Z = aX + bY`, for scalars `a`, `b`, and elements
+`X`, `Y`, `Z`.
 - Prove: This function applies the Fiat-Shamir heuristic to the protocol transcript and set of
 constraints to produce a zero-knowledge proof that can be verified.
 
@@ -835,7 +833,7 @@ def Prove():
         blinded_elements.append(blinded_element)
 
   # Obtain a scalar challenge
-  challenge = ComposeChalenge(state.label, state.elements, blinded_elements)
+  challenge = ComposeChallenge(state.label, state.elements, blinded_elements)
 
   # Compute response scalars from the challenge, scalars, and blindings.
   responses = []
@@ -846,10 +844,10 @@ def Prove():
   return ZKProof(challenge, responses)
 ~~~
 
-The function ComposeChalenge is defined below.
+The function ComposeChallenge is defined below.
 
 ~~~
-ComposeChalenge(label, elements, blinded_elements)
+ComposeChallenge(label, elements, blinded_elements)
 
 Inputs:
 - label: Data, the proof label
@@ -884,8 +882,8 @@ The verifier role consists of four functions:
 
 - AppendScalar: This function adds a scalar representation to the transcript.
 - AppendElement: This function adds an element representation to the transcript.
-- Constrain: This function applies an explicit constraint to the proof, where the constraint is expressed as equality between some element and a linear combination of scalar and element representations. An example constraint might be `y = mx + b`, for scalar `m` and elements
-`y`, `x`, and `b`.
+- Constrain: This function applies an explicit constraint to the proof, where the constraint is expressed as equality between some element and a linear combination of scalar and element representations. An example constraint might be `Z = aX + bY`, for scalars `a`, `b`, and elements
+`X`, `Y`, `Z`.
 - Verify: This function applies the Fiat-Shamir heuristic to verify the zero-knowledge proof.
 
 AppendScalar and Verify are defined in the following sub-sections. AppendElement and Constrain matches the functionality used in the prover role.
@@ -1037,6 +1035,7 @@ def VerifyCredentialRequestProof(request):
   m2Var = verifier.AppendScalar("m2")
   r1Var = verifier.AppendScalar("r1")
   r2Var = verifier.AppendScalar("r2")
+
   genGVar = verifier.AppendElement("genG", generatorG)
   genHVar = verifier.AppendElement("genH", generatorH)
   m1EncVar = verifier.AppendElement("m1Enc", request.m1Enc)
@@ -1051,7 +1050,7 @@ def VerifyCredentialRequestProof(request):
   return verifier.Verify(request.proof)
 ~~~
 
-## CreentialResponse Proof {#response-proof}
+## CredentialResponse Proof {#response-proof}
 
 The response proof is a proof of knowledge of (x0, x1, x2, x0Blinding, b) used in the server's CredentialResponse for the client's CredentialRequest. Statements to prove:
 
@@ -1131,9 +1130,9 @@ def MakeCredentialResponseProof(serverPrivateKey, serverPublicKey, request, b, U
   m2EncVar = prover.AppendElement("m2Enc", request.m2Enc)
   UVar = prover.AppendElement("U", U)
   encUPrimeVar = prover.AppendElement("encUPrime", encUPrime)
-  X0Var = prover.AppendElement("X0", serverPublicKeys.X0)
-  X1Var = prover.AppendElement("X1", serverPublicKeys.X1)
-  X2Var = prover.AppendElement("X2", serverPublicKeys.X2)
+  X0Var = prover.AppendElement("X0", serverPublicKey.X0)
+  X1Var = prover.AppendElement("X1", serverPublicKey.X1)
+  X2Var = prover.AppendElement("X2", serverPublicKey.X2)
   X0AuxVar = prover.AppendElement("X0Aux", X0Aux)
   X1AuxVar = prover.AppendElement("X1Aux", X1Aux)
   X2AuxVar = prover.AppendElement("X2Aux", X2Aux)
@@ -1276,6 +1275,7 @@ def VerifyCredentialResponseProof(serverPublicKey, response, request):
 The presentation proof is a proof of knowledge of (m1, r, z) used in the presentation, and a proof that the counter used to make the tag is in the range of [0, rateLimit).
 
 Statements to prove:
+
 ~~~
 1. m1Commit = m1 * U + z * generatorH
 2. V = z * X1 - r * generatorG
@@ -1446,7 +1446,7 @@ It also includes implementation details for each ciphersuite, focusing on input 
 
 ## ARC(P-384)
 
-This ciphersuite uses P-384 {{NISTCurves}} for the Group. 
+This ciphersuite uses P-384 {{NISTCurves}} for the Group.
 The value of the ciphersuite identifier is "P384". The value of
 contextString is "ARCV1-P384".
 
