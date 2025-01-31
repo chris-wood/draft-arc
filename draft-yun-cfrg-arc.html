@@ -1939,7 +1939,7 @@ Outputs:
   - UPrimeCommit: Element, a public key to the issued UPrime.
   - m1Commit: Element, a public key to the client secret (m1).
   - nonce: Integer, the nonce associated with this presentation.
-  - tag: Element, the tag element used for enforcing rate limiting and reuse.
+  - tag: Element, the tag element used for enforcing the presentation limit.
   - presentationProof: ZKProof, a proof of correct generation of the presentation.
 
 Parameters:
@@ -2031,7 +2031,7 @@ Inputs:
   - UPrimeCommit: Element, a public key to the issued UPrime.
   - m1Commit: Element, a public key to the client secret (m1).
   - nonce: Integer, the nonce associated with this presentation.
-  - tag: Element, the tag element used for enforcing rate limiting and reuse.
+  - tag: Element, the tag element used for enforcing the presentation limit.
   - presentationProof: ZKProof, a proof of correct generation of the presentation.
 - presentationLimit: Integer, the fixed presentation limit.
 
@@ -2746,7 +2746,7 @@ def VerifyCredentialResponseProof(serverPublicKey, response, request):
         <h3 id="name-presentation-proof">
 <a href="#section-5.4" class="section-number selfRef">5.4. </a><a href="#name-presentation-proof" class="section-name selfRef">Presentation Proof</a>
         </h3>
-<p id="section-5.4-1">The presentation proof is a proof of knowledge of (m1, r, z) used in the presentation, and a proof that the counter used to make the tag is in the range of [0, rateLimit).<a href="#section-5.4-1" class="pilcrow">¶</a></p>
+<p id="section-5.4-1">The presentation proof is a proof of knowledge of (m1, r, z) used in the presentation, and a proof that the counter used to make the tag is in the range of [0, presentationLimit).<a href="#section-5.4-1" class="pilcrow">¶</a></p>
 <p id="section-5.4-2">Statements to prove:<a href="#section-5.4-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.4-3">
 <pre>
@@ -2769,7 +2769,7 @@ Inputs:
 - U: Element, re-randomized from the U in the response.
 - UPrimeCommit: Element, a public key to the MACGGM output UPrime.
 - m1Commit: Element, a public key to the client secret (m1).
-- tag: Element, the tag element used for enforcing rate limiting and reuse.
+- tag: Element, the tag element used for enforcing the presentation limit.
 - generatorT: Element, used for presentation tag computation.
 - credential:
   - m1: Scalar, client's first secret.
@@ -2854,7 +2854,7 @@ Inputs:
   - U: Element, re-randomized from the U in the response.
   - UPrimeCommit: Element, a public key to the issued UPrime.
   - m1Commit: Element, a public key to the client secret (m1).
-  - tag: Element, the tag element used for enforcing rate limiting and reuse.
+  - tag: Element, the tag element used for enforcing the presentation limit.
   - presentationProof: ZKProof, a proof of correct generation of the presentation.
     - challenge: Scalar, the challenge used in the proof of valid presentation.
     - response0: Scalar, the response corresponding to m1.
@@ -3067,7 +3067,7 @@ necessary for these properties to hold.<a href="#section-7-2" class="pilcrow">¶
 <p id="section-7.2-1">Client credential presentations are constructed so that all presentations are indistinguishable, even if coming from the same user. We refer to this property as presentation unlinkability. This property is achieved by the way the credential presentations are constructed. The presentation elements <code>[U, UPrimeCommit, m1Commit]</code> are indistinguishable from all other presentations made from credentials issued with the same server keys, as detailed in <span>[<a href="#KVAC" class="cite xref">KVAC</a>]</span>.<a href="#section-7.2-1" class="pilcrow">¶</a></p>
 <p id="section-7.2-2">The indistinguishability set for these presentation elements is <code>sum_{i=0}^c(p_i)</code>, where <code>c</code> is the number of credentials issued with the same server keys, and <code>p_i</code> is the number of presentations made for each of those credentials.<a href="#section-7.2-2" class="pilcrow">¶</a></p>
 <p id="section-7.2-3">The presentation elements <code>[tag, nonce, presentationContext, presentationProof]</code> are indistinguishable from all presentations made from credentials issued with the same server keys for that presentationContext, with the exception of presentations with the same nonce (since those presentations can be ascertained as being generated from different credentials, as long as the presentation tag is unique).<a href="#section-7.2-3" class="pilcrow">¶</a></p>
-<p id="section-7.2-4">The indistinguishability set for those presentation elements is <code>sum_{i=0}^c(p_i[presentationContext]) - k[presentationContext]</code>, where <code>c</code> is the number of credentials issued with the same server keys, <code>p_i[presentationContext]</code> is the number of presentations made for each of those credentials with the same presentationContext, and <code>k</code> is the number of presentations with the same nonce for that presentationContext. As long as the nonces are generated randomly from the range defined by the rate limit, <code>k[presentationContext]</code> should be roughly equal to <code>sum_{i=0}^c(p_i[presentationContext]) / n</code>, where <code>n</code> is the rate limit. Therefore, the indistinguishability set can be represented as <code>sum_{i=0}^c(p_i[presentationContext])(1 - 1/n)</code>, where a larger rate limit results in a larger indistinguishability set and therefore stronger unlinkability properties.<a href="#section-7.2-4" class="pilcrow">¶</a></p>
+<p id="section-7.2-4">The indistinguishability set for those presentation elements is <code>sum_{i=0}^c(p_i[presentationContext]) - k[presentationContext]</code>, where <code>c</code> is the number of credentials issued with the same server keys, <code>p_i[presentationContext]</code> is the number of presentations made for each of those credentials with the same presentationContext, and <code>k</code> is the number of presentations with the same nonce for that presentationContext. As long as the nonces are generated randomly from the range defined by the presentation limit, <code>k[presentationContext]</code> should be roughly equal to <code>sum_{i=0}^c(p_i[presentationContext]) / n</code>, where <code>n</code> is the presentation limit. Therefore, the indistinguishability set can be represented as <code>sum_{i=0}^c(p_i[presentationContext])(1 - 1/n)</code>, where a larger presentation limit results in a larger indistinguishability set and therefore stronger unlinkability properties.<a href="#section-7.2-4" class="pilcrow">¶</a></p>
 <p id="section-7.2-5">[[OPEN ISSUE: hide the nonce and replace the tag proof with a range proof built from something like Bulletproofs.]]<a href="#section-7.2-5" class="pilcrow">¶</a></p>
 </section>
 </div>
