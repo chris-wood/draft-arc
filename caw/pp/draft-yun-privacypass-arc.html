@@ -8,7 +8,8 @@
 <meta content="Cathie Yun" name="author">
 <meta content="Christopher A. Wood" name="author">
 <meta content="
-       TODO Abstract 
+       This document specifies the issuance and redemption protocols for
+tokens based on the Anonymous Rate-Limited Credential (ARC) protocol. 
     " name="description">
 <meta content="xml2rfc 3.25.0" name="generator">
 <meta content="draft-yun-privacypass-arc-latest" name="ietf.draft">
@@ -1083,7 +1084,8 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <h1 id="title">Privacy Pass Issuance Protocol for Anonymous Rate-Limited Credentials</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">TODO Abstract<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">This document specifies the issuance and redemption protocols for
+tokens based on the Anonymous Rate-Limited Credential (ARC) protocol.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-about-this-document">
@@ -1152,53 +1154,67 @@ svg :is([fill="white"], [fill^="#fff"]) {
             <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
-            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-terminology" class="internal xref">Terminology</a></p>
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-motivation" class="internal xref">Motivation</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1" class="keepWithNext"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-protocol-overview" class="internal xref">Protocol Overview</a></p>
+            <p id="section-toc.1-1.3.1" class="keepWithNext"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-terminology" class="internal xref">Terminology</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
-            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-configuration" class="internal xref">Configuration</a></p>
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-protocol-overview" class="internal xref">Protocol Overview</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-credential-issuance-protoco" class="internal xref">Credential Issuance Protocol</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
-                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-client-to-issuer-request" class="internal xref">Client-to-Issuer Request</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
-                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-issuer-to-client-request" class="internal xref">Issuer-to-Client Request</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
-                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-credential-finalization" class="internal xref">Credential Finalization</a></p>
-</li>
-            </ul>
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-configuration" class="internal xref">Configuration</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-token-redemption-protocol" class="internal xref">Token Redemption Protocol</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
-                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-token-creation" class="internal xref">Token Creation</a></p>
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-token-challenge-requirement" class="internal xref">Token Challenge Requirements</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
-                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-token-verification" class="internal xref">Token Verification</a></p>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-credential-issuance-protoco" class="internal xref">Credential Issuance Protocol</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
+                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-client-to-issuer-request" class="internal xref">Client-to-Issuer Request</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
+                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-issuer-to-client-request" class="internal xref">Issuer-to-Client Request</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3">
+                <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="auto internal xref">7.3</a>.  <a href="#name-credential-finalization" class="internal xref">Credential Finalization</a></p>
 </li>
             </ul>
 </li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
-            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
-</li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
-            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-token-redemption-protocol" class="internal xref">Token Redemption Protocol</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1">
+                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="auto internal xref">8.1</a>.  <a href="#name-token-creation" class="internal xref">Token Creation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2">
+                <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="auto internal xref">8.2</a>.  <a href="#name-token-verification" class="internal xref">Token Verification</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
-            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
-            <p id="section-toc.1-1.10.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
-            <p id="section-toc.1-1.11.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.1">
+                <p id="section-toc.1-1.11.2.1.1"><a href="#section-11.1" class="auto internal xref">11.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.2">
+                <p id="section-toc.1-1.11.2.2.1"><a href="#section-11.2" class="auto internal xref">11.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
 </li>
         </ul>
 </nav>
@@ -1209,492 +1225,599 @@ svg :is([fill="white"], [fill^="#fff"]) {
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">TODO Introduction<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-1"><span>[<a href="#ARCHITECTURE" class="cite xref">ARCHITECTURE</a>]</span> describes the Privacy Pass architecture, and <span>[<a href="#ISSUANCE" class="cite xref">ISSUANCE</a>]</span>
+and <span>[<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>]</span> describe the issuance and redemption protocols for
+basic Privacy Pass tokens, i.e., those computed using blind RSA signatures
+(as specified in <span>[<a href="#BLIND-RSA" class="cite xref">BLIND-RSA</a>]</span>) or verifiable oblivious
+pseudorandom functions (as specified in <span>[<a href="#VOPRFS" class="cite xref">VOPRFS</a>]</span>). These protocols
+are widely deployed in practice for a variety of applications, including
+anonymous authentication for protocols such as Oblivious HTTP <span>[<a href="#OHTTP" class="cite xref">OHTTP</a>]</span>
+and the Distributed Aggregation Protocol <span>[<a href="#DAP" class="cite xref">DAP</a>]</span>. While
+effective, these variants of Privacy Pass tokens are limited in that
+each token can only be spent once. These are often calle "one-time-use" tokens.
+This means that applications which wish to limit access to a given user, e.g.,
+for the purposes of throttling or rate limiting them, must issue one token
+for each redemption.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">The Anonymous Rate-Limited Credential (ARC) protocol, as specified in [TODO],
+offers a more scalable approach to rate limiting. In particular, ARC credentials
+can be issued once and then presented (or redeemed) up to some fixed-amount
+of time for distinct, per-origin presentation contexts. This means that a Client
+will only be able to present a limited number of tokens associated with a given
+context.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">This document specifies the issuance and redemption protocols for ARC. <a href="#motivation" class="auto internal xref">Section 2</a>
+describes motivation for this new type of token, <a href="#overview" class="auto internal xref">Section 4</a> presents an overview
+of the protocols, and the remainder of the document specifies the protocols themselves.<a href="#section-1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="motivation">
+<section id="section-2">
+      <h2 id="name-motivation">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-motivation" class="section-name selfRef">Motivation</a>
+      </h2>
+<p id="section-2-1">To demonstrate how ARC is useful, consider the case where a client wishes to keep
+its IP address private while accessing a service. The client can hide its IP
+address using a proxy service or a VPN. However, doing so severely limits the
+client's ability to access services and content, since servers might not be able
+to enforce their policies without a stable and unique client identifier.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2">With one-time-use tokens, the server can verify that each client access meets
+a particular bar for attestation, i.e., the bar that is enforced during issuance,
+but cannot be used by the server to rate limit a specific client. This is because
+there is no mechanism in the issuance protocol to link repeated Client token
+requests in order to apply rate-limiting.<a href="#section-2-2" class="pilcrow">¶</a></p>
+<p id="section-2-3">There are several use cases for rate-limiting anonymous clients that are common
+on the Internet. These routinely use client IP address tracking, among other
+characteristics, to implement rate-limiting.<a href="#section-2-3" class="pilcrow">¶</a></p>
+<p id="section-2-4">One example of this use case is rate-limiting website accesses to a client to
+help prevent abusive behavior. Operations that are sensitive to abuse, such as
+account creation on a website or logging into an account, often employ rate-limiting
+as a defense-in-depth strategy. Additional verification can be required by these
+pages when a client exceeds a set rate-limit.<a href="#section-2-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="terminology">
-<section id="section-2">
+<section id="section-3">
       <h2 id="name-terminology">
-<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-terminology" class="section-name selfRef">Terminology</a>
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-terminology" class="section-name selfRef">Terminology</a>
       </h2>
-<p id="section-2-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+<p id="section-3-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
 "<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
 described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
-appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
-<p id="section-2-2">This document uses the terms Origin, Client, Issuer, and Token as defined in
-<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-architecture-16#section-2" class="relref">Section 2</a> of [<a href="#ARCHITECTURE" class="cite xref">ARCHITECTURE</a>]</span>. Moreover, the following additional terms are
-used throughout this document.<a href="#section-2-2" class="pilcrow">¶</a></p>
+appear in all capitals, as shown here.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2">This document uses the terms Origin, Client, Issuer, and Token as defined in
+<span><a href="https://rfc-editor.org/rfc/rfc9576#section-2" class="relref">Section 2</a> of [<a href="#ARCHITECTURE" class="cite xref">ARCHITECTURE</a>]</span>. Moreover, the following additional terms are
+used throughout this document.<a href="#section-3-2" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-2-3.1">
-          <p id="section-2-3.1.1">Issuer Public Key: The public key (from a private-public key pair) used by
-the Issuer for issuing and verifying Tokens.<a href="#section-2-3.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-3-3.1">
+          <p id="section-3-3.1.1">Issuer Public Key: The public key (from a private-public key pair) used by
+the Issuer for issuing and verifying Tokens.<a href="#section-3-3.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-2-3.2">
-          <p id="section-2-3.2.1">Issuer Private Key: The private key (from a private-public key pair) used by
-the Issuer for issuing and verifying Tokens.<a href="#section-2-3.2.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-3-3.2">
+          <p id="section-3-3.2.1">Issuer Private Key: The private key (from a private-public key pair) used by
+the Issuer for issuing and verifying Tokens.<a href="#section-3-3.2.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-2-4">Unless otherwise specified, this document encodes protocol messages in TLS
+<p id="section-3-4">Unless otherwise specified, this document encodes protocol messages in TLS
 notation from <span><a href="https://rfc-editor.org/rfc/rfc8446#section-3" class="relref">Section 3</a> of [<a href="#TLS13" class="cite xref">TLS13</a>]</span>. Moreover, all constants are in
-network byte order.<a href="#section-2-4" class="pilcrow">¶</a></p>
+network byte order.<a href="#section-3-4" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="protocol-overview">
-<section id="section-3">
+<div id="overview">
+<section id="section-4">
       <h2 id="name-protocol-overview">
-<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-protocol-overview" class="section-name selfRef">Protocol Overview</a>
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-protocol-overview" class="section-name selfRef">Protocol Overview</a>
       </h2>
-<p id="section-3-1">The issuance and redemption protocols defined in this document are built on
-an anonymous credential construction called KVAC. In contrast to the core Privacy
-Pass protocols which are one-time-use anonymous credentials, KVAC allows clients
-to turn a single credential output from an issuance protocol into an arbitarary
-number of unlinkable tokens.<a href="#section-3-1" class="pilcrow">¶</a></p>
-<p id="section-3-2">With KVAC, Clients receive TokenChallenge inputs from the redemption protocol
-(<span>[<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>], <a href="https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-auth-scheme-15#section-2.1" class="relref">Section 2.1</a></span>). If they have a valid credential for the designated
+<p id="section-4-1">The issuance and redemption protocols defined in this document are built on
+the Anonymous Rate-Limited Credential (ARC) protocol. In contrast to the core
+Privacy Pass protocols which are one-time-use anonymous credentials, ARC allows
+clients to turn a single credential output from an issuance protocol into a
+fixed number of unlinkable tokens, each of which are bound to some agreed-upon
+public presentation context.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-2">With ARC, Clients receive TokenChallenge inputs from the redemption protocol
+(<span>[<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>], <a href="https://rfc-editor.org/rfc/rfc9577#section-2.1" class="relref">Section 2.1</a></span>). If they have a valid credential for the designated
 Issuer, Clients can use the TokenChallenge to produce a single token for
 presentation. Otherwise, Clients invoke the issuance protocol to obtain a
-credential. This interaction is shown below.<a href="#section-3-2" class="pilcrow">¶</a></p>
+credential. This interaction is shown below.<a href="#section-4-2" class="pilcrow">¶</a></p>
 <span id="name-issuance-and-redemption-ove"></span><div id="fig-overview">
 <figure id="figure-1">
-        <div id="section-3-3.1">
-          <div class="alignLeft art-svg artwork" id="section-3-3.1.1">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="224" width="520" viewBox="0 0 520 224" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
-              <path d="M 8,32 L 8,64" fill="none" stroke="black"></path>
-              <path d="M 40,64 L 40,208" fill="none" stroke="black"></path>
-              <path d="M 80,32 L 80,64" fill="none" stroke="black"></path>
-              <path d="M 184,32 L 184,64" fill="none" stroke="black"></path>
-              <path d="M 216,64 L 216,208" fill="none" stroke="black"></path>
-              <path d="M 256,32 L 256,64" fill="none" stroke="black"></path>
-              <path d="M 336,32 L 336,64" fill="none" stroke="black"></path>
-              <path d="M 376,64 L 376,144" fill="none" stroke="black"></path>
-              <path d="M 376,192 L 376,208" fill="none" stroke="black"></path>
-              <path d="M 424,32 L 424,64" fill="none" stroke="black"></path>
-              <path d="M 440,32 L 440,64" fill="none" stroke="black"></path>
-              <path d="M 472,64 L 472,208" fill="none" stroke="black"></path>
-              <path d="M 512,32 L 512,64" fill="none" stroke="black"></path>
-              <path d="M 8,32 L 80,32" fill="none" stroke="black"></path>
-              <path d="M 184,32 L 256,32" fill="none" stroke="black"></path>
-              <path d="M 336,32 L 424,32" fill="none" stroke="black"></path>
-              <path d="M 440,32 L 512,32" fill="none" stroke="black"></path>
-              <path d="M 8,64 L 80,64" fill="none" stroke="black"></path>
-              <path d="M 184,64 L 256,64" fill="none" stroke="black"></path>
-              <path d="M 336,64 L 424,64" fill="none" stroke="black"></path>
-              <path d="M 440,64 L 512,64" fill="none" stroke="black"></path>
-              <path d="M 48,96 L 88,96" fill="none" stroke="black"></path>
-              <path d="M 168,96 L 216,96" fill="none" stroke="black"></path>
-              <path d="M 40,112 L 56,112" fill="none" stroke="black"></path>
-              <path d="M 192,112 L 208,112" fill="none" stroke="black"></path>
-              <path d="M 224,126 L 240,126" fill="none" stroke="black"></path>
-              <path d="M 224,130 L 240,130" fill="none" stroke="black"></path>
-              <path d="M 352,126 L 368,126" fill="none" stroke="black"></path>
-              <path d="M 352,130 L 368,130" fill="none" stroke="black"></path>
-              <path d="M 216,160 L 264,160" fill="none" stroke="black"></path>
-              <path d="M 424,160 L 464,160" fill="none" stroke="black"></path>
-              <path d="M 224,176 L 256,176" fill="none" stroke="black"></path>
-              <path d="M 424,176 L 472,176" fill="none" stroke="black"></path>
-              <path d="M 48,192 L 64,192" fill="none" stroke="black"></path>
-              <path d="M 192,192 L 216,192" fill="none" stroke="black"></path>
-              <polygon class="arrowhead" points="472,160 460,154.4 460,165.6" fill="black" transform="rotate(0,464,160)"></polygon>
-              <polygon class="arrowhead" points="376,128 364,122.4 364,133.6" fill="black" transform="rotate(0,368,128)"></polygon>
-              <polygon class="arrowhead" points="232,176 220,170.4 220,181.6" fill="black" transform="rotate(180,224,176)"></polygon>
-              <polygon class="arrowhead" points="232,128 220,122.4 220,133.6" fill="black" transform="rotate(180,224,128)"></polygon>
-              <polygon class="arrowhead" points="216,112 204,106.4 204,117.6" fill="black" transform="rotate(0,208,112)"></polygon>
-              <polygon class="arrowhead" points="56,192 44,186.4 44,197.6" fill="black" transform="rotate(180,48,192)"></polygon>
-              <polygon class="arrowhead" points="56,96 44,90.4 44,101.6" fill="black" transform="rotate(180,48,96)"></polygon>
+        <div id="section-4-3.1">
+          <div class="alignLeft art-svg artwork" id="section-4-3.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="256" width="528" viewBox="0 0 528 256" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+              <path d="M 8,48 L 8,80" fill="none" stroke="black"></path>
+              <path d="M 40,80 L 40,240" fill="none" stroke="black"></path>
+              <path d="M 80,48 L 80,80" fill="none" stroke="black"></path>
+              <path d="M 168,48 L 168,80" fill="none" stroke="black"></path>
+              <path d="M 216,80 L 216,240" fill="none" stroke="black"></path>
+              <path d="M 256,48 L 256,80" fill="none" stroke="black"></path>
+              <path d="M 280,32 L 280,80" fill="none" stroke="black"></path>
+              <path d="M 304,48 L 304,80" fill="none" stroke="black"></path>
+              <path d="M 344,80 L 344,96" fill="none" stroke="black"></path>
+              <path d="M 376,48 L 376,80" fill="none" stroke="black"></path>
+              <path d="M 376,104 L 376,176" fill="none" stroke="black"></path>
+              <path d="M 376,224 L 376,240" fill="none" stroke="black"></path>
+              <path d="M 424,48 L 424,80" fill="none" stroke="black"></path>
+              <path d="M 456,80 L 456,96" fill="none" stroke="black"></path>
+              <path d="M 472,104 L 472,240" fill="none" stroke="black"></path>
+              <path d="M 496,48 L 496,80" fill="none" stroke="black"></path>
+              <path d="M 520,48 L 520,80" fill="none" stroke="black"></path>
+              <path d="M 280,32 L 504,32" fill="none" stroke="black"></path>
+              <path d="M 8,48 L 80,48" fill="none" stroke="black"></path>
+              <path d="M 168,48 L 256,48" fill="none" stroke="black"></path>
+              <path d="M 304,48 L 376,48" fill="none" stroke="black"></path>
+              <path d="M 424,48 L 496,48" fill="none" stroke="black"></path>
+              <path d="M 8,80 L 80,80" fill="none" stroke="black"></path>
+              <path d="M 168,80 L 256,80" fill="none" stroke="black"></path>
+              <path d="M 304,80 L 376,80" fill="none" stroke="black"></path>
+              <path d="M 424,80 L 496,80" fill="none" stroke="black"></path>
+              <path d="M 296,96 L 336,96" fill="none" stroke="black"></path>
+              <path d="M 352,96 L 448,96" fill="none" stroke="black"></path>
+              <path d="M 464,96 L 504,96" fill="none" stroke="black"></path>
+              <path d="M 48,128 L 88,128" fill="none" stroke="black"></path>
+              <path d="M 168,128 L 216,128" fill="none" stroke="black"></path>
+              <path d="M 40,144 L 56,144" fill="none" stroke="black"></path>
+              <path d="M 192,144 L 208,144" fill="none" stroke="black"></path>
+              <path d="M 224,158 L 240,158" fill="none" stroke="black"></path>
+              <path d="M 224,162 L 240,162" fill="none" stroke="black"></path>
+              <path d="M 352,158 L 368,158" fill="none" stroke="black"></path>
+              <path d="M 352,162 L 368,162" fill="none" stroke="black"></path>
+              <path d="M 216,192 L 264,192" fill="none" stroke="black"></path>
+              <path d="M 424,192 L 464,192" fill="none" stroke="black"></path>
+              <path d="M 224,208 L 256,208" fill="none" stroke="black"></path>
+              <path d="M 424,208 L 472,208" fill="none" stroke="black"></path>
+              <path d="M 48,224 L 64,224" fill="none" stroke="black"></path>
+              <path d="M 192,224 L 216,224" fill="none" stroke="black"></path>
+              <path d="M 504,32 C 512.83064,32 520,39.16936 520,48" fill="none" stroke="black"></path>
+              <path d="M 296,96 C 287.16936,96 280,88.83064 280,80" fill="none" stroke="black"></path>
+              <path d="M 504,96 C 512.83064,96 520,88.83064 520,80" fill="none" stroke="black"></path>
+              <polygon class="arrowhead" points="472,192 460,186.4 460,197.6" fill="black" transform="rotate(0,464,192)"></polygon>
+              <polygon class="arrowhead" points="376,160 364,154.4 364,165.6" fill="black" transform="rotate(0,368,160)"></polygon>
+              <polygon class="arrowhead" points="232,208 220,202.4 220,213.6" fill="black" transform="rotate(180,224,208)"></polygon>
+              <polygon class="arrowhead" points="232,160 220,154.4 220,165.6" fill="black" transform="rotate(180,224,160)"></polygon>
+              <polygon class="arrowhead" points="216,144 204,138.4 204,149.6" fill="black" transform="rotate(0,208,144)"></polygon>
+              <polygon class="arrowhead" points="56,224 44,218.4 44,229.6" fill="black" transform="rotate(180,48,224)"></polygon>
+              <polygon class="arrowhead" points="56,128 44,122.4 44,133.6" fill="black" transform="rotate(180,48,128)"></polygon>
               <g class="text">
-                <text x="44" y="52">Origin</text>
-                <text x="220" y="52">Client</text>
-                <text x="380" y="52">Attester</text>
-                <text x="476" y="52">Issuer</text>
-                <text x="128" y="100">Request</text>
-                <text x="124" y="116">TokenChallenge</text>
-                <text x="296" y="132">Attestation</text>
-                <text x="344" y="164">CredentialRequest</text>
-                <text x="340" y="180">CredentialResponse</text>
-                <text x="128" y="196">Request+Token</text>
+                <text x="44" y="68">Client</text>
+                <text x="212" y="68">Attester</text>
+                <text x="340" y="68">Issuer</text>
+                <text x="460" y="68">Origin</text>
+                <text x="128" y="132">Request</text>
+                <text x="124" y="148">TokenChallenge</text>
+                <text x="296" y="164">Attestation</text>
+                <text x="344" y="196">CredentialRequest</text>
+                <text x="340" y="212">CredentialResponse</text>
+                <text x="128" y="228">Request+Token</text>
               </g>
-            </svg><a href="#section-3-3.1.1" class="pilcrow">¶</a>
+            </svg><a href="#section-4-3.1.1" class="pilcrow">¶</a>
 </div>
 </div>
 <figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
 <a href="#name-issuance-and-redemption-ove" class="selfRef">Issuance and Redemption Overview</a>
         </figcaption></figure>
 </div>
-<p id="section-3-4">Similar to the core Privacy Pass protocols, the TokenChallenge can
-be interactive or non-interactive, and per-origin or cross-origin.
-However, unlike the core Privacy Pass protocols, TokenChallenge values
-are not inputs to the issuance protocol used for producing credentialsl;
-they are only used for the redemption protocol.<a href="#section-3-4" class="pilcrow">¶</a></p>
-<p id="section-3-5">KVAC is only compatible with deployment models where the Issuer and Origin
-are operated by the same entity (see <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-architecture-16#section-4" class="relref">Section 4</a> of [<a href="#ARCHITECTURE" class="cite xref">ARCHITECTURE</a>]</span>), as
+<p id="section-4-4">Similar to the core Privacy Pass protocols, the TokenChallenge can
+be interactive or non-interactive, and per-origin or cross-origin.<a href="#section-4-4" class="pilcrow">¶</a></p>
+<p id="section-4-5">ARC is only compatible with deployment models where the Issuer and Origin
+are operated by the same entity (see <span><a href="https://rfc-editor.org/rfc/rfc9576#section-4" class="relref">Section 4</a> of [<a href="#ARCHITECTURE" class="cite xref">ARCHITECTURE</a>]</span>), as
 tokens produced from a credential are not publicly verifiable. The details
 of attestation are outside the scope of the issuance protocol; see
-<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-architecture-16#section-4" class="relref">Section 4</a> of [<a href="#ARCHITECTURE" class="cite xref">ARCHITECTURE</a>]</span> for information about how attestation can
-be implemented in each of the relevant deployment models.<a href="#section-3-5" class="pilcrow">¶</a></p>
-<p id="section-3-6">The issuance and redemption protocols in this document are built on
-<span>[<a href="#KVAC-SPEC" class="cite xref">KVAC-SPEC</a>]</span>.<a href="#section-3-6" class="pilcrow">¶</a></p>
+<span><a href="https://rfc-editor.org/rfc/rfc9576#section-4" class="relref">Section 4</a> of [<a href="#ARCHITECTURE" class="cite xref">ARCHITECTURE</a>]</span> for information about how attestation can
+be implemented in each of the relevant deployment models.<a href="#section-4-5" class="pilcrow">¶</a></p>
+<p id="section-4-6">The issuance and redemption protocols in this document are built on
+<span>[<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-4-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="setup">
-<section id="section-4">
+<section id="section-5">
       <h2 id="name-configuration">
-<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-configuration" class="section-name selfRef">Configuration</a>
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-configuration" class="section-name selfRef">Configuration</a>
       </h2>
-<p id="section-4-1">KVAC issuers are configured with key material used for issuance and credential
-verification. Concretely, Issuers run the <code>SetupServer</code> function from <span>[<a href="#KVAC-SPEC" class="cite xref">KVAC-SPEC</a>]</span>
-to produce three secret keys and two public keys, as follows:<a href="#section-4-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-4-2">
+<p id="section-5-1">ARC Issuers are configured with key material used for issuance and token
+verification. Concretely, Issuers run the <code>SetupServer</code> function from <span>[<a href="#ARC" class="cite xref">ARC</a>]</span>
+to produce a private and public key, denoted skI and pkI, respectively.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5-2">
 <pre>
-skI = SetupServer()
-</pre><a href="#section-4-2" class="pilcrow">¶</a>
+skI, pkI = SetupServer()
+</pre><a href="#section-5-2" class="pilcrow">¶</a>
 </div>
-<p id="section-4-3">The Issuer Secret Key is the output of SetupServer.
-The Issuer Public Key is <code>pkI = skI.PublicKey()</code>, where <code>PublicKey</code>
-is as defined in <span>[<a href="#KVAC-SPEC" class="cite xref">KVAC-SPEC</a>]</span>. The Issuer Public Key ID, denoted
-<code>issuer_key_id</code>, is computed as the SHA-256 hash of the Issuer Public
-Key, i.e., <code>issuer_key_id = SHA-256(pkI)</code>.<a href="#section-4-3" class="pilcrow">¶</a></p>
+<p id="section-5-3">The Issuer Public Key ID, denoted <code>issuer_key_id</code>, is computed as the
+SHA-256 hash of the Issuer Public Key, i.e., <code>issuer_key_id = SHA-256(pkI_serialized)</code>,
+where <code>pkI_serialized</code> is the serialized version of <code>pkI</code> as described in [Section 4.1 of ARC].<a href="#section-5-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="token-challenge-requirements">
+<section id="section-6">
+      <h2 id="name-token-challenge-requirement">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-token-challenge-requirement" class="section-name selfRef">Token Challenge Requirements</a>
+      </h2>
+<p id="section-6-1">Clients receive challenges for tokens as described in <span>[<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>]</span>.
+The HTTP authentication challenge also <span class="bcp14">SHOULD</span> contain the following
+additional attribute:<a href="#section-6-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6-2.1">
+          <p id="section-6-2.1.1">"rate-limit", which contains a JSON number indicating the presentation
+limit to use for ARC.<a href="#section-6-2.1.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
 </section>
 </div>
 <div id="credential-issuance-protocol">
-<section id="section-5">
+<section id="section-7">
       <h2 id="name-credential-issuance-protoco">
-<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-credential-issuance-protoco" class="section-name selfRef">Credential Issuance Protocol</a>
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-credential-issuance-protoco" class="section-name selfRef">Credential Issuance Protocol</a>
       </h2>
-<p id="section-5-1">Issuers provide a Issuer Private and Public Key, denoted <code>skI</code> and <code>pkI</code> respectively,
-used to produce tokens as input to the protocol. See <a href="#setup" class="auto internal xref">Section 4</a>
-for how these keys are generated.<a href="#section-5-1" class="pilcrow">¶</a></p>
-<p id="section-5-2">Clients provide the following as input to the issuance protocol:<a href="#section-5-2" class="pilcrow">¶</a></p>
+<p id="section-7-1">Issuers provide an Issuer Private and Public Key, denoted <code>skI</code> and <code>pkI</code>
+respectively, used to produce tokens as input to the protocol. See <a href="#setup" class="auto internal xref">Section 5</a>
+for how these keys are generated.<a href="#section-7-1" class="pilcrow">¶</a></p>
+<p id="section-7-2">Clients provide the following as input to the issuance protocol:<a href="#section-7-2" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5-3.1">
-          <p id="section-5-3.1.1">Issuer Request URL: A URL identifying the location to which issuance requests
+<li class="normal" id="section-7-3.1">
+          <p id="section-7-3.1.1">Issuer Request URL: A URL identifying the location to which issuance requests
 are sent. This can be a URL derived from the "issuer-request-uri" value in the
 Issuer's directory resource, or it can be another Client-configured URL. The value
 of this parameter depends on the Client configuration and deployment model.
 For example, in the 'Joint Origin and Issuer' deployment model, the Issuer
 Request URL might correspond to the Client's configured Attester, and the
-Attester is configured to relay requests to the Issuer.<a href="#section-5-3.1.1" class="pilcrow">¶</a></p>
+Attester is configured to relay requests to the Issuer.<a href="#section-7-3.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-5-3.2">
-          <p id="section-5-3.2.1">Issuer name: An identifier for the Issuer. This is typically a host name that
-can be used to construct HTTP requests to the Issuer.<a href="#section-5-3.2.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-7-3.2">
+          <p id="section-7-3.2.1">Issuer name: An identifier for the Issuer. This is typically a host name that
+can be used to construct HTTP requests to the Issuer.<a href="#section-7-3.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-5-3.3">
-          <p id="section-5-3.3.1">Issuer Public Key: <code>pkI</code>, with a key identifier <code>token_key_id</code> computed as
-described in <a href="#setup" class="auto internal xref">Section 4</a>.<a href="#section-5-3.3.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-7-3.3">
+          <p id="section-7-3.3.1">Issuer Public Key: <code>pkI</code>, with a key identifier <code>token_key_id</code> computed as
+described in <a href="#setup" class="auto internal xref">Section 5</a>.<a href="#section-7-3.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-5-4">Given this configuration and these inputs, the two messages exchanged in
-this protocol to produce a credential are described below.<a href="#section-5-4" class="pilcrow">¶</a></p>
+<p id="section-7-4">Given this configuration and these inputs, the two messages exchanged in
+this protocol to produce a credential are described below.<a href="#section-7-4" class="pilcrow">¶</a></p>
 <div id="client-to-issuer-request">
-<section id="section-5.1">
+<section id="section-7.1">
         <h3 id="name-client-to-issuer-request">
-<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-client-to-issuer-request" class="section-name selfRef">Client-to-Issuer Request</a>
+<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-client-to-issuer-request" class="section-name selfRef">Client-to-Issuer Request</a>
         </h3>
-<p id="section-5.1-1">Given Origin-provided input <code>tokenChallenge</code>, Issuer Public Key ID <code>issuer_key_id</code>,
-and the resulting <code>challenge_digest</code> from the token challenge, the Client first
-creates a credential request message using the <code>CredentialRequest</code> function from
-<span>[<a href="#KVAC-SPEC" class="cite xref">KVAC-SPEC</a>]</span> as follows:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.1-2">
+<p id="section-7.1-1">Given Origin-provided input <code>tokenChallenge</code> and the Issuer Public Key ID <code>issuer_key_id</code>,
+the Client first creates a credential request message using the <code>CredentialRequest</code>
+function from <span>[<a href="#ARC" class="cite xref">ARC</a>]</span> as follows:<a href="#section-7.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-7.1-2">
 <pre>
-presentation_context = concat(0xC7D3, challenge_digest, issuer_key_id)
-(clientSecrets, request) = CredentialRequest(tokenChallenge)
-</pre><a href="#section-5.1-2" class="pilcrow">¶</a>
+request_context = concat(0xC7D3, tokenChallenge.issuer_name, issuer_key_id)
+(clientSecrets, request) = CredentialRequest(request_context)
+</pre><a href="#section-7.1-2" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1-3">The Client then creates a TokenRequest structure as follows:<a href="#section-5.1-3" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.1-4">
+<p id="section-7.1-3">The Client then creates a TokenRequest structure as follows:<a href="#section-7.1-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-7.1-4">
 <pre>
 struct {
-  uint16_t token_type = 0xC7D3; /* Type KVAC(P-384, SHA-384) */
+  uint16_t token_type = 0xC7D3; /* Type ARC(P-384) */
   uint8_t truncated_issuer_key_id;
   uint8_t encoded_request[Nrequest];
 } TokenRequest;
-</pre><a href="#section-5.1-4" class="pilcrow">¶</a>
+</pre><a href="#section-7.1-4" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1-5">The structure fields are defined as follows:<a href="#section-5.1-5" class="pilcrow">¶</a></p>
+<p id="section-7.1-5">The structure fields are defined as follows:<a href="#section-7.1-5" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.1-6.1">
-            <p id="section-5.1-6.1.1">"token_type" is a 2-octet integer.<a href="#section-5.1-6.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-7.1-6.1">
+            <p id="section-7.1-6.1.1">"token_type" is a 2-octet integer.<a href="#section-7.1-6.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-5.1-6.2">
-            <p id="section-5.1-6.2.1">"truncated_issuer_key_id" is the least significant byte of the <code>issuer_key_id</code>
-(<a href="#setup" class="auto internal xref">Section 4</a>) in network byte order (in other words, the last 8
+          <li class="normal" id="section-7.1-6.2">
+            <p id="section-7.1-6.2.1">"truncated_issuer_key_id" is the least significant byte of the <code>issuer_key_id</code>
+(<a href="#setup" class="auto internal xref">Section 5</a>) in network byte order (in other words, the last 8
 bits of <code>issuer_key_id</code>). This value is truncated so that Issuers cannot use
-<code>issuer_key_id</code> as a way of uniquely identifying Clients; see <a href="#security" class="auto internal xref">Section 7</a>
-and referenced information for more details.<a href="#section-5.1-6.2.1" class="pilcrow">¶</a></p>
+<code>issuer_key_id</code> as a way of uniquely identifying Clients; see <a href="#security" class="auto internal xref">Section 9</a>
+and referenced information for more details.<a href="#section-7.1-6.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-5.1-6.3">
-            <p id="section-5.1-6.3.1">"encoded_request" is the Nrequest-octet request, computed as the serialization
-of the <code>request</code> value as defined in <span>[<a href="#KVAC-SPEC" class="cite xref">KVAC-SPEC</a>]</span>.<a href="#section-5.1-6.3.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.1-6.3">
+            <p id="section-7.1-6.3.1">"encoded_request" is the Nrequest-octet request, computed as the serialization
+of the <code>request</code> value as defined in [Section 4.2.1 of ARC].<a href="#section-7.1-6.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-5.1-7">The Client then generates an HTTP POST request to send to the Issuer Request URL,
+<p id="section-7.1-7">The Client then generates an HTTP POST request to send to the Issuer Request URL,
 with the TokenRequest as the content. The media type for this request is
-"application/private-token-request". An example request for the Issuer Request URL
-"https://issuer.example.net/request" is shown below.<a href="#section-5.1-7" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.1-8">
+"application/private-credential-request". An example request for the Issuer Request URL
+"https://issuer.example.net/request" is shown below.<a href="#section-7.1-7" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-7.1-8">
 <pre>
 POST /request HTTP/1.1
 Host: issuer.example.net
-Accept: application/KVAC-response
-Content-Type: application/KVAC-request
+Accept: application/private-credential-response
+Content-Type: application/private-credential-request
 Content-Length: &lt;Length of TokenRequest&gt;
 
 &lt;Bytes containing the TokenRequest&gt;
-</pre><a href="#section-5.1-8" class="pilcrow">¶</a>
+</pre><a href="#section-7.1-8" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 <div id="issuer-to-client-request">
-<section id="section-5.2">
+<section id="section-7.2">
         <h3 id="name-issuer-to-client-request">
-<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-issuer-to-client-request" class="section-name selfRef">Issuer-to-Client Request</a>
+<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-issuer-to-client-request" class="section-name selfRef">Issuer-to-Client Request</a>
         </h3>
-<p id="section-5.2-1">Upon receipt of the request, the Issuer validates the following conditions:<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+<p id="section-7.2-1">Upon receipt of the request, the Issuer validates the following conditions:<a href="#section-7.2-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.2-2.1">
-            <p id="section-5.2-2.1.1">The TokenRequest contains a supported token_type equal to value 0xC7D3.<a href="#section-5.2-2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-7.2-2.1">
+            <p id="section-7.2-2.1.1">The TokenRequest contains a supported token_type equal to value 0xC7D3.<a href="#section-7.2-2.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-5.2-2.2">
-            <p id="section-5.2-2.2.1">The TokenRequest.truncated_token_key_id corresponds to the truncated key ID
+          <li class="normal" id="section-7.2-2.2">
+            <p id="section-7.2-2.2.1">The TokenRequest.truncated_token_key_id corresponds to the truncated key ID
 of an Issuer Public Key, with corresponding secret key <code>skI</code>, owned by
-the Issuer.<a href="#section-5.2-2.2.1" class="pilcrow">¶</a></p>
+the Issuer.<a href="#section-7.2-2.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-5.2-2.3">
-            <p id="section-5.2-2.3.1">The TokenRequest.encoded_request is of the correct size (<code>Nrequest</code>).<a href="#section-5.2-2.3.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.2-2.3">
+            <p id="section-7.2-2.3.1">The TokenRequest.encoded_request is of the correct size (<code>Nrequest</code>).<a href="#section-7.2-2.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-5.2-3">If any of these conditions is not met, the Issuer <span class="bcp14">MUST</span> return an HTTP 422
-(Unprocessable Content) error to the client.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
-<p id="section-5.2-4">If these conditions are met, the Issuer then tries to deserialize
-TokenRequest.encoded_request according to <span>[<a href="#KVAC-SPEC" class="cite xref">KVAC-SPEC</a>]</span>, yielding <code>request</code>.
+<p id="section-7.2-3">If any of these conditions is not met, the Issuer <span class="bcp14">MUST</span> return an HTTP 422
+(Unprocessable Content) error to the client.<a href="#section-7.2-3" class="pilcrow">¶</a></p>
+<p id="section-7.2-4">If these conditions are met, the Issuer then tries to deserialize
+TokenRequest.encoded_request according to [Section 4.2.1 of ARC], yielding <code>request</code>.
 If this fails, the Issuer <span class="bcp14">MUST</span> return an HTTP 422 (Unprocessable Content)
 error to the client. Otherwise, if the Issuer is willing to produce a credential
 for the Client, the Issuer completes the issuance flow by an issuance response
-as follows:<a href="#section-5.2-4" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.2-5">
+as follows:<a href="#section-7.2-4" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-7.2-5">
 <pre>
-response = CredentialResponse(skI, request)
-</pre><a href="#section-5.2-5" class="pilcrow">¶</a>
+response = CredentialResponse(skI, pkI, request)
+</pre><a href="#section-7.2-5" class="pilcrow">¶</a>
 </div>
-<p id="section-5.2-6">The Issuer then creates a TokenResponse structured as follows:<a href="#section-5.2-6" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.2-7">
+<p id="section-7.2-6">The Issuer then creates a TokenResponse structured as follows:<a href="#section-7.2-6" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-7.2-7">
 <pre>
 struct {
    uint8_t encoded_response[Nresponse];
 } TokenResponse;
-</pre><a href="#section-5.2-7" class="pilcrow">¶</a>
+</pre><a href="#section-7.2-7" class="pilcrow">¶</a>
 </div>
-<p id="section-5.2-8">The structure fields are defined as follows:<a href="#section-5.2-8" class="pilcrow">¶</a></p>
+<p id="section-7.2-8">The structure fields are defined as follows:<a href="#section-7.2-8" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.2-9.1">
-            <p id="section-5.2-9.1.1">"encoded_response" is the Nresponse-octet encoded issuance response message, computed
-as the serialization of <code>response</code> as specified in <span>[<a href="#KVAC-SPEC" class="cite xref">KVAC-SPEC</a>]</span>.<a href="#section-5.2-9.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-7.2-9.1">
+            <p id="section-7.2-9.1.1">"encoded_response" is the Nresponse-octet encoded issuance response message, computed
+as the serialization of <code>response</code> as specified in [Section 4.2.2 of ARC].<a href="#section-7.2-9.1.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-5.2-10">The Issuer generates an HTTP response with status code 200 whose content
+<p id="section-7.2-10">The Issuer generates an HTTP response with status code 200 whose content
 consists of TokenResponse, with the content type set as
-"application/private-token-response".<a href="#section-5.2-10" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.2-11">
+"application/private-credential-response".<a href="#section-7.2-10" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-7.2-11">
 <pre>
 HTTP/1.1 200 OK
-Content-Type: application/KVAC-response
+Content-Type: application/private-credential-response
 Content-Length: &lt;Length of TokenResponse&gt;
 
 &lt;Bytes containing the TokenResponse&gt;
-</pre><a href="#section-5.2-11" class="pilcrow">¶</a>
+</pre><a href="#section-7.2-11" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 <div id="credential-finalization">
-<section id="section-5.3">
+<section id="section-7.3">
         <h3 id="name-credential-finalization">
-<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-credential-finalization" class="section-name selfRef">Credential Finalization</a>
+<a href="#section-7.3" class="section-number selfRef">7.3. </a><a href="#name-credential-finalization" class="section-name selfRef">Credential Finalization</a>
         </h3>
-<p id="section-5.3-1">Upon receipt, the Client handles the response and, if successful, deserializes
-the content values <code>TokenResponse.encoded_response</code> according to <span>[<a href="#KVAC-SPEC" class="cite xref">KVAC-SPEC</a>]</span>
+<p id="section-7.3-1">Upon receipt, the Client handles the response and, if successful, deserializes
+the content values <code>TokenResponse.encoded_response</code> according to [Section 4.2.2 of ARC]
 yielding <code>response</code>. If deserialization fails, the Client aborts the protocol.
-Otherwise, the Client processes the response as follows:<a href="#section-5.3-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.3-2">
+Otherwise, the Client processes the response as follows:<a href="#section-7.3-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-7.3-2">
 <pre>
-credential = FinalizeCredential(clientSecrets, request, response)
-</pre><a href="#section-5.3-2" class="pilcrow">¶</a>
+credential = FinalizeCredential(clientSecrets, pkI, request, response)
+</pre><a href="#section-7.3-2" class="pilcrow">¶</a>
 </div>
-<p id="section-5.3-3">The Client then saves the credential structure, associated with the given Issuer
-Name, to use when producing Token values in response to future token challenges.<a href="#section-5.3-3" class="pilcrow">¶</a></p>
+<p id="section-7.3-3">The Client then saves the credential structure, associated with the given Issuer
+Name, to use when producing Token values in response to future token challenges.<a href="#section-7.3-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
 <div id="token-redemption-protocol">
-<section id="section-6">
+<section id="section-8">
       <h2 id="name-token-redemption-protocol">
-<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-token-redemption-protocol" class="section-name selfRef">Token Redemption Protocol</a>
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-token-redemption-protocol" class="section-name selfRef">Token Redemption Protocol</a>
       </h2>
-<p id="section-6-1">The token redemption protocol takes as input TokenChallenge values from
-<span>[<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>], <a href="https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-auth-scheme-15#section-2.1" class="relref">Section 2.1</a></span> as well as arbitrary application context
-information to produce a token. Clients use credentials from the issuance
-protocol in producing tokens bound to these inputs. The process for producing
-a token in this way, as well as verifying a resulting token, is described
-in the following sections.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<p id="section-8-1">The token redemption protocol takes as input TokenChallenge and presentation limit
+values from <span>[<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>], <a href="https://rfc-editor.org/rfc/rfc9577#section-2.1" class="relref">Section 2.1</a></span>; the presentation limit is sent as an additional
+attribute within the HTTP challenge as described in <a href="#token-challenge-requirements" class="auto internal xref">Section 6</a>.
+Clients use credentials from the issuance protocol in producing tokens
+bound to the TokenChallenge. The process for producing a token in this
+way, as well as verifying a resulting token, is described in the following sections.<a href="#section-8-1" class="pilcrow">¶</a></p>
 <div id="token-creation">
-<section id="section-6.1">
+<section id="section-8.1">
         <h3 id="name-token-creation">
-<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-token-creation" class="section-name selfRef">Token Creation</a>
+<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-token-creation" class="section-name selfRef">Token Creation</a>
         </h3>
-<p id="section-6.1-1">Given a TokenChallenge value as input, denoted <code>challenge</code>, application contextual
-information, denoted <code>context</code>, and a previously computed credential, denoted
-<code>credential</code>, Clients compute a credential presentation value as follows:<a href="#section-6.1-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-6.1-2">
+<p id="section-8.1-1">Given a TokenChallenge value as input, denoted <code>challenge</code>, a presentation limit,
+denoted <code>presentationLimit</code>, and a previously computed credential that is valid
+for the Issuer identifier in the challenge, denoted <code>credential</code>, Clients compute
+a credential presentation value as follows:<a href="#section-8.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.1-2">
 <pre>
 presentation_context = concat(0xC7D3, challenge_digest, issuer_key_id)
-presentation = Present(credential, presentation_context)
-</pre><a href="#section-6.1-2" class="pilcrow">¶</a>
+state = MakePresentationState(credential, presentation_context, presentationLimit)
+newState, nonce, presentation = Present(state)
+</pre><a href="#section-8.1-2" class="pilcrow">¶</a>
 </div>
-<p id="section-6.1-3">The resulting Token value is then constructed as follows:<a href="#section-6.1-3" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-6.1-4">
+<p id="section-8.1-3">Subsequent presentations <span class="bcp14">MUST</span> use the updated state, denoted <code>newState</code>. Reusing
+the original state will break the presentation unlinkability properties of ARC;
+see <a href="#security" class="auto internal xref">Section 9</a>.<a href="#section-8.1-3" class="pilcrow">¶</a></p>
+<p id="section-8.1-4">The resulting Token value is then constructed as follows:<a href="#section-8.1-4" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.1-5">
 <pre>
 struct {
-    uint16_t token_type = 0xC7D3; /* Type KVAC(P-384, SHA-384) */
-    uint8_t challenge_digest[32];
+    uint16_t token_type = 0xC7D3; /* Type ARC(P-384) */
     uint8_t issuer_key_id[Nid];
-    uint8_t credential_proof[Nproof];
+    uint32_t presentation_nonce;
+    uint8_t presentation[Npresentation];
 } Token;
-</pre><a href="#section-6.1-4" class="pilcrow">¶</a>
+</pre><a href="#section-8.1-5" class="pilcrow">¶</a>
 </div>
-<p id="section-6.1-5">The structure fields are defined as follows:<a href="#section-6.1-5" class="pilcrow">¶</a></p>
+<p id="section-8.1-6">The structure fields are defined as follows:<a href="#section-8.1-6" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-6.1-6.1">
-            <p id="section-6.1-6.1.1">"token_type" is a 2-octet integer, in network byte order, equal to 0xC7D3.<a href="#section-6.1-6.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-8.1-7.1">
+            <p id="section-8.1-7.1.1">"token_type" is a 2-octet integer, in network byte order, equal to 0xC7D3.<a href="#section-8.1-7.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-6.1-6.2">
-            <p id="section-6.1-6.2.1">"challenge_digest" is a 32-octet value containing the hash of the
-original TokenChallenge, SHA-256(TokenChallenge), where SHA-256 is as defined
-in <span>[<a href="#SHS" class="cite xref">SHS</a>]</span>. Changing the hash function to something
-other than SHA-256 would require defining a new token type and token structure
-(since the contents of challenge_digest would be computed differently),
-which can be done in a future specification.<a href="#section-6.1-6.2.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-8.1-7.2">
+            <p id="section-8.1-7.2.1">"issuer_key_id" is a Nid-octet identifier for the Issuer Public Key, computed
+as defined in <a href="#setup" class="auto internal xref">Section 5</a>.<a href="#section-8.1-7.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-6.1-6.3">
-            <p id="section-6.1-6.3.1">"issuer_key_id" is a Nid-octet identifier for the Issuer Public Key, computed
-as defined in <a href="#setup" class="auto internal xref">Section 4</a>.<a href="#section-6.1-6.3.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-8.1-7.3">
+            <p id="section-8.1-7.3.1">"presentation_nonce" is a 32-bit encoding of the nonce output from ARC.<a href="#section-8.1-7.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-6.1-6.4">
-            <p id="section-6.1-6.4.1">"credential_proof" is a Nproof-octet presentation proof, set to the serialized <code>presentation</code>
-value (see <span>[<a href="#KVAC-SPEC" class="cite xref">KVAC-SPEC</a>]</span> for serialiation details) that is cryptographically bound
-to the preceding fields in the token; see <a href="#verification" class="auto internal xref">Section 6.2</a> for more information
-about how this field is used in verifying a token.<a href="#section-6.1-6.4.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-8.1-7.4">
+            <p id="section-8.1-7.4.1">"presentation" is a Npresentation-octet presentation, set to the serialized
+<code>presentation</code> value (see [Section 4.3.2 of ARC] for serialiation details).<a href="#section-8.1-7.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
 </div>
 <div id="verification">
-<section id="section-6.2">
+<section id="section-8.2">
         <h3 id="name-token-verification">
-<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-token-verification" class="section-name selfRef">Token Verification</a>
+<a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-token-verification" class="section-name selfRef">Token Verification</a>
         </h3>
-<p id="section-6.2-1">Verifying a Token requires invoking the VerifyPresentationProof
-function from <span>[<a href="#KVAC-SPEC" class="cite xref">KVAC-SPEC</a>]</span> in the following way:<a href="#section-6.2-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-6.2-2">
+<p id="section-8.2-1">Given a deserialized presentation from the token, denoted <code>presentation</code> and
+obtained by deserializing a presentation according to [Section 4.3.2 of ARC],
+a presentation limit, denoted <code>presentation_limit</code>, a presentation nonce
+from a token, denoted <code>nonce</code>, and the digest of a token challenge, denoted
+<code>challenge_digest</code>, verifying a Token requires invoking the VerifyPresentation
+function from [Section 4.3.3 of ARC] in the following wayz:<a href="#section-8.2-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-8.2-2">
 <pre>
+request_context = concat(0xC7D3, tokenChallenge.issuer_name, issuer_key_id)
 presentation_context = concat(0xC7D3, challenge_digest, issuer_key_id)
-valid = VerifyPresentationProof(serverSecrets, CredentialToken.credential_proof, presentation_context)
-</pre><a href="#section-6.2-2" class="pilcrow">¶</a>
+valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonce, presentation, presentation_limit)
+</pre><a href="#section-8.2-2" class="pilcrow">¶</a>
 </div>
-<p id="section-6.2-3">This function returns True if the CredentialToken is valid, and False otherwise.<a href="#section-6.2-3" class="pilcrow">¶</a></p>
+<p id="section-8.2-3">This function returns True if the CredentialToken is valid, and False otherwise.<a href="#section-8.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
 <div id="security">
-<section id="section-7">
+<section id="section-9">
       <h2 id="name-security-considerations">
-<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-7-1">TODO Security<a href="#section-7-1" class="pilcrow">¶</a></p>
+<p id="section-9-1">TODO: unlinkability of tokens across presentations<a href="#section-9-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
-<section id="section-8">
+<section id="section-10">
       <h2 id="name-iana-considerations">
-<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-8-1">This document updates the "Privacy Pass Token Type" Registry with the
-following entries.<a href="#section-8-1" class="pilcrow">¶</a></p>
+<p id="section-10-1">This document updates the "Privacy Pass Token Type" Registry with the
+following entries.<a href="#section-10-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-8-2.1">
-          <p id="section-8-2.1.1">Value: 0xC7D3<a href="#section-8-2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-10-2.1">
+          <p id="section-10-2.1.1">Value: 0xC7D3<a href="#section-10-2.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-2.2">
-          <p id="section-8-2.2.1">Name: KVAC (P-384, SHA-384)<a href="#section-8-2.2.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-10-2.2">
+          <p id="section-10-2.2.1">Name: ARC (P-384)<a href="#section-10-2.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-2.3">
-          <p id="section-8-2.3.1">Token Structure: As defined in <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-auth-scheme-15#section-2.2" class="relref">Section 2.2</a> of [<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>]</span><a href="#section-8-2.3.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-10-2.3">
+          <p id="section-10-2.3.1">Token Structure: As defined in <span><a href="https://rfc-editor.org/rfc/rfc9577#section-2.2" class="relref">Section 2.2</a> of [<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>]</span><a href="#section-10-2.3.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-2.4">
-          <p id="section-8-2.4.1">Token Key Encoding: Serialized as described in <a href="#setup" class="auto internal xref">Section 4</a><a href="#section-8-2.4.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-10-2.4">
+          <p id="section-10-2.4.1">Token Key Encoding: Serialized as described in <a href="#setup" class="auto internal xref">Section 5</a><a href="#section-10-2.4.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-2.5">
-          <p id="section-8-2.5.1">TokenChallenge Structure: As defined in <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-auth-scheme-15#section-2.1" class="relref">Section 2.1</a> of [<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>]</span><a href="#section-8-2.5.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-10-2.5">
+          <p id="section-10-2.5.1">TokenChallenge Structure: As defined in <span><a href="https://rfc-editor.org/rfc/rfc9577#section-2.1" class="relref">Section 2.1</a> of [<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>]</span><a href="#section-10-2.5.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-2.6">
-          <p id="section-8-2.6.1">Public Verifiability: N<a href="#section-8-2.6.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-10-2.6">
+          <p id="section-10-2.6.1">Public Verifiability: N<a href="#section-10-2.6.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-2.7">
-          <p id="section-8-2.7.1">Public Metadata: N<a href="#section-8-2.7.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-10-2.7">
+          <p id="section-10-2.7.1">Public Metadata: N<a href="#section-10-2.7.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-2.8">
-          <p id="section-8-2.8.1">Private Metadata: N<a href="#section-8-2.8.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-10-2.8">
+          <p id="section-10-2.8.1">Private Metadata: N<a href="#section-10-2.8.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-2.9">
-          <p id="section-8-2.9.1">Nk: 48<a href="#section-8-2.9.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-10-2.9">
+          <p id="section-10-2.9.1">Nk: 0 (not applicable)<a href="#section-10-2.9.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-2.10">
-          <p id="section-8-2.10.1">Nid: 32<a href="#section-8-2.10.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-10-2.10">
+          <p id="section-10-2.10.1">Nid: 32<a href="#section-10-2.10.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-2.11">
-          <p id="section-8-2.11.1">Reference: This document<a href="#section-8-2.11.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-10-2.11">
+          <p id="section-10-2.11.1">Reference: This document<a href="#section-10-2.11.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-2.12">
-          <p id="section-8-2.12.1">Notes: None<a href="#section-8-2.12.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-10-2.12">
+          <p id="section-10-2.12.1">Notes: None<a href="#section-10-2.12.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 </section>
 </div>
-<div id="sec-normative-references">
-<section id="section-9">
-      <h2 id="name-normative-references">
-<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+<div id="sec-combined-references">
+<section id="section-11">
+      <h2 id="name-references">
+<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-references" class="section-name selfRef">References</a>
       </h2>
+<div id="sec-normative-references">
+<section id="section-11.1">
+        <h3 id="name-normative-references">
+<a href="#section-11.1" class="section-number selfRef">11.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
 <dl class="references">
-<dt id="ARCHITECTURE">[ARCHITECTURE]</dt>
-      <dd>
-<span class="refAuthor">Davidson, A.</span>, <span class="refAuthor">Iyengar, J.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"The Privacy Pass Architecture"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-privacypass-architecture-16</span>, <time datetime="2023-09-25" class="refDate">25 September 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-architecture-16">https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-architecture-16</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="AUTHSCHEME">[AUTHSCHEME]</dt>
-      <dd>
-<span class="refAuthor">Pauly, T.</span>, <span class="refAuthor">Valdez, S.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"The Privacy Pass HTTP Authentication Scheme"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-privacypass-auth-scheme-15</span>, <time datetime="2023-10-23" class="refDate">23 October 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-auth-scheme-15">https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-auth-scheme-15</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="KVAC-SPEC">[KVAC-SPEC]</dt>
-      <dd>
+<dt id="ARC">[ARC]</dt>
+        <dd>
 <span class="refTitle">"*** BROKEN REFERENCE ***"</span>. </dd>
 <dd class="break"></dd>
+<dt id="ARCHITECTURE">[ARCHITECTURE]</dt>
+        <dd>
+<span class="refAuthor">Davidson, A.</span>, <span class="refAuthor">Iyengar, J.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"The Privacy Pass Architecture"</span>, <span class="seriesInfo">RFC 9576</span>, <span class="seriesInfo">DOI 10.17487/RFC9576</span>, <time datetime="2024-06" class="refDate">June 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9576">https://www.rfc-editor.org/rfc/rfc9576</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="AUTHSCHEME">[AUTHSCHEME]</dt>
+        <dd>
+<span class="refAuthor">Pauly, T.</span>, <span class="refAuthor">Valdez, S.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"The Privacy Pass HTTP Authentication Scheme"</span>, <span class="seriesInfo">RFC 9577</span>, <span class="seriesInfo">DOI 10.17487/RFC9577</span>, <time datetime="2024-06" class="refDate">June 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9577">https://www.rfc-editor.org/rfc/rfc9577</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="BLIND-RSA">[BLIND-RSA]</dt>
+        <dd>
+<span class="refAuthor">Denis, F.</span>, <span class="refAuthor">Jacobs, F.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"RSA Blind Signatures"</span>, <span class="seriesInfo">RFC 9474</span>, <span class="seriesInfo">DOI 10.17487/RFC9474</span>, <time datetime="2023-10" class="refDate">October 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9474">https://www.rfc-editor.org/rfc/rfc9474</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="ISSUANCE">[ISSUANCE]</dt>
+        <dd>
+<span class="refAuthor">Celi, S.</span>, <span class="refAuthor">Davidson, A.</span>, <span class="refAuthor">Valdez, S.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Privacy Pass Issuance Protocols"</span>, <span class="seriesInfo">RFC 9578</span>, <span class="seriesInfo">DOI 10.17487/RFC9578</span>, <time datetime="2024-06" class="refDate">June 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9578">https://www.rfc-editor.org/rfc/rfc9578</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8174">[RFC8174]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="SHS">[SHS]</dt>
-      <dd>
-<span class="refTitle">"Secure hash standard"</span>, <span class="refContent">National Institute of Standards and Technology (U.S.)</span>, <span class="seriesInfo">DOI 10.6028/nist.fips.180-4</span>, <time datetime="2015" class="refDate">2015</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.fips.180-4">https://doi.org/10.6028/nist.fips.180-4</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="TLS13">[TLS13]</dt>
-    <dd>
+        <dd>
 <span class="refAuthor">Rescorla, E.</span>, <span class="refTitle">"The Transport Layer Security (TLS) Protocol Version 1.3"</span>, <span class="seriesInfo">RFC 8446</span>, <span class="seriesInfo">DOI 10.17487/RFC8446</span>, <time datetime="2018-08" class="refDate">August 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8446">https://www.rfc-editor.org/rfc/rfc8446</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="VOPRFS">[VOPRFS]</dt>
+      <dd>
+<span class="refAuthor">Davidson, A.</span>, <span class="refAuthor">Faz-Hernandez, A.</span>, <span class="refAuthor">Sullivan, N.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Oblivious Pseudorandom Functions (OPRFs) Using Prime-Order Groups"</span>, <span class="seriesInfo">RFC 9497</span>, <span class="seriesInfo">DOI 10.17487/RFC9497</span>, <time datetime="2023-12" class="refDate">December 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9497">https://www.rfc-editor.org/rfc/rfc9497</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 </dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-11.2">
+        <h3 id="name-informative-references">
+<a href="#section-11.2" class="section-number selfRef">11.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="DAP">[DAP]</dt>
+        <dd>
+<span class="refAuthor">Geoghegan, T.</span>, <span class="refAuthor">Patton, C.</span>, <span class="refAuthor">Pitman, B.</span>, <span class="refAuthor">Rescorla, E.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Distributed Aggregation Protocol for Privacy Preserving Measurement"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-ppm-dap-13</span>, <time datetime="2024-11-02" class="refDate">2 November 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-ppm-dap-13">https://datatracker.ietf.org/doc/html/draft-ietf-ppm-dap-13</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="OHTTP">[OHTTP]</dt>
+        <dd>
+<span class="refAuthor">Thomson, M.</span> and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Oblivious HTTP"</span>, <span class="seriesInfo">RFC 9458</span>, <span class="seriesInfo">DOI 10.17487/RFC9458</span>, <time datetime="2024-01" class="refDate">January 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9458">https://www.rfc-editor.org/rfc/rfc9458</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RATE-LIMITED">[RATE-LIMITED]</dt>
+      <dd>
+<span class="refAuthor">Hendrickson, S.</span>, <span class="refAuthor">Iyengar, J.</span>, <span class="refAuthor">Pauly, T.</span>, <span class="refAuthor">Valdez, S.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Rate-Limited Token Issuance Protocol"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-privacypass-rate-limit-tokens-06</span>, <time datetime="2024-04-01" class="refDate">1 April 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-rate-limit-tokens-06">https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-rate-limit-tokens-06</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
 </section>
 </div>
 <div id="acknowledgments">
@@ -1702,7 +1825,9 @@ following entries.<a href="#section-8-1" class="pilcrow">¶</a></p>
       <h2 id="name-acknowledgments">
 <a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
       </h2>
-<p id="appendix-A-1">TODO acknowledge.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<p id="appendix-A-1">The authors would like to thank Tommy Pauly and the authors
+of <span>[<a href="#RATE-LIMITED" class="cite xref">RATE-LIMITED</a>]</span>
+for helpful discussions on rate-limited tokens.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="authors-addresses">
