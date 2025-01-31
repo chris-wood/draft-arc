@@ -13,8 +13,8 @@ venue:
   type: ""
   mail: "cfrg@ietf.org"
   arch: "https://mailarchive.ietf.org/arch/browse/cfrg"
-  github: "chris-wood/draft-kvac"
-  latest: "https://chris-wood.github.io/draft-kvac/draft-yun-cfrg-kvac.html"
+  github: "chris-wood/draft-arc"
+  latest: "https://chris-wood.github.io/draft-arc/draft-yun-cfrg-arc.html"
 
 author:
  -
@@ -37,6 +37,12 @@ informative:
   REVISITING_KVAC:
     title: Revisiting Keyed-Verification Anonymous Credentials
     target: https://eprint.iacr.org/2024/1552
+  BBS:
+    title: Short Group Signatures
+    target: https://eprint.iacr.org/2004/174
+  BBDT17:
+    title: Improved Algebraic MACs and Practical Keyed-Verification Anonymous Credentials
+    target: https://link.springer.com/chapter/10.1007/978-3-319-69453-5_20
   NISTCurves: DOI.10.6028/NIST.FIPS.186-4
   SEC1:
     title: "SEC 1: Elliptic Curve Cryptography"
@@ -49,7 +55,7 @@ informative:
 --- abstract
 
 This document specifies the Anonymous Rate-Limited Credential (ARC) protocol,
-a specialization of keyed verification anonymous credentials with support for
+a specialization of keyed-verification anonymous credentials with support for
 rate limiting. ARC credentials can be presented from client to server up to
 some fixed number of times, where each presentation is cryptographically bound
 to client secrets and application-specific public information, such that each
@@ -62,7 +68,7 @@ rate-limit access from anonymous clients.
 # Introduction
 
 This document specifies the Anonymous Rate-Limited Credential (ARC) protocol,
-a specialization of keyed verification anonymous credentials with support for
+a specialization of keyed-verification anonymous credentials with support for
 rate limiting.
 
 ARC is privately verifiable (keyed-verification), yet differs from similar token-based
@@ -135,13 +141,10 @@ and cannot link a client's request/response and presentation steps.
 
 # Preliminaries
 
-The construction in this document has two primary dependencies:
+The construction in this document has one primary dependency:
 
 - `Group`: A prime-order group implementing the API described below in {{pog}}.
   See {{ciphersuites}} for specific instances of groups.
-- `Hash`: A cryptographic hash function whose output length is `Nh` bytes.
-
-{{ciphersuites}} specifies ciphersuites as combinations of `Group` and `Hash`.
 
 ## Prime-Order Group {#pog}
 
@@ -228,7 +231,7 @@ consisting of three distinct phases:
 
 This protocol bears resemblance to anonymous token protocols, such as those built on
 Blind RSA {{?BLIND-RSA=RFC9474}} and Oblivious Pseudorandom Functions {{?OPRFS=RFC9497}}
-with one critical distinction: Unlike anonymous tokens, an anonymous credential can be
+with one critical distinction: unlike anonymous tokens, an anonymous credential can be
 used multiple times to create unlinkable presentations (up to the fixed presentation
 limit). This means that a single issuance invocation can drive multiple presentation
 invocations, whereas with anonymous tokens, each presentation invocation requires
@@ -283,7 +286,7 @@ struct {
 } ServerPublicKey;
 ~~~
 
-The length of this encoded response structure is `NserverPublicKeys = 3*Ne`.
+The length of this encoded response structure is `NserverPublicKey = 3*Ne`.
 
 ## Issuance {#issuance}
 
@@ -298,7 +301,7 @@ distinct steps:
 1. The client generates and sends a credential request to the server. This credential request contains a
    proof that the request is valid with respect to the client's secrets and request context. See
    {{issuance-step1}} for details about this step.
-1. The server validates the credential request. If valid, computes a credential response with the server
+1. The server validates the credential request. If valid, it computes a credential response with the server
    private keys. The response includes a proof that the credential response is valid with respect to the
    server keys. The server sends the response to the client. See {{issuance-step2}} for details about this
    step.
@@ -386,7 +389,7 @@ Inputs:
 - request:
   - m1Enc: Element, first encrypted secret.
   - m2Enc: Element, second encrypted secret.
-  - responseProof: ZKProof, a proof of correct generation of m1Enc and m2Enc.
+  - requestProof: ZKProof, a proof of correct generation of m1Enc and m2Enc.
 
 Outputs:
 - U: Element, a randomized generator for the response, `b*G`.
@@ -406,22 +409,22 @@ Parameters:
 Exceptions:
 - VerifyError, raised when response verification fails
 
-def CredentialResponse(serverPrivateKeys, serverPublicKeys, request):
+def CredentialResponse(serverPrivateKeys, serverPublicKey, request):
   if VerifyCredentialRequestProof(request) == false:
     raise VerifyError
 
   b = G.RandomScalar()
   U = b * generatorG
-  encUPrime = b * (serverPublicKeys.X0 +
+  encUPrime = b * (serverPublicKey.X0 +
         serverPrivateKeys.x1 * request.m1Enc +
         serverPrivateKeys.x2 * request.m2Enc)
   X0Aux = b * serverPrivateKeys.x0Blinding * generatorH
-  X1Aux = b * serverPublicKeys.X1
-  X2Aux = b * serverPublicKeys.X2
+  X1Aux = b * serverPublicKey.X1
+  X2Aux = b * serverPublicKey.X2
   HAux = b * generatorH
 
-  responseProof = MakeCredentialResponseProof(serverPrivateKeys,
-    serverPublicKeys, request, b, U, encUPrime, X0Aux, X1Aux, X2Aux, HAux)
+  responseProof = MakeCredentialResponseProof(serverPrivateKey,
+    serverPublicKey, request, b, U, encUPrime, X0Aux, X1Aux, X2Aux, HAux)
   return (U, encUPrime, X0Aux, X1Aux, X2Aux, HAux, responseProof)
 ~~~
 
@@ -510,14 +513,14 @@ limits.
 
 This phase consists of three steps:
 
-1. The client creates presentation state for a given presentation context and presentation limit.
+1. The client creates a presentation state for a given presentation context and presentation limit.
    This state is used to produce a fixed amount of presentations.
 1. The client creates a presentation from the presentation state and sends it to the server.
    The presentation is cryptographically bound to the state's presentation context, and
    contains proof that the presentation is valid with respect to the presentation context.
    Moreover, the presentation contains proof that the count of this presentation is within the
    presentation limit.
-1. The server verifies the presentation with respect to the presentation context and fixed-size
+1. The server verifies the presentation with respect to the presentation context and presentation
    limit.
 
 Details for each each of these steps are in the following subsections.
@@ -546,16 +549,12 @@ Outputs:
 - credential
 - presentationContext: Data (public), used for presentation tag computation.
 - presentationNonceSet: {Integer}, the set of nonces that have been used for this presentation
-- presentationNonce: Integer, the number of times this credential has been presented for this presentationContext, initialized to 0.
 - presentationLimit: Integer, the fixed presentation limit.
 
 def MakePresentationState(credential, presentationContext, presentationLimit):
   nonce = random_integer_uniform(0, presentationLimit)
-  return PresentationState(credential, presentationContext, nonce, presentationLimit)
+  return PresentationState(credential, presentationContext, [nonce], presentationLimit)
 ~~~
-
-Applications which initialize more than one presentation state for the same presentation
-context
 
 ## Presentation Construction {#presentation-construction}
 
@@ -574,7 +573,7 @@ Inputs:
 state: input PresentationState
   - credential
   - presentationContext: Data (public), used for presentation tag computation.
-  - presentationCount: Integer, the number of times this credential has been presented for this presentationContext, initialized to 0.
+  - presentationNonceSet: {Integer}, the set of nonces that have been used for this presentation
   - presentationLimit: Integer, the fixed presentation limit.
 
 Outputs:
@@ -596,7 +595,7 @@ Exceptions:
 - LimitExceededError, raised when the presentation count meets or exceeds the presentation limit for the given presentation context
 
 def Present(state):
-  if state.presentationCount >= state.presentationLimit:
+  if len(state.presentationNonceSet) >= state.presentationLimit:
     raise LimitExceededError
 
   a = G.RandomScalar()
@@ -610,10 +609,9 @@ def Present(state):
 
   # This step mutates the state by keeping track of
   # what nonces have already been spent.
-  nonce = state.presentationNonce
-  state.presentationNonceSet.add(nonce)
-  state.presentationNonce = random_integer_uniform_excluding_set(0,
+  nonce = random_integer_uniform_excluding_set(0,
     state.presentationLimit, state.presentationNonceSet)
+  state.presentationNonceSet.add(nonce)
 
   generatorT = G.HashToGroup(presentationContext, "Tag")
   tag = (credential.m1 + nonce)^(-1) * generatorT
@@ -647,12 +645,12 @@ struct {
 }
 ~~~
 
-The length of this structure is `Npresentation = 4*Ne + 4*Ns`, plus the length of the serialized range proof.
+The length of this structure is `Npresentation = 4*Ne + 6*Ns`.
 
 ## Presentation Verification
 
 The server processes the presentation by verifying the presentation proof against server-computed
-values, and performing a check that the presentation is in .
+values, and performing a check that the presentation conforms to the presentation limit.
 
 ~~~
 validity = VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presentationContext, presentation, presentationLimit)
@@ -694,7 +692,7 @@ def VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presen
     raise InvalidNonceError
 
   generatorT = G.HashToGroup(presentationContext, "Tag")
-  m1Tag = generator_T - (presentation.nonce * presentation.tag)
+  m1Tag = generatorT - (presentation.nonce * presentation.tag)
 
   validity = VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, presentationContext, presentation, m1Tag)
   # Implementation-specific step: perform double-spending check on tag.
@@ -705,7 +703,7 @@ def VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presen
 Implementation-specific steps: the server must perform a check that the tag (presentation.tag) has
 not previously been seen, to prevent double spending. It then stores the tag for use in future double
 spending checks. To reduce the overhead of performing double spend checks, the server can store and
-look up the tags corresponding to the associated presentationContext value.
+look up the tags corresponding to the associated requestContext and presentationContext values.
 
 # Zero-Knowledge Proofs
 
@@ -730,8 +728,8 @@ The prover role consists of four functions:
 
 - AppendScalar: This function adds a scalar representation to the transcript.
 - AppendElement: This function adds an element representation to the transcript.
-- Constrain: This function applies an explicit constraint to the proof, where the constraint is expressed as equality between some element and a linear combination of scalar and element representations. An example constraint might be `y = mx + b`, for scalar `m` and elements
-`y`, `x`, and `b`.
+- Constrain: This function applies an explicit constraint to the proof, where the constraint is expressed as equality between some element and a linear combination of scalar and element representations. An example constraint might be `Z = aX + bY`, for scalars `a`, `b`, and elements
+`X`, `Y`, `Z`.
 - Prove: This function applies the Fiat-Shamir heuristic to the protocol transcript and set of
 constraints to produce a zero-knowledge proof that can be verified.
 
@@ -838,7 +836,7 @@ def Prove():
         blinded_elements.append(blinded_element)
 
   # Obtain a scalar challenge
-  challenge = ComposeChalenge(state.label, state.elements, blinded_elements)
+  challenge = ComposeChallenge(state.label, state.elements, blinded_elements)
 
   # Compute response scalars from the challenge, scalars, and blindings.
   responses = []
@@ -849,10 +847,10 @@ def Prove():
   return ZKProof(challenge, responses)
 ~~~
 
-The function ComposeChalenge is defined below.
+The function ComposeChallenge is defined below.
 
 ~~~
-ComposeChalenge(label, elements, blinded_elements)
+ComposeChallenge(label, elements, blinded_elements)
 
 Inputs:
 - label: Data, the proof label
@@ -887,8 +885,8 @@ The verifier role consists of four functions:
 
 - AppendScalar: This function adds a scalar representation to the transcript.
 - AppendElement: This function adds an element representation to the transcript.
-- Constrain: This function applies an explicit constraint to the proof, where the constraint is expressed as equality between some element and a linear combination of scalar and element representations. An example constraint might be `y = mx + b`, for scalar `m` and elements
-`y`, `x`, and `b`.
+- Constrain: This function applies an explicit constraint to the proof, where the constraint is expressed as equality between some element and a linear combination of scalar and element representations. An example constraint might be `Z = aX + bY`, for scalars `a`, `b`, and elements
+`X`, `Y`, `Z`.
 - Verify: This function applies the Fiat-Shamir heuristic to verify the zero-knowledge proof.
 
 AppendScalar and Verify are defined in the following sub-sections. AppendElement and Constrain matches the functionality used in the prover role.
@@ -1018,6 +1016,11 @@ Inputs:
   - m1Enc: Element, first encrypted secret.
   - m2Enc: Element, second encrypted secret.
   - requestProof: ZKProof, a proof of correct generation of m1Enc and m2Enc.
+    - challenge: Scalar, the challenge used in the proof of valid encryption.
+    - response0: Scalar, the response corresponding to m1.
+    - response1: Scalar, the response corresponding to m2.
+    - response2: Scalar, the response corresponding to r1.
+    - response3: Scalar, the response corresponding to r2.
 
 Outputs:
 - validity: Boolean, True if the proof verifies correctly, False otherwise.
@@ -1035,6 +1038,7 @@ def VerifyCredentialRequestProof(request):
   m2Var = verifier.AppendScalar("m2")
   r1Var = verifier.AppendScalar("r1")
   r2Var = verifier.AppendScalar("r2")
+
   genGVar = verifier.AppendElement("genG", generatorG)
   genHVar = verifier.AppendElement("genH", generatorH)
   m1EncVar = verifier.AppendElement("m1Enc", request.m1Enc)
@@ -1049,7 +1053,7 @@ def VerifyCredentialRequestProof(request):
   return verifier.Verify(request.proof)
 ~~~
 
-## CreentialResponse Proof {#response-proof}
+## CredentialResponse Proof {#response-proof}
 
 The response proof is a proof of knowledge of (x0, x1, x2, x0Blinding, b) used in the server's CredentialResponse for the client's CredentialRequest. Statements to prove:
 
@@ -1129,9 +1133,9 @@ def MakeCredentialResponseProof(serverPrivateKey, serverPublicKey, request, b, U
   m2EncVar = prover.AppendElement("m2Enc", request.m2Enc)
   UVar = prover.AppendElement("U", U)
   encUPrimeVar = prover.AppendElement("encUPrime", encUPrime)
-  X0Var = prover.AppendElement("X0", serverPublicKeys.X0)
-  X1Var = prover.AppendElement("X1", serverPublicKeys.X1)
-  X2Var = prover.AppendElement("X2", serverPublicKeys.X2)
+  X0Var = prover.AppendElement("X0", serverPublicKey.X0)
+  X1Var = prover.AppendElement("X1", serverPublicKey.X1)
+  X2Var = prover.AppendElement("X2", serverPublicKey.X2)
   X0AuxVar = prover.AppendElement("X0Aux", X0Aux)
   X1AuxVar = prover.AppendElement("X1Aux", X1Aux)
   X2AuxVar = prover.AppendElement("X2Aux", X2Aux)
@@ -1189,6 +1193,14 @@ Inputs:
   - X2Aux: Element, auxiliary point for X2.
   - HAux: Element, auxiliary point for generatorH.
   - responseProof: ZKProof, a proof of correct generation of U, encUPrime, server public keys, and auxiliary points.
+    - challenge: Scalar, the challenge used in the proof of valid response.
+    - response0: Scalar, the response corresponding to x0.
+    - response1: Scalar, the response corresponding to x1.
+    - response2: Scalar, the response corresponding to x2.
+    - response3: Scalar, the response corresponding to x0Blinding.
+    - response4: Scalar, the response corresponding to b.
+    - response5: Scalar, the response corresponding to t1.
+    - response6: Scalar, the response corresponding to t2.
 - request:
   - m1Enc: Element, first encrypted secret.
   - m2Enc: Element, second encrypted secret.
@@ -1266,6 +1278,7 @@ def VerifyCredentialResponseProof(serverPublicKey, response, request):
 The presentation proof is a proof of knowledge of (m1, r, z) used in the presentation, and a proof that the counter used to make the tag is in the range of [0, rateLimit).
 
 Statements to prove:
+
 ~~~
 1. m1Commit = m1 * U + z * generatorH
 2. V = z * X1 - r * generatorG
@@ -1299,9 +1312,9 @@ Outputs:
 - proof: ZKProof
   - challenge: Scalar, the challenge used in the proof of valid presentation.
   - response0: Scalar, the response corresponding to m1.
-  - response1: Scalar, the response corresponding to r.
-  - response2: Scalar, the response corresponding to z.
-  - response3: Scalar, the response corresponding to m1Tag.
+  - response1: Scalar, the response corresponding to z.
+  - response2: Scalar, the response corresponding to -r.
+  - response3: Scalar, the response corresponding to nonce.
 
 Parameters:
 - G: Group
@@ -1363,6 +1376,11 @@ Inputs:
   - m1Commit: Element, a public key to the client secret (m1).
   - tag: Element, the tag element used for enforcing rate limiting and reuse.
   - presentationProof: ZKProof, a proof of correct generation of the presentation.
+    - challenge: Scalar, the challenge used in the proof of valid presentation.
+    - response0: Scalar, the response corresponding to m1.
+    - response1: Scalar, the response corresponding to z.
+    - response2: Scalar, the response corresponding to -r.
+    - response3: Scalar, the response corresponding to nonce.
 - m1Tag: Element, helper to validate the presentation proof.
 
 Outputs:
@@ -1416,27 +1434,24 @@ wraps the functionality required for the protocol to take place. The
 ciphersuite should be available to both the client and server, and agreement
 on the specific instantiation is assumed throughout.
 
-A ciphersuite contains instantiations of the following functionalities:
+A ciphersuite contains an instantiation of the following functionality:
 
 - `Group`: A prime-order Group exposing the API detailed in {{pog}}, with the
   generator element defined in the corresponding reference for each group. Each
-  group also specifies HashToGroup, HashToScalar, and serialization
-  functionalities. For
-  HashToGroup, the domain separation tag (DST) is constructed in accordance
+  group also specifies HashToGroup, HashToScalar, and serialization functionalities.
+  For HashToGroup, the domain separation tag (DST) is constructed in accordance
   with the recommendations in {{!I-D.irtf-cfrg-hash-to-curve, Section 3.1}}.
   For HashToScalar, each group specifies an integer order that is used in
   reducing integer values to a member of the corresponding scalar field.
-- `Hash`: A cryptographic hash function whose output length is Nh bytes long.
 
-This section includes an initial set of ciphersuites with supported groups
-and hash functions. It also includes implementation details for each ciphersuite,
-focusing on input validation.
+This section includes an initial set of ciphersuites with supported groups.
+It also includes implementation details for each ciphersuite, focusing on input validation.
 
-## ARC(P-384, SHA-384)
+## ARC(P-384)
 
-This ciphersuite uses P-384 {{NISTCurves}} for the Group and SHA-384 for the Hash
-function. The value of the ciphersuite identifier is "P384-SHA384". The value of
-contextString is "ARCV1-P384-SHA384".
+This ciphersuite uses P-384 {{NISTCurves}} for the Group.
+The value of the ciphersuite identifier is "P384". The value of
+contextString is "ARCV1-P384".
 
 - Group: P-256 (secp256r1) {{NISTCurves}}
   - Order(): Return 0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551.
@@ -1467,7 +1482,6 @@ contextString is "ARCV1-P384-SHA384".
   - DeserializeScalar(buf): Implemented by attempting to deserialize a Scalar from a 48-byte
     string using Octet-String-to-Field-Element from {{SEC1}}. This function can fail if the
     input does not represent a Scalar in the range \[0, `G.Order()` - 1\].
-- Hash: SHA-256; Nh = 32.
 
 ## Random Scalar Generation {#random-scalar}
 
@@ -1505,7 +1519,7 @@ necessary for these properties to hold.
 
 ## Credential Issuance Unlinkability
 
-Client credential requests are constructed such that the server cannot distinguish between any two credential requests from the same client and two requests from different clients. We refer to this property as issuance unlinkability. This property is achieved by the way the credential requests are constructed. In particular, each credential request is computed using a freshly generated ElGamal encryption keypair and fresh blinding factors, which are used to encrypt a freshly generated client secret. The resulting request is therefore independent from other requests from the same client. More details about this unlinkability property can be found in {{KVAC}} and {{REVISITING_KVAC}}.
+Client credential requests are constructed such that the server cannot distinguish between any two credential requests from the same client and two requests from different clients. We refer to this property as issuance unlinkability. This property is achieved by the way the credential requests are constructed. In particular, each credential request consists of two Pedersen commitments with fresh blinding factors, which are used to commit to a freshly generated client secret and request context. The resulting request is therefore perfetly hiding, and independent from other requests from the same client. More details about this unlinkability property can be found in {{KVAC}} and {{REVISITING_KVAC}}.
 
 ## Presentation Unlinkability {#pres-unlinkability}
 
@@ -1522,6 +1536,15 @@ The indistinguishability set for those presentation elements is `sum_{i=0}^c(p_i
 ## Timing Leaks
 
 To ensure no information is leaked during protocol execution, all operations that use secret data MUST run in constant time. This includes all prime-order group operations and proof-specific operations that operate on secret data, including proof generation and verification.
+
+# Alternatives considered
+
+
+ARC uses the MACGGM algebraic MAC as its underlying primitive, as detailed in {{KVAC}} and {{REVISITING_KVAC}}. This offers the benefit of having a lower credential size than MACDDH, which is an alternative algebraic MAC detailed in {{KVAC}}.
+
+The BBS anonymous credential scheme, as detailed in {{BBS}} and its variants, is efficient and publicly verifiable, but requires pairings for verification. This is problematic for adoption because pairings are not supported as widely in software and hardware as non-pairing elliptic curves.
+
+It is possible to construct a keyed-verification variant of BBS which doesn't use pairings, as discussed in {{BBDT17}} and {{REVISITING_KVAC}}. However these keyed-verification BBS variants require more analysis, proofs of security properties, and review to be considered mature enough for safe deployment.
 
 # IANA Considerations
 

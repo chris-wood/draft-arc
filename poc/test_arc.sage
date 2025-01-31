@@ -39,7 +39,8 @@ def main(path="vectors"):
     request_vectors = {}
     response_vectors = {}
     credential_vectors = {}
-    presentation_vectors = {}
+    presentation_vectors_1 = {}
+    presentation_vectors_2 = {}
 
     private_key, public_key = Server.keygen(rng, key_vectors)
 
@@ -54,9 +55,11 @@ def main(path="vectors"):
     presentation_limit = 2
     presentation_state = PresentationState(credential, sample_presentation_context, presentation_limit)
 
-    presentation = presentation_state.present(rng, presentation_vectors)
+    presentation_1 = presentation_state.present(rng, presentation_vectors_1)
+    assert issuer.verify_presentation(private_key, public_key, sample_request_context, sample_presentation_context, presentation_1, presentation_limit)
 
-    assert issuer.verify_presentation(private_key, public_key, sample_request_context, sample_presentation_context, presentation, presentation_limit)
+    presentation_2 = presentation_state.present(rng, presentation_vectors_2)
+    assert issuer.verify_presentation(private_key, public_key, sample_request_context, sample_presentation_context, presentation_2, presentation_limit)
 
     vectors = {}
     vectors[context_string] = {
@@ -64,7 +67,8 @@ def main(path="vectors"):
         "CredentialRequest": request_vectors,
         "CredentialResponse": response_vectors,
         "Credential": credential_vectors,
-        "Presentation": presentation_vectors,
+        "Presentation1": presentation_vectors_1,
+        "Presentation2": presentation_vectors_2,
     }
 
     with open(path + "/allVectors.json", 'wt') as f:
