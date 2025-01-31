@@ -583,7 +583,7 @@ Outputs:
   - UPrimeCommit: Element, a public key to the issued UPrime.
   - m1Commit: Element, a public key to the client secret (m1).
   - nonce: Integer, the nonce associated with this presentation.
-  - tag: Element, the tag element used for enforcing rate limiting and reuse.
+  - tag: Element, the tag element used for enforcing the presentation limit.
   - presentationProof: ZKProof, a proof of correct generation of the presentation.
 
 Parameters:
@@ -672,7 +672,7 @@ Inputs:
   - UPrimeCommit: Element, a public key to the issued UPrime.
   - m1Commit: Element, a public key to the client secret (m1).
   - nonce: Integer, the nonce associated with this presentation.
-  - tag: Element, the tag element used for enforcing rate limiting and reuse.
+  - tag: Element, the tag element used for enforcing the presentation limit.
   - presentationProof: ZKProof, a proof of correct generation of the presentation.
 - presentationLimit: Integer, the fixed presentation limit.
 
@@ -1275,7 +1275,7 @@ def VerifyCredentialResponseProof(serverPublicKey, response, request):
 
 ## Presentation Proof {#presentation-proof}
 
-The presentation proof is a proof of knowledge of (m1, r, z) used in the presentation, and a proof that the counter used to make the tag is in the range of [0, rateLimit).
+The presentation proof is a proof of knowledge of (m1, r, z) used in the presentation, and a proof that the counter used to make the tag is in the range of [0, presentationLimit).
 
 Statements to prove:
 
@@ -1295,7 +1295,7 @@ Inputs:
 - U: Element, re-randomized from the U in the response.
 - UPrimeCommit: Element, a public key to the MACGGM output UPrime.
 - m1Commit: Element, a public key to the client secret (m1).
-- tag: Element, the tag element used for enforcing rate limiting and reuse.
+- tag: Element, the tag element used for enforcing the presentation limit.
 - generatorT: Element, used for presentation tag computation.
 - credential:
   - m1: Scalar, client's first secret.
@@ -1374,7 +1374,7 @@ Inputs:
   - U: Element, re-randomized from the U in the response.
   - UPrimeCommit: Element, a public key to the issued UPrime.
   - m1Commit: Element, a public key to the client secret (m1).
-  - tag: Element, the tag element used for enforcing rate limiting and reuse.
+  - tag: Element, the tag element used for enforcing the presentation limit.
   - presentationProof: ZKProof, a proof of correct generation of the presentation.
     - challenge: Scalar, the challenge used in the proof of valid presentation.
     - response0: Scalar, the response corresponding to m1.
@@ -1529,7 +1529,7 @@ The indistinguishability set for these presentation elements is `sum_{i=0}^c(p_i
 
 The presentation elements `[tag, nonce, presentationContext, presentationProof]` are indistinguishable from all presentations made from credentials issued with the same server keys for that presentationContext, with the exception of presentations with the same nonce (since those presentations can be ascertained as being generated from different credentials, as long as the presentation tag is unique).
 
-The indistinguishability set for those presentation elements is `sum_{i=0}^c(p_i[presentationContext]) - k[presentationContext]`, where `c` is the number of credentials issued with the same server keys, `p_i[presentationContext]` is the number of presentations made for each of those credentials with the same presentationContext, and `k` is the number of presentations with the same nonce for that presentationContext. As long as the nonces are generated randomly from the range defined by the rate limit, `k[presentationContext]` should be roughly equal to `sum_{i=0}^c(p_i[presentationContext]) / n`, where `n` is the rate limit. Therefore, the indistinguishability set can be represented as `sum_{i=0}^c(p_i[presentationContext])(1 - 1/n)`, where a larger rate limit results in a larger indistinguishability set and therefore stronger unlinkability properties.
+The indistinguishability set for those presentation elements is `sum_{i=0}^c(p_i[presentationContext]) - k[presentationContext]`, where `c` is the number of credentials issued with the same server keys, `p_i[presentationContext]` is the number of presentations made for each of those credentials with the same presentationContext, and `k` is the number of presentations with the same nonce for that presentationContext. As long as the nonces are generated randomly from the range defined by the presentation limit, `k[presentationContext]` should be roughly equal to `sum_{i=0}^c(p_i[presentationContext]) / n`, where `n` is the presentation limit. Therefore, the indistinguishability set can be represented as `sum_{i=0}^c(p_i[presentationContext])(1 - 1/n)`, where a larger presentation limit results in a larger indistinguishability set and therefore stronger unlinkability properties.
 
 [[OPEN ISSUE: hide the nonce and replace the tag proof with a range proof built from something like Bulletproofs.]]
 
