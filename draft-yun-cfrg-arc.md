@@ -37,6 +37,12 @@ informative:
   REVISITING_KVAC:
     title: Revisiting Keyed-Verification Anonymous Credentials
     target: https://eprint.iacr.org/2024/1552
+  BBS:
+    title: Short Group Signatures
+    target: https://eprint.iacr.org/2004/174
+  BBDT17:
+    title: Improved Algebraic MACs and Practical Keyed-Verification Anonymous Credentials
+    target: https://link.springer.com/chapter/10.1007/978-3-319-69453-5_20
   NISTCurves: DOI.10.6028/NIST.FIPS.186-4
   SEC1:
     title: "SEC 1: Elliptic Curve Cryptography"
@@ -1441,7 +1447,7 @@ A ciphersuite contains an instantiation of the following functionality:
   For HashToScalar, each group specifies an integer order that is used in
   reducing integer values to a member of the corresponding scalar field.
 
-This section includes an initial set of ciphersuites with supported groups. 
+This section includes an initial set of ciphersuites with supported groups.
 It also includes implementation details for each ciphersuite, focusing on input validation.
 
 ## ARC(P-384)
@@ -1516,7 +1522,7 @@ necessary for these properties to hold.
 
 ## Credential Issuance Unlinkability
 
-Client credential requests are constructed such that the server cannot distinguish between any two credential requests from the same client and two requests from different clients. We refer to this property as issuance unlinkability. This property is achieved by the way the credential requests are constructed. In particular, each credential request is computed using a freshly generated ElGamal encryption keypair and fresh blinding factors, which are used to encrypt a freshly generated client secret. The resulting request is therefore independent from other requests from the same client. More details about this unlinkability property can be found in {{KVAC}} and {{REVISITING_KVAC}}.
+Client credential requests are constructed such that the server cannot distinguish between any two credential requests from the same client and two requests from different clients. We refer to this property as issuance unlinkability. This property is achieved by the way the credential requests are constructed. In particular, each credential request consists of two Pedersen commitments with fresh blinding factors, which are used to commit to a freshly generated client secret and request context. The resulting request is therefore perfetly hiding, and independent from other requests from the same client. More details about this unlinkability property can be found in {{KVAC}} and {{REVISITING_KVAC}}.
 
 ## Presentation Unlinkability {#pres-unlinkability}
 
@@ -1533,6 +1539,16 @@ The indistinguishability set for those presentation elements is `sum_{i=0}^c(p_i
 ## Timing Leaks
 
 To ensure no information is leaked during protocol execution, all operations that use secret data MUST run in constant time. This includes all prime-order group operations and proof-specific operations that operate on secret data, including proof generation and verification.
+
+# Alternatives considered
+
+## Alternative Algebraic MACs
+
+ARC uses the MACGGM algebraic MAC as its underlying primitive, as detailed in {{KVAC}} and {{REVISITING_KVAC}}. This offers the benefit of having a lower credential size than MACDDH, which is an alternative algebraic MAC detailed in {{KVAC}}.
+
+The BBS anonymous credential scheme, as detailed in {{BBS}} and its variants, is efficient and publicly verifiable, but requires pairings for verification. This is problematic for adoption because pairings are complex to implement securely, and aren't supported as widely in software and hardware as non-pairing elliptic curves.
+
+It is possible to construct a keyed-verification variant of BBS which doesn't use pairings, as discussed in {{BBDT17}} and {{REVISITING_KVAC}}. However these keyed-verification BBS variants require more analysis, proofs of security properties, and review to be considered mature enough for standardization.
 
 # IANA Considerations
 
