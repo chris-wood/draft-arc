@@ -1862,8 +1862,8 @@ This state is used to produce a fixed amount of presentations.<a href="#section-
             <p id="section-4.3-3.2.1">The client creates a presentation from the presentation state and sends it to the server.
 The presentation is cryptographically bound to the state's presentation context, and
 contains proof that the presentation is valid with respect to the presentation context.
-Moreover, the presentation contains proof that the count of this presentation is within the
-presentation limit.<a href="#section-4.3-3.2.1" class="pilcrow">¶</a></p>
+Moreover, the presentation contains proof that the nonce (an integer) associated with this
+presentation is within the presentation limit.<a href="#section-4.3-3.2.1" class="pilcrow">¶</a></p>
 </li>
           <li id="section-4.3-3.3">
             <p id="section-4.3-3.3.1">The server verifies the presentation with respect to the presentation context and presentation
@@ -1917,10 +1917,10 @@ def MakePresentationState(credential, presentationContext, presentationLimit):
 <p id="section-4.5-1">Creating a presentation requires a credential, presentation context, and presentation limit.
 This process is necessarily stateful on the client since the number of times a credential
 is used for a given presentation context cannot exceed the presentation limit; doing so
-would break presentation unlinkability, as two presentations created with the same "counter"
+would break presentation unlinkability, as two presentations created with the same nonce
 can be directly compared for equality (via the "tag"). As a result, the process for creating
-a presentation accepts as input a presentation count and then outputs an updated presentation
-count.<a href="#section-4.5-1" class="pilcrow">¶</a></p>
+a presentation accepts as input a presentation state and then outputs an updated presentation
+state.<a href="#section-4.5-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-4.5-2">
 <pre>
 newState, presentation = Present(state)
@@ -2746,13 +2746,13 @@ def VerifyCredentialResponseProof(serverPublicKey, response, request):
         <h3 id="name-presentation-proof">
 <a href="#section-5.4" class="section-number selfRef">5.4. </a><a href="#name-presentation-proof" class="section-name selfRef">Presentation Proof</a>
         </h3>
-<p id="section-5.4-1">The presentation proof is a proof of knowledge of (m1, r, z) used in the presentation, and a proof that the counter used to make the tag is in the range of [0, presentationLimit).<a href="#section-5.4-1" class="pilcrow">¶</a></p>
+<p id="section-5.4-1">The presentation proof is a proof of knowledge of (m1, r, z) used in the presentation, and a proof that the nonce used to make the tag is in the range of [0, presentationLimit).<a href="#section-5.4-1" class="pilcrow">¶</a></p>
 <p id="section-5.4-2">Statements to prove:<a href="#section-5.4-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.4-3">
 <pre>
 1. m1Commit = m1 * U + z * generatorH
 2. V = z * X1 - r * generatorG
-3. G.HashToGroup(presentationContext, "Tag") = m1 * tag + counter * tag
+3. G.HashToGroup(presentationContext, "Tag") = m1 * tag + nonce * tag
 4. m1Tag = m1 * tag
 </pre><a href="#section-5.4-3" class="pilcrow">¶</a>
 </div>
@@ -2819,7 +2819,7 @@ def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, presentati
   prover.Constrain(m1CommitVar, [(m1Var, UVar), (zVar, genHVar)])
   # 2. V = z * X1 - r * generatorG
   prover.Constrain(VVar, [(zVar, X1Var), (rNegVar, genGVar)])
-  # 3. G.HashToGroup(presentationContext, "Tag") = m1 * tag + counter * tag
+  # 3. G.HashToGroup(presentationContext, "Tag") = m1 * tag + nonce * tag
   prover.Constrain(genTVar, [(m1Var, tagVar), (nonceVar, tagVar)])
   # 4. m1Tag = m1 * tag
   prover.Constrain(m1TagVar, [(m1Var, tagVar)])
