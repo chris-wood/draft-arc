@@ -32,10 +32,9 @@ class PresentationState(object):
         self.presentation_context = presentation_context
         self.presentation_limit = presentation_limit
         self.presentation_nonce_set = []
-        self.presentation_nonce = 1 # Note: this should be randomized, but it starts at 1 for determinism's sake
 
     def present(self, rng, vectors):
-        if self.presentation_nonce >= self.presentation_limit:
+        if len(self.presentation_nonce_set) >= self.presentation_limit:
             raise Exception("LimitExceededError")
 
         a = G.random_scalar(rng)
@@ -47,8 +46,10 @@ class PresentationState(object):
         U_prime_commit = U_prime + r * GenG
         m1_commit = self.credential.m1 * U + z * GenH
 
-        nonce = self.presentation_nonce
-        self.presentation_nonce += 1
+        # Note: this should be randomized, but it starts
+        # at 0 and increments for determinism's sake
+        nonce = len(self.presentation_nonce_set)
+        self.presentation_nonce_set.append(nonce)
 
         generator_T = hash_to_group(self.presentation_context, to_bytes("tag"))
         tag = inverse_mod(self.credential.m1 + nonce, GroupP384().order()) * generator_T
@@ -171,7 +172,7 @@ class Server(object):
 
         vectors["x0"] = to_hex(G.serialize_scalar(x0))
         vectors["x1"] = to_hex(G.serialize_scalar(x1))
-        vectors["x1"] = to_hex(G.serialize_scalar(x1))
+        vectors["x2"] = to_hex(G.serialize_scalar(x2))
         vectors["xb"] = to_hex(G.serialize_scalar(xb))
         vectors["X0"] = to_hex(G.serialize(X0))
         vectors["X1"] = to_hex(G.serialize(X1))
@@ -210,7 +211,7 @@ class Server(object):
         return response
     
     def verify_presentation(self, private_key, public_key, request_context, presentation_context, presentation, presentation_limit):
-        if presentation.nonce < 0 or presentation.nonce > presentation_limit:
+        if presentation.nonce < 0 or presentation.nonce >= presentation_limit:
             raise Exception("InvalidNonce")
         
         generator_T = hash_to_group(presentation_context, to_bytes("tag")) 

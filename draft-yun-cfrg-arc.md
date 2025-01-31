@@ -549,7 +549,6 @@ Outputs:
 - credential
 - presentationContext: Data (public), used for presentation tag computation.
 - presentationNonceSet: {Integer}, the set of nonces that have been used for this presentation
-- presentationCount: Integer, the number of times this credential has been presented for this presentationContext, initialized to 0.
 - presentationLimit: Integer, the fixed presentation limit.
 
 def MakePresentationState(credential, presentationContext, presentationLimit):
@@ -575,7 +574,6 @@ state: input PresentationState
   - credential
   - presentationContext: Data (public), used for presentation tag computation.
   - presentationNonceSet: {Integer}, the set of nonces that have been used for this presentation
-  - presentationCount: Integer, the number of times this credential has been presented for this presentationContext, initialized to 0.
   - presentationLimit: Integer, the fixed presentation limit.
 
 Outputs:
@@ -597,7 +595,7 @@ Exceptions:
 - LimitExceededError, raised when the presentation count meets or exceeds the presentation limit for the given presentation context
 
 def Present(state):
-  if state.presentationCount >= state.presentationLimit:
+  if len(state.presentationNonceSet) >= state.presentationLimit:
     raise LimitExceededError
 
   a = G.RandomScalar()
@@ -614,7 +612,6 @@ def Present(state):
   nonce = random_integer_uniform_excluding_set(0,
     state.presentationLimit, state.presentationNonceSet)
   state.presentationNonceSet.add(nonce)
-  state.presentationCount += 1
 
   generatorT = G.HashToGroup(presentationContext, "Tag")
   tag = (credential.m1 + nonce)^(-1) * generatorT
