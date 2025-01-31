@@ -518,8 +518,8 @@ This phase consists of three steps:
 1. The client creates a presentation from the presentation state and sends it to the server.
    The presentation is cryptographically bound to the state's presentation context, and
    contains proof that the presentation is valid with respect to the presentation context.
-   Moreover, the presentation contains proof that the count of this presentation is within the
-   presentation limit.
+   Moreover, the presentation contains proof that the nonce (an integer) associated with this
+   presentation is within the presentation limit.
 1. The server verifies the presentation with respect to the presentation context and presentation
    limit.
 
@@ -561,10 +561,10 @@ def MakePresentationState(credential, presentationContext, presentationLimit):
 Creating a presentation requires a credential, presentation context, and presentation limit.
 This process is necessarily stateful on the client since the number of times a credential
 is used for a given presentation context cannot exceed the presentation limit; doing so
-would break presentation unlinkability, as two presentations created with the same "counter"
+would break presentation unlinkability, as two presentations created with the same nonce
 can be directly compared for equality (via the "tag"). As a result, the process for creating
-a presentation accepts as input a presentation count and then outputs an updated presentation
-count.
+a presentation accepts as input a presentation state and then outputs an updated presentation
+state.
 
 ~~~
 newState, presentation = Present(state)
@@ -1275,14 +1275,14 @@ def VerifyCredentialResponseProof(serverPublicKey, response, request):
 
 ## Presentation Proof {#presentation-proof}
 
-The presentation proof is a proof of knowledge of (m1, r, z) used in the presentation, and a proof that the counter used to make the tag is in the range of [0, presentationLimit).
+The presentation proof is a proof of knowledge of (m1, r, z) used in the presentation, and a proof that the nonce used to make the tag is in the range of [0, presentationLimit).
 
 Statements to prove:
 
 ~~~
 1. m1Commit = m1 * U + z * generatorH
 2. V = z * X1 - r * generatorG
-3. G.HashToGroup(presentationContext, "Tag") = m1 * tag + counter * tag
+3. G.HashToGroup(presentationContext, "Tag") = m1 * tag + nonce * tag
 4. m1Tag = m1 * tag
 ~~~
 
@@ -1345,7 +1345,7 @@ def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, presentati
   prover.Constrain(m1CommitVar, [(m1Var, UVar), (zVar, genHVar)])
   # 2. V = z * X1 - r * generatorG
   prover.Constrain(VVar, [(zVar, X1Var), (rNegVar, genGVar)])
-  # 3. G.HashToGroup(presentationContext, "Tag") = m1 * tag + counter * tag
+  # 3. G.HashToGroup(presentationContext, "Tag") = m1 * tag + nonce * tag
   prover.Constrain(genTVar, [(m1Var, tagVar), (nonceVar, tagVar)])
   # 4. m1Tag = m1 * tag
   prover.Constrain(m1TagVar, [(m1Var, tagVar)])
