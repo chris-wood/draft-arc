@@ -525,7 +525,7 @@ This phase consists of three steps:
 
 Details for each each of these steps are in the following subsections.
 
-## Presentation State
+### Presentation State
 
 Presentation state is used to track the number of presentations for a given credential.
 This state is important for ARC's unlinkability goals: reuse of state can break
@@ -556,7 +556,7 @@ def MakePresentationState(credential, presentationContext, presentationLimit):
   return PresentationState(credential, presentationContext, [nonce], presentationLimit)
 ~~~
 
-## Presentation Construction {#presentation-construction}
+### Presentation Construction {#presentation-construction}
 
 Creating a presentation requires a credential, presentation context, and presentation limit.
 This process is necessarily stateful on the client since the number of times a credential
@@ -647,7 +647,7 @@ struct {
 
 The length of this structure is `Npresentation = 4*Ne + 6*Ns`.
 
-## Presentation Verification
+### Presentation Verification
 
 The server processes the presentation by verifying the presentation proof against server-computed
 values, and performing a check that the presentation conforms to the presentation limit.
