@@ -183,19 +183,20 @@ Table of Contents
    Otherwise, Clients invoke the issuance protocol to obtain a
    credential.  This interaction is shown below.
 
-                                         +--------------------------.
+                                         +---------------------------+
    +--------+          +----------+      |  +--------+   +--------+  |
    | Client |          | Attester |      |  | Issuer |   | Origin |  |
    +---+----+          +-----+----+      |  +----+---+   +---+----+  |
-       |                     |            `------|-----------|------'
+       |                     |           +-------|-----------|------ +
        |                     |                   |           |
-       |<----- Request ------+                   |           |
-       +-- TokenChallenge -->|                   |           |
-       |                     |<== Attestation ==>|           |
+       |--------------------- Request ---------------------->|
+       <----------------- TokenChallenge --------------------+
        |                     |                   |           |
-       |                     +------ CredentialRequest ----->|
-       |                     |<---- CredentialResponse ------+
-       |<-- Request+Token ---+                   |           |
+       | <== Attestation ==> |                   |           |
+       +----------- CredentialRequest ---------->|           |
+       |<---------- CredentialResponse ----------+           |
+       |                     |                   |           |
+       |----------- Request + Presentation ----------------->|
        |                     |                   |           |
 
                  Figure 1: Issuance and Redemption Overview
