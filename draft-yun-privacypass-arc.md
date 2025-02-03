@@ -128,19 +128,20 @@ presentation. Otherwise, Clients invoke the issuance protocol to obtain a
 credential. This interaction is shown below.
 
 ~~~ aasvg
-                                      +--------------------------.
+                                      +---------------------------+
 +--------+          +----------+      |  +--------+   +--------+  |
 | Client |          | Attester |      |  | Issuer |   | Origin |  |
 +---+----+          +-----+----+      |  +----+---+   +---+----+  |
-    |                     |            `------|-----------|------'
+    |                     |           +-------|-----------|------ +
     |                     |                   |           |
-    |<----- Request ------+                   |           |
-    +-- TokenChallenge -->|                   |           |
-    |                     |<== Attestation ==>|           |
+    |--------------------- Request ---------------------->|
+    <----------------- TokenChallenge --------------------+
     |                     |                   |           |
-    |                     +------ CredentialRequest ----->|
-    |                     |<---- CredentialResponse ------+
-    |<-- Request+Token ---+                   |           |
+    | <== Attestation ==> |                   |           |
+    +----------- CredentialRequest ---------->|           |
+    |<---------- CredentialResponse ----------+           |
+    |                     |                   |           |
+    |----------- Request + Presentation ----------------->|
     |                     |                   |           |
 ~~~
 {: #fig-overview title="Issuance and Redemption Overview"}
