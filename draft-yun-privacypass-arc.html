@@ -1195,17 +1195,6 @@ tokens based on the Anonymous Rate-Limited Credential (ARC) protocol.<a href="#s
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
             <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
-                <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-unconditional-issuance-unli" class="internal xref">Unconditional Issuance Unlinkability</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
-                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-unconditional-issuance-to-p" class="internal xref">Unconditional Issuance-to-Presentation Unlinkability</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3">
-                <p id="section-toc.1-1.9.2.3.1"><a href="#section-9.3" class="auto internal xref">9.3</a>.  <a href="#name-presentation-unlinkability" class="internal xref">Presentation Unlinkability</a></p>
-</li>
-            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
             <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
@@ -1375,7 +1364,7 @@ credential. This interaction is shown below.<a href="#section-4-2" class="pilcro
               <path d="M 48,208 L 128,208" fill="none" stroke="black"></path>
               <path d="M 296,208 L 376,208" fill="none" stroke="black"></path>
               <path d="M 48,240 L 128,240" fill="none" stroke="black"></path>
-              <path d="M 328,240 L 464,240" fill="none" stroke="black"></path>
+              <path d="M 272,240 L 464,240" fill="none" stroke="black"></path>
               <polygon class="arrowhead" points="472,240 460,234.4 460,245.6" fill="black" transform="rotate(0,464,240)"></polygon>
               <polygon class="arrowhead" points="472,128 460,122.4 460,133.6" fill="black" transform="rotate(0,464,128)"></polygon>
               <polygon class="arrowhead" points="376,192 364,186.4 364,197.6" fill="black" transform="rotate(0,368,192)"></polygon>
@@ -1396,7 +1385,7 @@ credential. This interaction is shown below.<a href="#section-4-2" class="pilcro
                 <text x="216" y="228">|</text>
                 <text x="168" y="244">Request</text>
                 <text x="208" y="244">+</text>
-                <text x="268" y="244">Presentation</text>
+                <text x="240" y="244">Token</text>
                 <text x="216" y="260">|</text>
                 <text x="376" y="260">|</text>
               </g>
@@ -1710,32 +1699,14 @@ valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonc
       <h2 id="name-security-considerations">
 <a href="#section-9" class="section-number selfRef">9. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-9-1">Privacy considerations for tokens based on deployment details, such as issuer configuration and issuer selection, are discussed in <span><a href="https://rfc-editor.org/rfc/rfc9576#section-6.1" class="relref">Section 6.1</a> of [<a href="#ARCHITECTURE" class="cite xref">ARCHITECTURE</a>]</span>.<a href="#section-9-1" class="pilcrow">¶</a></p>
-<p id="section-9-2">The presentation context is considered public metadata, and is known to both the Client and Origin. The mechanism by which public metadata is made available to Client and Orign is out of scope for this document. The privacy considerations in <span>[<a href="#ARCHITECTURE" class="cite xref">ARCHITECTURE</a>]</span> ofer a guide for determining what type of information is appropriate to include, and in what circumstances.<a href="#section-9-2" class="pilcrow">¶</a></p>
-<div id="unconditional-issuance-unlinkability">
-<section id="section-9.1">
-        <h3 id="name-unconditional-issuance-unli">
-<a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-unconditional-issuance-unli" class="section-name selfRef">Unconditional Issuance Unlinkability</a>
-        </h3>
-<p id="section-9.1-1">Client credential requests are constructed such that a server cannot distinguish between any two credential requests from the same client and two requests from different clients, even with unbounded computation. We refer to this property as unconditional issuance unlinkability. This property is achieved by the way the credential requests are constructed. In particular, each credential request consists of Pedersen commitments with fresh blinding factors, which are used to commit to a freshly generated client secret. The resulting request is therefore perfectly hiding, and independent from other requests from the same client.<a href="#section-9.1-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="unconditional-issuance-to-presentation-unlinkability">
-<section id="section-9.2">
-        <h3 id="name-unconditional-issuance-to-p">
-<a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-unconditional-issuance-to-p" class="section-name selfRef">Unconditional Issuance-to-Presentation Unlinkability</a>
-        </h3>
-<p id="section-9.2-1">Client credential requests are constructed such that a server cannot link a presentation to a credential request, even with unbounded computation. We refer to this property as unconditional issuance-to-presentation unlinkability. This property is achieved because the credential request is perfectly hiding, and the blinding factors used in the credential request are removed before creating a presentation.<a href="#section-9.2-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="presentation-unlinkability">
-<section id="section-9.3">
-        <h3 id="name-presentation-unlinkability">
-<a href="#section-9.3" class="section-number selfRef">9.3. </a><a href="#name-presentation-unlinkability" class="section-name selfRef">Presentation Unlinkability</a>
-        </h3>
-<p id="section-9.3-1">Client presentations are constructed such that a server cannot link multiple presentations as coming from the same credential. We refer to this property as presentation unlinkability. This property is achieved by re-randomizing credentials every time they are presented, so that each presentation is indistinguishable from all other presentations made from credentials issued with the same server keys and the same public metadata. There is a reduction in the indistinguishability set in the case of nonce collisions, as detailed in <span><a href="https://rfc-editor.org/rfc/rfc9577#section-7.2" class="relref">Section 7.2</a> of [<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>]</span><a href="#section-9.3-1" class="pilcrow">¶</a></p>
-</section>
-</div>
+<p id="section-9-1">Privacy considerations for tokens based on deployment details, such as issuer configuration
+and issuer selection, are discussed in <span><a href="https://rfc-editor.org/rfc/rfc9576#section-6.1" class="relref">Section 6.1</a> of [<a href="#ARCHITECTURE" class="cite xref">ARCHITECTURE</a>]</span>. Note that ARC
+requires a joint Origin and Issuer configuration given that it is privately verifiable.<a href="#section-9-1" class="pilcrow">¶</a></p>
+<p id="section-9-2">ARC offers Origin-Client unlinkability, Issuer-Client unlinkability, and redemption context
+unlinkability, as described in <span><a href="https://rfc-editor.org/rfc/rfc9576#section-3.3" class="relref">Section 3.3</a> of [<a href="#ARCHITECTURE" class="cite xref">ARCHITECTURE</a>]</span>, with one exception.
+While redemption context unlinkability is achieved by re-randomizing credentials every time
+they are presented as tokens, there is a reduction in the anonymity set in the case of presentation
+nonce collisions, as detailed in <span><a href="https://rfc-editor.org/rfc/rfc9577#section-7.2" class="relref">Section 7.2</a> of [<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>]</span>.<a href="#section-9-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
