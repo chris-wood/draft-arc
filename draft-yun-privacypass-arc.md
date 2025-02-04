@@ -141,7 +141,7 @@ credential. This interaction is shown below.
     +----------- CredentialRequest ---------->|           |
     |<---------- CredentialResponse ----------+           |
     |                     |                   |           |
-    |----------- Request + Presentation ----------------->|
+    |----------- Request + Token ------------------------>|
     |                     |                   |           |
 ~~~
 {: #fig-overview title="Issuance and Redemption Overview"}
@@ -385,22 +385,15 @@ This function returns True if the CredentialToken is valid, and False otherwise.
 
 # Security Considerations {#security}
 
-Privacy considerations for tokens based on deployment details, such as issuer configuration and issuer selection, are discussed in {{Section 6.1 of ARCHITECTURE}}.
+Privacy considerations for tokens based on deployment details, such as issuer configuration
+and issuer selection, are discussed in {{Section 6.1 of ARCHITECTURE}}. Note that ARC
+requires a joint Origin and Issuer configuration given that it is privately verifiable.
 
-The presentation context is considered public metadata, and is known to both the Client and Origin. The mechanism by which public metadata is made available to Client and Orign is out of scope for this document. The privacy considerations in {{ARCHITECTURE}} ofer a guide for determining what type of information is appropriate to include, and in what circumstances.
-
-## Unconditional Issuance Unlinkability
-
-Client credential requests are constructed such that a server cannot distinguish between any two credential requests from the same client and two requests from different clients, even with unbounded computation. We refer to this property as unconditional issuance unlinkability. This property is achieved by the way the credential requests are constructed. In particular, each credential request consists of Pedersen commitments with fresh blinding factors, which are used to commit to a freshly generated client secret. The resulting request is therefore perfectly hiding, and independent from other requests from the same client.
-
-## Unconditional Issuance-to-Presentation Unlinkability
-
-Client credential requests are constructed such that a server cannot link a presentation to a credential request, even with unbounded computation. We refer to this property as unconditional issuance-to-presentation unlinkability. This property is achieved because the credential request is perfectly hiding, and the blinding factors used in the credential request are removed before creating a presentation.
-
-## Presentation Unlinkability
-
-Client presentations are constructed such that a server cannot link multiple presentations as coming from the same credential. We refer to this property as presentation unlinkability. This property is achieved by re-randomizing credentials every time they are presented, so that each presentation is indistinguishable from all other presentations made from credentials issued with the same server keys and the same public metadata. There is a reduction in the indistinguishability set in the case of nonce collisions, as detailed in {{Section 7.2 of AUTHSCHEME}}
-
+ARC offers Origin-Client unlinkability, Issuer-Client unlinkability, and redemption context
+unlinkability, as described in {{Section 3.3 of ARCHITECTURE}}, with one exception.
+While redemption context unlinkability is achieved by re-randomizing credentials every time
+they are presented as tokens, there is a reduction in the anonymity set in the case of presentation
+nonce collisions, as detailed in {{Section 7.2 of AUTHSCHEME}}.
 
 # IANA Considerations
 
