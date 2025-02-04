@@ -1,0 +1,192 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2025-02-04T00:08:20.296979+00:00",
+  "repo": "chris-wood/draft-arc",
+  "labels": [
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [],
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDONyB6uM6JkhuC",
+      "title": "Cleanup pass over the spec draft",
+      "url": "https://github.com/chris-wood/draft-arc/pull/1",
+      "state": "MERGED",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Documentation / spec updates:\r\n- Removed Hash from ciphersuite dependency\r\n- Added explanation of why we are using KVAC instead of BBS\r\n- Clarified that the issuance protocol uses Pedersen commitments, for perfect privacy\r\n- Corrected the incorrect presentation proof scalar descriptions\r\n\r\nBehavioral changes:\r\n- Changed the presentationState definition to generate the nonce only when needed (instead of proactively generating / holding onto a presentationNonce). Updated the proof of concept accordingly.\r\n- Changed the proof of concept presentationState to have nonces start at 0 (instead of 1)\r\n-  Tightened the presentation limit bounds to 0 <= nonce < rateLimit (was previously allowing for nonce = rateLimit)\r\n\r\nFixes:\r\n- Added `x2` to the ServerKey test vectors (previously had a typo, repeated `x1` twice).\r\n\r\nSome things I have questions about:\r\n- Why aren't the presentation proof statements (5.4) rendering correctly? I don't see anything that should result in a formatting error, but the markdown seems unhappy with the Tag definition.",
+      "createdAt": "2025-01-31T00:51:57Z",
+      "updatedAt": "2025-01-31T13:15:02Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "9cfc01da472c850860006c4a0b0570a477dca2e2",
+      "headRepository": "chris-wood/draft-arc",
+      "headRefName": "cathie/cleanup",
+      "headRefOid": "b67e765525d3a80637e67095d5019049eb950a5f",
+      "closedAt": "2025-01-31T13:15:02Z",
+      "mergedAt": "2025-01-31T13:15:02Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "0f1198a859c747541f23185b1707f66433a315b5"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDONyB6uM6aLi0m",
+          "commit": {
+            "abbreviatedOid": "34e4d55"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-31T13:12:44Z",
+          "updatedAt": "2025-01-31T13:12:44Z",
+          "comments": [
+            {
+              "originalPosition": 416,
+              "body": "```suggestion\r\n```",
+              "createdAt": "2025-01-31T13:12:44Z",
+              "updatedAt": "2025-01-31T13:12:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM6aLjq6",
+          "commit": {
+            "abbreviatedOid": "68d20a7"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-01-31T13:13:23Z",
+          "updatedAt": "2025-01-31T13:14:08Z",
+          "comments": [
+            {
+              "originalPosition": 419,
+              "body": "```suggestion\r\nThe BBS anonymous credential scheme, as detailed in {{BBS}} and its variants, is efficient and publicly verifiable, but requires pairings for verification. This is problematic for adoption because pairings are not supported as widely in software and hardware as non-pairing elliptic curves.\r\n```",
+              "createdAt": "2025-01-31T13:13:24Z",
+              "updatedAt": "2025-01-31T13:14:08Z"
+            },
+            {
+              "originalPosition": 421,
+              "body": "```suggestion\r\nIt is possible to construct a keyed-verification variant of BBS which doesn't use pairings, as discussed in {{BBDT17}} and {{REVISITING_KVAC}}. However these keyed-verification BBS variants require more analysis, proofs of security properties, and review to be considered mature enough for safe deployment.\r\n```",
+              "createdAt": "2025-01-31T13:14:01Z",
+              "updatedAt": "2025-01-31T13:14:08Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "id": "PR_kwDONyB6uM6JrAx9",
+      "title": "Add Privacy Pass integration draft",
+      "url": "https://github.com/chris-wood/draft-arc/pull/2",
+      "state": "MERGED",
+      "author": "chris-wood",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Questions:\r\n1. Should requestContext be the entire challenge, or just issuer name? I think just the issuer name, letting the server use the rest of the TokenChallenge as the presentationContext.\r\n2. Do we need to include the rate limit as a challenge extension? (I think so)\r\n3. How should we encode nonce on the wire? I think 32 bits is probably fine? This does impose an upper bound on the actual rate limit, of course.\r\n4. What do we need in security considerations for the Privacy Pass draft?",
+      "createdAt": "2025-01-31T17:53:46Z",
+      "updatedAt": "2025-01-31T21:06:17Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "b3bb6710d338ed8fd0825f6909880e445832c9c5",
+      "headRepository": "chris-wood/draft-arc",
+      "headRefName": "caw/pp",
+      "headRefOid": "694d54e8c735ad5e75953d4c15965a773a4089aa",
+      "closedAt": "2025-01-31T21:06:17Z",
+      "mergedAt": "2025-01-31T21:06:17Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "0e51dff5a7e76eaddc27bf66c7bd974148a837ef"
+      },
+      "comments": [
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "1. I think that the requestContext should be as minimal as possible. So if we can have it just be the issuer name, that would be ideal (allows for more flexibility upon presentation).\r\n2. By \"challenge extension\" you mean another field in the TokenChallenge sent from the Client Origin? I had been thinking that the rate limit gets sent with the server public keys - so that can be in the TokenChallenge itself, or alongside it.\r\n   - Though looking through the origin-provided inputs, I see that the Privacy Pass spec has the origin sending the Public Key ID (issuer_key_id), instead of the public key itself. Since the client needs the full public key for the FinalizeCredential call, when does it receive the full public key? Or is this step considered to be out-of-band and not defined by the spec?\r\n3. I think 32 bits is fine. ",
+          "createdAt": "2025-01-31T19:03:52Z",
+          "updatedAt": "2025-01-31T19:03:52Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 3,
+      "id": "PR_kwDONyB6uM6J6Zt9",
+      "title": "Add privacy pass security considerations",
+      "url": "https://github.com/chris-wood/draft-arc/pull/3",
+      "state": "OPEN",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Added some security considerations to the privacy pass section, working off of other specs:\r\n\r\nhttps://datatracker.ietf.org/doc/html/draft-ietf-privacypass-architecture-16#section-6\r\nhttps://datatracker.ietf.org/doc/draft-ietf-privacypass-public-metadata-issuance/\r\nhttps://datatracker.ietf.org/doc/rfc9497/\r\n\r\nSome of this repeats the security considerations in the ARC CFRG spec (eg Client Issuance Unlinkability), I'm not sure if it's okay to repeat across both specs, or where they would belong best.",
+      "createdAt": "2025-02-03T22:24:38Z",
+      "updatedAt": "2025-02-03T22:35:38Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "a85a40173e014733ffe96e625c73399b43d19e13",
+      "headRepository": "chris-wood/draft-arc",
+      "headRefName": "cathie/pp-security",
+      "headRefOid": "91c301950da1cc6dbb71a062425d256af4e30f2c",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    }
+  ]
+}
