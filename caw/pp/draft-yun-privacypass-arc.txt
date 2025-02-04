@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Standards Track                             Apple, Inc.
-Expires: 4 August 2025                                   31 January 2025
+Expires: 8 August 2025                                   4 February 2025
 
 
  Privacy Pass Issuance Protocol for Anonymous Rate-Limited Credentials
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 August 2025.
+   This Internet-Draft will expire on 8 August 2025.
 
 Copyright Notice
 
@@ -180,19 +180,20 @@ Table of Contents
    Otherwise, Clients invoke the issuance protocol to obtain a
    credential.  This interaction is shown below.
 
-                                     +----------------------------.
-   +--------+          +----------+  |  +--------+     +--------+  |
-   | Client |          | Attester |  |  | Issuer |     | Origin |  |
-   +---+----+          +-----+----+  |  +----+---+     +---+----+  |
-       |                     |        `------|-------------|------'
+                                         +---------------------------+
+   +--------+          +----------+      |  +--------+   +--------+  |
+   | Client |          | Attester |      |  | Issuer |   | Origin |  |
+   +---+----+          +-----+----+      |  +----+---+   +---+----+  |
+       |                     |           +-------|-----------|------ +
        |                     |                   |           |
-       |<----- Request ------+                   |           |
-       +-- TokenChallenge -->|                   |           |
-       |                     |<== Attestation ==>|           |
+       |--------------------- Request ---------------------->|
+       <----------------- TokenChallenge --------------------+
        |                     |                   |           |
-       |                     +------ CredentialRequest ----->|
-       |                     |<---- CredentialResponse ------+
-       |<-- Request+Token ---+                   |           |
+       | <== Attestation ==> |                   |           |
+       +----------- CredentialRequest ---------->|           |
+       |<---------- CredentialResponse ----------+           |
+       |                     |                   |           |
+       |----------- Request + Token ------------------------>|
        |                     |                   |           |
 
                  Figure 1: Issuance and Redemption Overview
@@ -441,7 +442,18 @@ valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonc
 
 9.  Security Considerations
 
-   TODO: unlinkability of tokens across presentations
+   Privacy considerations for tokens based on deployment details, such
+   as issuer configuration and issuer selection, are discussed in
+   Section 6.1 of [ARCHITECTURE].  Note that ARC requires a joint Origin
+   and Issuer configuration given that it is privately verifiable.
+
+   ARC offers Origin-Client unlinkability, Issuer-Client unlinkability,
+   and redemption context unlinkability, as described in Section 3.3 of
+   [ARCHITECTURE], with one exception.  While redemption context
+   unlinkability is achieved by re-randomizing credentials every time
+   they are presented as tokens, there is a reduction in the anonymity
+   set in the case of presentation nonce collisions, as detailed in
+   Section 7.2 of [AUTHSCHEME].
 
 10.  IANA Considerations
 
@@ -523,9 +535,9 @@ valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonc
    [DAP]      Geoghegan, T., Patton, C., Pitman, B., Rescorla, E., and
               C. A. Wood, "Distributed Aggregation Protocol for Privacy
               Preserving Measurement", Work in Progress, Internet-Draft,
-              draft-ietf-ppm-dap-13, 2 November 2024,
+              draft-ietf-ppm-dap-14, 3 February 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-ppm-dap-
-              13>.
+              14>.
 
    [OHTTP]    Thomson, M. and C. A. Wood, "Oblivious HTTP", RFC 9458,
               DOI 10.17487/RFC9458, January 2024,

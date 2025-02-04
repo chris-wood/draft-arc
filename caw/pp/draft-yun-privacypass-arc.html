@@ -11,10 +11,10 @@
        This document specifies the issuance and redemption protocols for
 tokens based on the Anonymous Rate-Limited Credential (ARC) protocol. 
     " name="description">
-<meta content="xml2rfc 3.25.0" name="generator">
+<meta content="xml2rfc 3.26.0" name="generator">
 <meta content="draft-yun-privacypass-arc-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.25.0
+  xml2rfc 3.26.0
     Python 3.12.8
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
@@ -1045,11 +1045,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">Privacy Pass Issuance Protocol for ARC</td>
-<td class="right">January 2025</td>
+<td class="right">February 2025</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Yun &amp; Wood</td>
-<td class="center">Expires 4 August 2025</td>
+<td class="center">Expires 8 August 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1062,12 +1062,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-yun-privacypass-arc-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-01-31" class="published">31 January 2025</time>
+<time datetime="2025-02-04" class="published">4 February 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-08-04">4 August 2025</time></dd>
+<dd class="expires"><time datetime="2025-08-08">8 August 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1121,7 +1121,7 @@ tokens based on the Anonymous Rate-Limited Credential (ARC) protocol.<a href="#s
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 4 August 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 8 August 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1321,71 +1321,73 @@ credential. This interaction is shown below.<a href="#section-4-2" class="pilcro
 <figure id="figure-1">
         <div id="section-4-3.1">
           <div class="alignLeft art-svg artwork" id="section-4-3.1.1">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="256" width="528" viewBox="0 0 528 256" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="272" width="544" viewBox="0 0 544 272" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
               <path d="M 8,48 L 8,80" fill="none" stroke="black"></path>
-              <path d="M 40,80 L 40,240" fill="none" stroke="black"></path>
+              <path d="M 40,80 L 40,128" fill="none" stroke="black"></path>
+              <path d="M 40,160 L 40,256" fill="none" stroke="black"></path>
               <path d="M 80,48 L 80,80" fill="none" stroke="black"></path>
               <path d="M 168,48 L 168,80" fill="none" stroke="black"></path>
-              <path d="M 216,80 L 216,240" fill="none" stroke="black"></path>
+              <path d="M 216,80 L 216,112" fill="none" stroke="black"></path>
+              <path d="M 216,160 L 216,176" fill="none" stroke="black"></path>
               <path d="M 256,48 L 256,80" fill="none" stroke="black"></path>
-              <path d="M 280,32 L 280,80" fill="none" stroke="black"></path>
-              <path d="M 304,48 L 304,80" fill="none" stroke="black"></path>
-              <path d="M 344,80 L 344,96" fill="none" stroke="black"></path>
-              <path d="M 376,48 L 376,80" fill="none" stroke="black"></path>
-              <path d="M 376,104 L 376,176" fill="none" stroke="black"></path>
-              <path d="M 376,224 L 376,240" fill="none" stroke="black"></path>
-              <path d="M 424,48 L 424,80" fill="none" stroke="black"></path>
-              <path d="M 456,80 L 456,96" fill="none" stroke="black"></path>
-              <path d="M 472,104 L 472,240" fill="none" stroke="black"></path>
-              <path d="M 496,48 L 496,80" fill="none" stroke="black"></path>
-              <path d="M 520,48 L 520,80" fill="none" stroke="black"></path>
-              <path d="M 280,32 L 504,32" fill="none" stroke="black"></path>
+              <path d="M 312,32 L 312,96" fill="none" stroke="black"></path>
+              <path d="M 336,48 L 336,80" fill="none" stroke="black"></path>
+              <path d="M 376,80 L 376,120" fill="none" stroke="black"></path>
+              <path d="M 376,152 L 376,232" fill="none" stroke="black"></path>
+              <path d="M 408,48 L 408,80" fill="none" stroke="black"></path>
+              <path d="M 440,48 L 440,80" fill="none" stroke="black"></path>
+              <path d="M 472,80 L 472,256" fill="none" stroke="black"></path>
+              <path d="M 512,48 L 512,80" fill="none" stroke="black"></path>
+              <path d="M 536,32 L 536,96" fill="none" stroke="black"></path>
+              <path d="M 312,32 L 536,32" fill="none" stroke="black"></path>
               <path d="M 8,48 L 80,48" fill="none" stroke="black"></path>
               <path d="M 168,48 L 256,48" fill="none" stroke="black"></path>
-              <path d="M 304,48 L 376,48" fill="none" stroke="black"></path>
-              <path d="M 424,48 L 496,48" fill="none" stroke="black"></path>
+              <path d="M 336,48 L 408,48" fill="none" stroke="black"></path>
+              <path d="M 440,48 L 512,48" fill="none" stroke="black"></path>
               <path d="M 8,80 L 80,80" fill="none" stroke="black"></path>
               <path d="M 168,80 L 256,80" fill="none" stroke="black"></path>
-              <path d="M 304,80 L 376,80" fill="none" stroke="black"></path>
-              <path d="M 424,80 L 496,80" fill="none" stroke="black"></path>
-              <path d="M 296,96 L 336,96" fill="none" stroke="black"></path>
-              <path d="M 352,96 L 448,96" fill="none" stroke="black"></path>
-              <path d="M 464,96 L 504,96" fill="none" stroke="black"></path>
-              <path d="M 48,128 L 88,128" fill="none" stroke="black"></path>
-              <path d="M 168,128 L 216,128" fill="none" stroke="black"></path>
-              <path d="M 40,144 L 56,144" fill="none" stroke="black"></path>
-              <path d="M 192,144 L 208,144" fill="none" stroke="black"></path>
-              <path d="M 224,158 L 240,158" fill="none" stroke="black"></path>
-              <path d="M 224,162 L 240,162" fill="none" stroke="black"></path>
-              <path d="M 352,158 L 368,158" fill="none" stroke="black"></path>
-              <path d="M 352,162 L 368,162" fill="none" stroke="black"></path>
-              <path d="M 216,192 L 264,192" fill="none" stroke="black"></path>
-              <path d="M 424,192 L 464,192" fill="none" stroke="black"></path>
-              <path d="M 224,208 L 256,208" fill="none" stroke="black"></path>
-              <path d="M 424,208 L 472,208" fill="none" stroke="black"></path>
-              <path d="M 48,224 L 64,224" fill="none" stroke="black"></path>
-              <path d="M 192,224 L 216,224" fill="none" stroke="black"></path>
-              <path d="M 504,32 C 512.83064,32 520,39.16936 520,48" fill="none" stroke="black"></path>
-              <path d="M 296,96 C 287.16936,96 280,88.83064 280,80" fill="none" stroke="black"></path>
-              <path d="M 504,96 C 512.83064,96 520,88.83064 520,80" fill="none" stroke="black"></path>
-              <polygon class="arrowhead" points="472,192 460,186.4 460,197.6" fill="black" transform="rotate(0,464,192)"></polygon>
-              <polygon class="arrowhead" points="376,160 364,154.4 364,165.6" fill="black" transform="rotate(0,368,160)"></polygon>
-              <polygon class="arrowhead" points="232,208 220,202.4 220,213.6" fill="black" transform="rotate(180,224,208)"></polygon>
-              <polygon class="arrowhead" points="232,160 220,154.4 220,165.6" fill="black" transform="rotate(180,224,160)"></polygon>
-              <polygon class="arrowhead" points="216,144 204,138.4 204,149.6" fill="black" transform="rotate(0,208,144)"></polygon>
-              <polygon class="arrowhead" points="56,224 44,218.4 44,229.6" fill="black" transform="rotate(180,48,224)"></polygon>
-              <polygon class="arrowhead" points="56,128 44,122.4 44,133.6" fill="black" transform="rotate(180,48,128)"></polygon>
+              <path d="M 336,80 L 408,80" fill="none" stroke="black"></path>
+              <path d="M 440,80 L 512,80" fill="none" stroke="black"></path>
+              <path d="M 312,96 L 368,96" fill="none" stroke="black"></path>
+              <path d="M 384,96 L 464,96" fill="none" stroke="black"></path>
+              <path d="M 480,96 L 520,96" fill="none" stroke="black"></path>
+              <path d="M 48,128 L 208,128" fill="none" stroke="black"></path>
+              <path d="M 288,128 L 464,128" fill="none" stroke="black"></path>
+              <path d="M 40,144 L 176,144" fill="none" stroke="black"></path>
+              <path d="M 312,144 L 472,144" fill="none" stroke="black"></path>
+              <path d="M 56,174 L 72,174" fill="none" stroke="black"></path>
+              <path d="M 56,178 L 72,178" fill="none" stroke="black"></path>
+              <path d="M 184,174 L 200,174" fill="none" stroke="black"></path>
+              <path d="M 184,178 L 200,178" fill="none" stroke="black"></path>
+              <path d="M 40,192 L 128,192" fill="none" stroke="black"></path>
+              <path d="M 288,192 L 368,192" fill="none" stroke="black"></path>
+              <path d="M 48,208 L 128,208" fill="none" stroke="black"></path>
+              <path d="M 296,208 L 376,208" fill="none" stroke="black"></path>
+              <path d="M 48,240 L 128,240" fill="none" stroke="black"></path>
+              <path d="M 272,240 L 464,240" fill="none" stroke="black"></path>
+              <polygon class="arrowhead" points="472,240 460,234.4 460,245.6" fill="black" transform="rotate(0,464,240)"></polygon>
+              <polygon class="arrowhead" points="472,128 460,122.4 460,133.6" fill="black" transform="rotate(0,464,128)"></polygon>
+              <polygon class="arrowhead" points="376,192 364,186.4 364,197.6" fill="black" transform="rotate(0,368,192)"></polygon>
+              <polygon class="arrowhead" points="208,176 196,170.4 196,181.6" fill="black" transform="rotate(0,200,176)"></polygon>
+              <polygon class="arrowhead" points="64,176 52,170.4 52,181.6" fill="black" transform="rotate(180,56,176)"></polygon>
+              <polygon class="arrowhead" points="56,208 44,202.4 44,213.6" fill="black" transform="rotate(180,48,208)"></polygon>
+              <polygon class="arrowhead" points="48,144 36,138.4 36,149.6" fill="black" transform="rotate(180,40,144)"></polygon>
               <g class="text">
                 <text x="44" y="68">Client</text>
                 <text x="212" y="68">Attester</text>
-                <text x="340" y="68">Issuer</text>
-                <text x="460" y="68">Origin</text>
-                <text x="128" y="132">Request</text>
-                <text x="124" y="148">TokenChallenge</text>
-                <text x="296" y="164">Attestation</text>
-                <text x="344" y="196">CredentialRequest</text>
-                <text x="340" y="212">CredentialResponse</text>
-                <text x="128" y="228">Request+Token</text>
+                <text x="372" y="68">Issuer</text>
+                <text x="476" y="68">Origin</text>
+                <text x="248" y="132">Request</text>
+                <text x="244" y="148">TokenChallenge</text>
+                <text x="128" y="180">Attestation</text>
+                <text x="208" y="196">CredentialRequest</text>
+                <text x="212" y="212">CredentialResponse</text>
+                <text x="216" y="228">|</text>
+                <text x="168" y="244">Request</text>
+                <text x="208" y="244">+</text>
+                <text x="240" y="244">Token</text>
+                <text x="216" y="260">|</text>
+                <text x="376" y="260">|</text>
               </g>
             </svg><a href="#section-4-3.1.1" class="pilcrow">¶</a>
 </div>
@@ -1697,7 +1699,14 @@ valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonc
       <h2 id="name-security-considerations">
 <a href="#section-9" class="section-number selfRef">9. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-9-1">TODO: unlinkability of tokens across presentations<a href="#section-9-1" class="pilcrow">¶</a></p>
+<p id="section-9-1">Privacy considerations for tokens based on deployment details, such as issuer configuration
+and issuer selection, are discussed in <span><a href="https://rfc-editor.org/rfc/rfc9576#section-6.1" class="relref">Section 6.1</a> of [<a href="#ARCHITECTURE" class="cite xref">ARCHITECTURE</a>]</span>. Note that ARC
+requires a joint Origin and Issuer configuration given that it is privately verifiable.<a href="#section-9-1" class="pilcrow">¶</a></p>
+<p id="section-9-2">ARC offers Origin-Client unlinkability, Issuer-Client unlinkability, and redemption context
+unlinkability, as described in <span><a href="https://rfc-editor.org/rfc/rfc9576#section-3.3" class="relref">Section 3.3</a> of [<a href="#ARCHITECTURE" class="cite xref">ARCHITECTURE</a>]</span>, with one exception.
+While redemption context unlinkability is achieved by re-randomizing credentials every time
+they are presented as tokens, there is a reduction in the anonymity set in the case of presentation
+nonce collisions, as detailed in <span><a href="https://rfc-editor.org/rfc/rfc9577#section-7.2" class="relref">Section 7.2</a> of [<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>]</span>.<a href="#section-9-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
@@ -1805,7 +1814,7 @@ following entries.<a href="#section-10-1" class="pilcrow">¶</a></p>
 <dl class="references">
 <dt id="DAP">[DAP]</dt>
         <dd>
-<span class="refAuthor">Geoghegan, T.</span>, <span class="refAuthor">Patton, C.</span>, <span class="refAuthor">Pitman, B.</span>, <span class="refAuthor">Rescorla, E.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Distributed Aggregation Protocol for Privacy Preserving Measurement"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-ppm-dap-13</span>, <time datetime="2024-11-02" class="refDate">2 November 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-ppm-dap-13">https://datatracker.ietf.org/doc/html/draft-ietf-ppm-dap-13</a>&gt;</span>. </dd>
+<span class="refAuthor">Geoghegan, T.</span>, <span class="refAuthor">Patton, C.</span>, <span class="refAuthor">Pitman, B.</span>, <span class="refAuthor">Rescorla, E.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Distributed Aggregation Protocol for Privacy Preserving Measurement"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-ppm-dap-14</span>, <time datetime="2025-02-03" class="refDate">3 February 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-ppm-dap-14">https://datatracker.ietf.org/doc/html/draft-ietf-ppm-dap-14</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="OHTTP">[OHTTP]</dt>
         <dd>
