@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Informational                               Apple, Inc.
-Expires: 4 August 2025                                   31 January 2025
+Expires: 8 August 2025                                   4 February 2025
 
 
                    Anonymous Rate-Limited Credentials
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 August 2025.
+   This Internet-Draft will expire on 8 August 2025.
 
 Copyright Notice
 
@@ -238,7 +238,7 @@ Table of Contents
 
    *  Order(): Outputs the order of the group (i.e. p).
 
-   *  Identity(): Outputs the identity element of the group (i.e.  I).
+   *  Identity(): Outputs the identity element of the group (i.e. I).
 
    *  Generator(): Outputs the fixed generator of the group.
 

@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Standards Track                             Apple, Inc.
-Expires: 4 August 2025                                   31 January 2025
+Expires: 8 August 2025                                   4 February 2025
 
 
  Privacy Pass Issuance Protocol for Anonymous Rate-Limited Credentials
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 August 2025.
+   This Internet-Draft will expire on 8 August 2025.
 
 Copyright Notice
 
@@ -79,6 +79,9 @@ Table of Contents
      8.1.  Token Creation
      8.2.  Token Verification
    9.  Security Considerations
+     9.1.  Unconditional Issuance Unlinkability
+     9.2.  Unconditional Issuance-to-Presentation Unlinkability
+     9.3.  Presentation Unlinkability
    10. IANA Considerations
    11. References
      11.1.  Normative References
@@ -180,19 +183,20 @@ Table of Contents
    Otherwise, Clients invoke the issuance protocol to obtain a
    credential.  This interaction is shown below.
 
-                                         +--------------------------.
+                                         +---------------------------+
    +--------+          +----------+      |  +--------+   +--------+  |
    | Client |          | Attester |      |  | Issuer |   | Origin |  |
    +---+----+          +-----+----+      |  +----+---+   +---+----+  |
-       |                     |            `------|-----------|------'
+       |                     |           +-------|-----------|------ +
        |                     |                   |           |
-       |<----- Request ------+                   |           |
-       +-- TokenChallenge -->|                   |           |
-       |                     |<== Attestation ==>|           |
+       |--------------------- Request ---------------------->|
+       <----------------- TokenChallenge --------------------+
        |                     |                   |           |
-       |                     +------ CredentialRequest ----->|
-       |                     |<---- CredentialResponse ------+
-       |<-- Request+Token ---+                   |           |
+       | <== Attestation ==> |                   |           |
+       +----------- CredentialRequest ---------->|           |
+       |<---------- CredentialResponse ----------+           |
+       |                     |                   |           |
+       |----------- Request + Presentation ----------------->|
        |                     |                   |           |
 
                  Figure 1: Issuance and Redemption Overview
@@ -441,7 +445,50 @@ valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonc
 
 9.  Security Considerations
 
-   TODO: unlinkability of tokens across presentations
+   Privacy considerations for tokens based on deployment details, such
+   as issuer configuration and issuer selection, are discussed in
+   Section 6.1 of [ARCHITECTURE].
+
+   The presentation context is considered public metadata, and is known
+   to both the Client and Origin.  The mechanism by which public
+   metadata is made available to Client and Orign is out of scope for
+   this document.  The privacy considerations in [ARCHITECTURE] ofer a
+   guide for determining what type of information is appropriate to
+   include, and in what circumstances.
+
+9.1.  Unconditional Issuance Unlinkability
+
+   Client credential requests are constructed such that a server cannot
+   distinguish between any two credential requests from the same client
+   and two requests from different clients, even with unbounded
+   computation.  We refer to this property as unconditional issuance
+   unlinkability.  This property is achieved by the way the credential
+   requests are constructed.  In particular, each credential request
+   consists of Pedersen commitments with fresh blinding factors, which
+   are used to commit to a freshly generated client secret.  The
+   resulting request is therefore perfectly hiding, and independent from
+   other requests from the same client.
+
+9.2.  Unconditional Issuance-to-Presentation Unlinkability
+
+   Client credential requests are constructed such that a server cannot
+   link a presentation to a credential request, even with unbounded
+   computation.  We refer to this property as unconditional issuance-to-
+   presentation unlinkability.  This property is achieved because the
+   credential request is perfectly hiding, and the blinding factors used
+   in the credential request are removed before creating a presentation.
+
+9.3.  Presentation Unlinkability
+
+   Client presentations are constructed such that a server cannot link
+   multiple presentations as coming from the same credential.  We refer
+   to this property as presentation unlinkability.  This property is
+   achieved by re-randomizing credentials every time they are presented,
+   so that each presentation is indistinguishable from all other
+   presentations made from credentials issued with the same server keys
+   and the same public metadata.  There is a reduction in the
+   indistinguishability set in the case of nonce collisions, as detailed
+   in Section 7.2 of [AUTHSCHEME]
 
 10.  IANA Considerations
 
@@ -523,9 +570,9 @@ valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonc
    [DAP]      Geoghegan, T., Patton, C., Pitman, B., Rescorla, E., and
               C. A. Wood, "Distributed Aggregation Protocol for Privacy
               Preserving Measurement", Work in Progress, Internet-Draft,
-              draft-ietf-ppm-dap-13, 2 November 2024,
+              draft-ietf-ppm-dap-14, 3 February 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-ppm-dap-
-              13>.
+              14>.
 
    [OHTTP]    Thomson, M. and C. A. Wood, "Oblivious HTTP", RFC 9458,
               DOI 10.17487/RFC9458, January 2024,
