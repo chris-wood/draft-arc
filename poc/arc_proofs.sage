@@ -5,7 +5,7 @@ from util import to_bytes
 class CredentialRequestProof(object):
     @classmethod
     def prove(self, m1, m2, r1, r2, m1_enc, m2_enc, rng):
-        prover = Prover(context_string + "-CredentialRequestProof", rng)
+        prover = Prover(context_string + "CredentialRequest", rng)
         m1_var = prover.append_scalar("m1", m1)
         m2_var = prover.append_scalar("m2", m2)
         r1_var = prover.append_scalar("r1", r1)
@@ -23,7 +23,7 @@ class CredentialRequestProof(object):
 
     @classmethod
     def verify(cls, blinded_request):
-        verifier = Verifier(context_string + "-CredentialRequestProof")
+        verifier = Verifier(context_string + "CredentialRequest")
 
         m1_var = verifier.append_scalar("m1")
         m2_var = verifier.append_scalar("m2")
@@ -42,7 +42,7 @@ class CredentialRequestProof(object):
 class CredentialResponseProof(object):
     @classmethod
     def prove(cls, private_key, public_key, request, b, U, enc_U_prime, X0_aux, X1_aux, X2_aux, H_aux, rng):
-        prover = Prover(context_string + "-CredentialResponseProof", rng)
+        prover = Prover(context_string + "CredentialResponse", rng)
 
         x0_var = prover.append_scalar("x0", private_key.x0)
         x1_var = prover.append_scalar("x1", private_key.x1)
@@ -103,7 +103,7 @@ class CredentialResponseProof(object):
 
     @classmethod
     def verify(cls, public_key, response, request):
-        verifier = Verifier(context_string + "-CredentialResponseProof")
+        verifier = Verifier(context_string + "CredentialResponse")
 
         x0_var = verifier.append_scalar("x0")
         x1_var = verifier.append_scalar("x1")
@@ -165,7 +165,7 @@ class CredentialResponseProof(object):
 class PresentationProof(object):
     @classmethod
     def prove(cls, U, U_prime_commit, m1_commit, tag, generator_T, credential, V, r, z, nonce, m1_tag, rng):
-        prover = Prover(context_string + "-PresentationProof", rng)
+        prover = Prover(context_string + "PresentationProof", rng)
 
         m1_var = prover.append_scalar("m1", credential.m1)
         z_var = prover.append_scalar("z", z)
@@ -196,11 +196,11 @@ class PresentationProof(object):
 
     @classmethod
     def verify(cls, server_private_key, server_public_key, request_context, presentation_context, presentation, m1_tag):
-        verifier = Verifier(context_string + "-PresentationProof")
+        verifier = Verifier(context_string + "PresentationProof")
 
         m2 = hash_to_scalar(request_context, to_bytes("requestContext"))
         V = server_private_key.x0 * presentation.U + server_private_key.x1 * presentation.m1_commit + server_private_key.x2 * m2 * presentation.U - presentation.U_prime_commit
-        generator_T = hash_to_group(presentation_context, to_bytes("-Tag"))
+        generator_T = hash_to_group(presentation_context, to_bytes("Tag"))
 
         m1_var = verifier.append_scalar("m1")
         z_var = verifier.append_scalar("z")

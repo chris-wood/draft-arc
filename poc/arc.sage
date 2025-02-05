@@ -51,7 +51,7 @@ class PresentationState(object):
         nonce = len(self.presentation_nonce_set)
         self.presentation_nonce_set.append(nonce)
 
-        generator_T = hash_to_group(self.presentation_context, to_bytes("-Tag"))
+        generator_T = hash_to_group(self.presentation_context, to_bytes("Tag"))
         tag = inverse_mod(self.credential.m1 + nonce, GroupP384().order()) * generator_T
         V = (z * self.credential.X1) - (r * GenG)
         m1_tag = self.credential.m1 * tag
@@ -213,7 +213,7 @@ class Server(object):
         if presentation.nonce < 0 or presentation.nonce >= presentation_limit:
             raise Exception("InvalidNonce")
         
-        generator_T = hash_to_group(presentation_context, to_bytes("-Tag"))
+        generator_T = hash_to_group(presentation_context, to_bytes("Tag"))
         m1_tag = generator_T - (presentation.nonce * presentation.tag)
         return PresentationProof.verify(private_key, public_key, request_context, presentation_context, presentation, m1_tag)
 
