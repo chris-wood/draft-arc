@@ -1812,7 +1812,8 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
    b805af308a9bd697df7c97b0f1147108c3a
 
    // Presentation1
-   presentation_context = test presentation context
+   presentation_context = 746573742070726573656e746174696f6e20636f6e746
+   57874
    a = ad00ec0f71b7a8fb7c0aef35c7243e17b78e57df8f0a95d102ff12bbb97e15ed
    35c23e54f9b4483d30b76772ee60d886
    r = e5cab8c896187b61abe017e57022528742252210dd60ddbbf1a57e3b144e26dd
@@ -1838,7 +1839,8 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
    000000000004
 
    // Presentation2
-   presentation_context = test presentation context
+   presentation_context = 746573742070726573656e746174696f6e20636f6e746
+   57874
    a = a8e630484ba024bf9363805bc7a45f1695bcf45150a61f5c44a6cfbf343cd9e0
    f593f127b6f49bec0f9b20f0550504a2
    r = df6d39c3c0716d7cf8093073168bf967d7ed72750b6d366ed0febdc539b52d89
