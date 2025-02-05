@@ -200,7 +200,7 @@ class PresentationProof(object):
 
         m2 = hash_to_scalar(request_context, to_bytes("requestContext"))
         V = server_private_key.x0 * presentation.U + server_private_key.x1 * presentation.m1_commit + server_private_key.x2 * m2 * presentation.U - presentation.U_prime_commit
-        generator_T = hash_to_group(presentation_context, to_bytes("tag"))
+        generator_T = hash_to_group(presentation_context, to_bytes("Tag"))
 
         m1_var = verifier.append_scalar("m1")
         z_var = verifier.append_scalar("z")

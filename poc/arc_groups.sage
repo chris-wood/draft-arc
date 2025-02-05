@@ -3,7 +3,7 @@ from util import to_bytes
 
 G = GroupP384()
 
-context_string = "ARCV1-P384-SHA384"
+context_string = "ARCV1-P384"
 
 def hash_to_group(x, info):
     dst = to_bytes("HashToGroup-") + to_bytes(context_string) + info
