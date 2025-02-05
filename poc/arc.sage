@@ -51,7 +51,7 @@ class PresentationState(object):
         nonce = len(self.presentation_nonce_set)
         self.presentation_nonce_set.append(nonce)
 
-        generator_T = hash_to_group(self.presentation_context, to_bytes("tag"))
+        generator_T = hash_to_group(self.presentation_context, to_bytes("-Tag"))
         tag = inverse_mod(self.credential.m1 + nonce, GroupP384().order()) * generator_T
         V = (z * self.credential.X1) - (r * GenG)
         m1_tag = self.credential.m1 * tag
@@ -59,12 +59,11 @@ class PresentationState(object):
         proof = PresentationProof.prove(U, U_prime_commit, m1_commit, tag, generator_T, self.credential, V, r, z, nonce, m1_tag, rng)
         presentation = Presentation(U, U_prime_commit, m1_commit, nonce, tag, proof)
 
+        vectors["presentation_context"] = self.presentation_context.decode('utf-8')
         vectors["a"] = to_hex(G.serialize_scalar(a))
         vectors["r"] = to_hex(G.serialize_scalar(r))
         vectors["z"] = to_hex(G.serialize_scalar(z))
-        vectors["generator_T"] = to_hex(G.serialize(generator_T))
         vectors["U"] = to_hex(G.serialize(U))
-        vectors["U_prime"] = to_hex(G.serialize(U_prime))
         vectors["U_prime_commit"] = to_hex(G.serialize(U_prime_commit))
         vectors["m1_commit"] = to_hex(G.serialize(m1_commit))
         vectors["nonce"] = hex(nonce)
@@ -214,7 +213,7 @@ class Server(object):
         if presentation.nonce < 0 or presentation.nonce >= presentation_limit:
             raise Exception("InvalidNonce")
         
-        generator_T = hash_to_group(presentation_context, to_bytes("tag")) 
+        generator_T = hash_to_group(presentation_context, to_bytes("-Tag"))
         m1_tag = generator_T - (presentation.nonce * presentation.tag)
         return PresentationProof.verify(private_key, public_key, request_context, presentation_context, presentation, m1_tag)
 
