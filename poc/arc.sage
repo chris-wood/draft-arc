@@ -59,7 +59,7 @@ class PresentationState(object):
         proof = PresentationProof.prove(U, U_prime_commit, m1_commit, tag, generator_T, self.credential, V, r, z, nonce, m1_tag, rng)
         presentation = Presentation(U, U_prime_commit, m1_commit, nonce, tag, proof)
 
-        vectors["presentation_context"] = self.presentation_context.decode('utf-8')
+        vectors["presentation_context"] = to_hex(self.presentation_context)
         vectors["a"] = to_hex(G.serialize_scalar(a))
         vectors["r"] = to_hex(G.serialize_scalar(r))
         vectors["z"] = to_hex(G.serialize_scalar(z))
