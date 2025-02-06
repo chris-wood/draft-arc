@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-02-04T00:08:20.296979+00:00",
+  "timestamp": "2025-02-06T00:08:33.702149+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -167,26 +167,175 @@
       "id": "PR_kwDONyB6uM6J6Zt9",
       "title": "Add privacy pass security considerations",
       "url": "https://github.com/chris-wood/draft-arc/pull/3",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "cathieyun",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Added some security considerations to the privacy pass section, working off of other specs:\r\n\r\nhttps://datatracker.ietf.org/doc/html/draft-ietf-privacypass-architecture-16#section-6\r\nhttps://datatracker.ietf.org/doc/draft-ietf-privacypass-public-metadata-issuance/\r\nhttps://datatracker.ietf.org/doc/rfc9497/\r\n\r\nSome of this repeats the security considerations in the ARC CFRG spec (eg Client Issuance Unlinkability), I'm not sure if it's okay to repeat across both specs, or where they would belong best.",
       "createdAt": "2025-02-03T22:24:38Z",
-      "updatedAt": "2025-02-03T22:35:38Z",
+      "updatedAt": "2025-02-04T01:13:12Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "a85a40173e014733ffe96e625c73399b43d19e13",
       "headRepository": "chris-wood/draft-arc",
       "headRefName": "cathie/pp-security",
       "headRefOid": "91c301950da1cc6dbb71a062425d256af4e30f2c",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-02-04T01:13:12Z",
+      "mergedAt": "2025-02-04T01:13:12Z",
+      "mergedBy": "cathieyun",
+      "mergeCommit": {
+        "oid": "2f07972788431435b16750677c88ca2f14e33cf1"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDONyB6uM6adea4",
+          "commit": {
+            "abbreviatedOid": "91c3019"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-02-04T00:15:17Z",
+          "updatedAt": "2025-02-04T00:15:17Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "id": "PR_kwDONyB6uM6KB0It",
+      "title": "Collapse security considerations",
+      "url": "https://github.com/chris-wood/draft-arc/pull/4",
+      "state": "MERGED",
+      "author": "chris-wood",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "We defined a lot of these things in the architecture document, so I just used that language. Also, I fixed two things: (1) we don't send \"presentations,\" we send \"tokens\", and (2) the presentation context is the token challenge (and some other stuff); it's not some agreed-upon value between client and origin/issuer.",
+      "createdAt": "2025-02-04T17:09:09Z",
+      "updatedAt": "2025-02-04T20:17:31Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "2f07972788431435b16750677c88ca2f14e33cf1",
+      "headRepository": "chris-wood/draft-arc",
+      "headRefName": "caw/pp",
+      "headRefOid": "6643014bb397ef96bd592ab7db2df337d4982983",
+      "closedAt": "2025-02-04T20:17:31Z",
+      "mergedAt": "2025-02-04T20:17:31Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "f9f8ca5daa5442fc9b9376d44c1a1e46e8298531"
+      },
+      "comments": [
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "LGTM! Thanks for cleaning up the wording, I wasn't sure about some of the terminology.",
+          "createdAt": "2025-02-04T20:13:25Z",
+          "updatedAt": "2025-02-04T20:14:16Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDONyB6uM6amn2h",
+          "commit": {
+            "abbreviatedOid": "6643014"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-02-04T19:14:01Z",
+          "updatedAt": "2025-02-04T19:14:01Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "id": "PR_kwDONyB6uM6KGYl5",
+      "title": "Reference implementation / test vector updates",
+      "url": "https://github.com/chris-wood/draft-arc/pull/5",
+      "state": "MERGED",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Small changes and cleanups I came across while working on interoperability for the test vectors - mostly domain separator updates. I also removed some unnecessary fields from the Presentation (generatorT, U_prime) and added presentation_context. \r\n\r\nIMO the test vectors should have presentation_context, for presentation creation. I see that generatorT is included currently, which can be a proxy for presentation_context, but it seems better to use presentation_context directly (it also is a bit weird to make the ARC implementation take in a generatorT from a test vector, during presentation creation), so I removed it.",
+      "createdAt": "2025-02-05T07:52:27Z",
+      "updatedAt": "2025-02-05T23:03:30Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "f9f8ca5daa5442fc9b9376d44c1a1e46e8298531",
+      "headRepository": "chris-wood/draft-arc",
+      "headRefName": "cathie/testvectors",
+      "headRefOid": "497187e26cf19295f769c9c3c68fd83c640a90d5",
+      "closedAt": "2025-02-05T23:03:30Z",
+      "mergedAt": "2025-02-05T23:03:30Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "f94fdf1fac0bfd6b5a92c530c915adebb72add49"
+      },
+      "comments": [
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Ok, I'm happy to keep the labels in line with the spec (so as not to change the spec).\r\n\r\nBut even then, we'll need a few tweaks here and there in the poc, like capitalizing \"tag\" in `generator_T = hash_to_group(self.presentation_context, to_bytes(\"tag\"))` to get them in sync.",
+          "createdAt": "2025-02-05T16:49:39Z",
+          "updatedAt": "2025-02-05T16:57:33Z"
+        },
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The reference implementation is now in line with the spec, from what I can tell. I didn't change the spec itself.\r\nAnd I updated the presentation context encoding to hex. \r\nPTAL :)",
+          "createdAt": "2025-02-05T18:00:05Z",
+          "updatedAt": "2025-02-05T18:00:05Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDONyB6uM6aukrC",
+          "commit": {
+            "abbreviatedOid": "e1b90d1"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "CHANGES_REQUESTED",
+          "body": "The label changes don't match the spec. Can we please keep them as-is?",
+          "createdAt": "2025-02-05T14:11:08Z",
+          "updatedAt": "2025-02-05T14:12:03Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "This should be in hex like the other test vectors.",
+              "createdAt": "2025-02-05T14:11:08Z",
+              "updatedAt": "2025-02-05T14:12:03Z"
+            },
+            {
+              "originalPosition": 5,
+              "body": "This doesn't match the spec:\r\n\r\n```\r\n  generatorT = G.HashToGroup(presentationContext, \"Tag\")\r\n```",
+              "createdAt": "2025-02-05T14:11:40Z",
+              "updatedAt": "2025-02-05T14:12:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM6azdXT",
+          "commit": {
+            "abbreviatedOid": "497187e"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-02-05T23:03:25Z",
+          "updatedAt": "2025-02-05T23:03:25Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
