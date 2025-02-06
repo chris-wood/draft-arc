@@ -672,7 +672,6 @@ Inputs:
   - U: Element, re-randomized from the U in the response.
   - UPrimeCommit: Element, a public key to the issued UPrime.
   - m1Commit: Element, a public key to the client secret (m1).
-  - nonce: Integer, the nonce associated with this presentation.
   - tag: Element, the tag element used for enforcing the presentation limit.
   - presentationProof: ZKProof, a proof of correct generation of the presentation.
 - presentationLimit: Integer, the fixed presentation limit.
