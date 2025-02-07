@@ -1055,7 +1055,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Yun &amp; Wood</td>
-<td class="center">Expires 10 August 2025</td>
+<td class="center">Expires 11 August 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1068,12 +1068,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-yun-cfrg-arc-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-02-06" class="published">6 February 2025</time>
+<time datetime="2025-02-07" class="published">7 February 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-08-10">10 August 2025</time></dd>
+<dd class="expires"><time datetime="2025-08-11">11 August 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1134,7 +1134,7 @@ rate-limit access from anonymous clients.<a href="#section-abstract-1" class="pi
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 10 August 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 11 August 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -2521,8 +2521,8 @@ def VerifyCredentialRequestProof(request):
   4a. HAux = b * generatorH
   4b: X0Aux = x0Blinding * HAux (= b * x0Blinding * generatorH)
 5. X1Aux = b * x1 * generatorH
-  5a. X1Aux = b * X1 (X1 = x1 * generatorH)
-  5b. X1Aux = t1 * generatorH (t1 = b * x1)
+  5a. X1Aux = t1 * generatorH (t1 = b * x1)
+  5b. X1Aux = b * X1 (X1 = x1 * generatorH)
 6. X2Aux = b * x2 * generatorH
   6a. X2Aux = b * X2 (X2 = x2 * generatorH)
   6b. X2Aux = t2 * generatorH (t2 = b * x2)
@@ -2603,7 +2603,7 @@ def MakeCredentialResponseProof(serverPrivateKey, serverPublicKey, request, b, U
 
   # 1. X0 = x0 * generatorG + x0Blinding * generatorH
   prover.Constrain(X0Var, [(x0Var, genGVar), (x0BlindingVar, genHVar)])
-  # 2. 2. X1 = x1 * generatorH
+  # 2. X1 = x1 * generatorH
   prover.Constrain(X1Var, [(x1Var, genHVar)])
   # 3. X2 = x2 * generatorH
   prover.Constrain(X2Var, [(x2Var, genHVar)])
@@ -2614,10 +2614,10 @@ def MakeCredentialResponseProof(serverPrivateKey, serverPublicKey, request, b, U
   # 4b: X0Aux = x0Blinding * HAux (= b * x0Blinding * generatorH)
   prover.Constrain(X0AuxVar, [(x0BlindingVar, HAuxVar)])
 
-  #5. X1Aux = b * x1 * generatorH
-  # 5a. X1Aux = b * X1 (X1 = x1 * generatorH)
+  # 5. X1Aux = b * x1 * generatorH
+  # 5a. X1Aux = t1 * generatorH (t1 = b * x1)
   prover.Constrain(X1AuxVar, [(t1Var, genHVar)])
-  # 5b. X1Aux = t1 * generatorH (t1 = b * x1)
+  # 5b. X1Aux = b * X1 (X1 = x1 * generatorH)
   prover.Constrain(X1AuxVar, [(bVar, X1Var)])
 
   # 6. X2Aux = b * x2 * generatorH
@@ -2707,7 +2707,7 @@ def VerifyCredentialResponseProof(serverPublicKey, response, request):
 
   # 1. X0 = x0 * generatorG + x0Blinding * generatorH
   verifier.Constrain(X0Var, [(x0Var, genGVar), (x0BlindingVar, genHVar)])
-  # 2. 2. X1 = x1 * generatorH
+  # 2. X1 = x1 * generatorH
   verifier.Constrain(X1Var, [(x1Var, genHVar)])
   # 3. X2 = x2 * generatorH
   verifier.Constrain(X2Var, [(x2Var, genHVar)])
@@ -2718,10 +2718,10 @@ def VerifyCredentialResponseProof(serverPublicKey, response, request):
   # 4b: X0Aux = x0Blinding * HAux (= b * x0Blinding * generatorH)
   verifier.Constrain(X0AuxVar, [(x0BlindingVar, HAuxVar)])
 
-  #5. X1Aux = b * x1 * generatorH
-  # 5a. X1Aux = b * X1 (X1 = x1 * generatorH)
+  # 5. X1Aux = b * x1 * generatorH
+  # 5a. X1Aux = t1 * generatorH (t1 = b * x1)
   verifier.Constrain(X1AuxVar, [(t1Var, genHVar)])
-  # 5b. X1Aux = t1 * generatorH (t1 = b * x1)
+  # 5b. X1Aux = b * X1 (X1 = x1 * generatorH)
   verifier.Constrain(X1AuxVar, [(bVar, X1Var)])
 
   # 6. X2Aux = b * x2 * generatorH
@@ -3131,6 +3131,7 @@ X2 = 028a9547a39d925bdd054706aa5ff7616c28aca94c92041c678970c52ee6572
 2f2c54d4f6cecba66abd721ecbcdb2b8a04
 
 // CredentialRequest
+request_context = 74657374207265717565737420636f6e74657874
 m1 = 5a32aaf031be0555089356d299ce24b0eedfe7939e2382934ab5b0f76aae441
 24955d2c5ebf9b41d88786259c34692d2
 m2 = ae93d3ea7e5856d5d951a0ae87f8845d767df2e97dd669c8025715e604cb1c4
