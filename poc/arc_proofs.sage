@@ -69,7 +69,7 @@ class CredentialResponseProof(object):
         # 1. X0 = x0 * generatorG + x0Blinding * generatorH
         prover.constrain(X0_var, [(x0_var, gen_G_var), (xb_var, gen_H_var)])
 
-        # 2. 2. X1 = x1 * generatorH
+        # 2. X1 = x1 * generatorH
         prover.constrain(X1_var, [(x1_var, gen_H_var)])
         
         # 3. X2 = x2 * generatorH
@@ -81,10 +81,10 @@ class CredentialResponseProof(object):
         # 4b: X0Aux = x0Blinding * HAux (= b * x0Blinding * generatorH)
         prover.constrain(X0_aux_var, [(xb_var, H_aux_var)])
 
-        #5. X1Aux = b * x1 * generatorH
-        # 5a. X1Aux = b * X1 (X1 = x1 * generatorH)
+        # 5. X1Aux = b * x1 * generatorH
+        # 5a. X1Aux = t1 * generatorH (t1 = b * x1)
         prover.constrain(X1_aux_var, [(t1_var, gen_H_var)])
-        # 5b. X1Aux = t1 * generatorH (t1 = b * x1)
+        # 5b. X1Aux = b * X1 (X1 = x1 * generatorH)
         prover.constrain(X1_aux_var, [(b_var, X1_var)])
 
         # 6. X2Aux = b * x2 * generatorH
@@ -130,7 +130,7 @@ class CredentialResponseProof(object):
         # 1. X0 = x0 * generatorG + x0Blinding * generatorH
         verifier.constrain(X0_var, [(x0_var, gen_G_var), (xb_var, gen_H_var)])
 
-        # 2. 2. X1 = x1 * generatorH
+        # 2. X1 = x1 * generatorH
         verifier.constrain(X1_var, [(x1_var, gen_H_var)])
         
         # 3. X2 = x2 * generatorH
@@ -142,10 +142,10 @@ class CredentialResponseProof(object):
         # 4b: X0Aux = x0Blinding * HAux (= b * x0Blinding * generatorH)
         verifier.constrain(X0_aux_var, [(xb_var, H_aux_var)])
 
-        #5. X1Aux = b * x1 * generatorH
-        # 5a. X1Aux = b * X1 (X1 = x1 * generatorH)
+        # 5. X1Aux = b * x1 * generatorH
+        # 5a. X1Aux = t1 * generatorH (t1 = b * x1)
         verifier.constrain(X1_aux_var, [(t1_var, gen_H_var)])
-        # 5b. X1Aux = t1 * generatorH (t1 = b * x1)
+        # 5b. X1Aux = b * X1 (X1 = x1 * generatorH)
         verifier.constrain(X1_aux_var, [(b_var, X1_var)])
 
         # 6. X2Aux = b * x2 * generatorH
