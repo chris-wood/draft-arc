@@ -135,6 +135,7 @@ class Client(object):
 
         context = CredentialRequestContext(client_secrets, blinded_request)
 
+        vectors["request_context"] = to_hex(request_context)
         vectors["m1"] = to_hex(G.serialize_scalar(m1))
         vectors["m2"] = to_hex(G.serialize_scalar(m2))
         vectors["r1"] = to_hex(G.serialize_scalar(r1))
