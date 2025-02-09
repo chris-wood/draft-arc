@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-02-06T00:08:33.702149+00:00",
+  "timestamp": "2025-02-09T00:09:24.145985+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -266,7 +266,7 @@
       "labels": [],
       "body": "Small changes and cleanups I came across while working on interoperability for the test vectors - mostly domain separator updates. I also removed some unnecessary fields from the Presentation (generatorT, U_prime) and added presentation_context. \r\n\r\nIMO the test vectors should have presentation_context, for presentation creation. I see that generatorT is included currently, which can be a proxy for presentation_context, but it seems better to use presentation_context directly (it also is a bit weird to make the ARC implementation take in a generatorT from a test vector, during presentation creation), so I removed it.",
       "createdAt": "2025-02-05T07:52:27Z",
-      "updatedAt": "2025-02-05T23:03:30Z",
+      "updatedAt": "2025-02-07T21:26:39Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "f9f8ca5daa5442fc9b9376d44c1a1e46e8298531",
@@ -336,6 +336,32 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 6,
+      "id": "PR_kwDONyB6uM6KeBnn",
+      "title": "Cleanup tasks",
+      "url": "https://github.com/chris-wood/draft-arc/pull/6",
+      "state": "OPEN",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Cleanup / documentation tasks:\r\n- Some proof documentation was incorrect - specifically, the comments for statements 5a and 5b in the response proof were in the wrong order. \r\n- Added request_context to the test vectors, so we can test that request_context gets hashed correctly to become m2. \r\n\r\nPotential additional tasks: \r\n- Currently, the ProofParticipant initializer ignores the input label, instead setting it to an empty string. We should actually use the label, to differentiate different proofs. However, I didn't make that change in this PR because it changes all the proof test vectors, which would be quite disruptive. Maybe this fix can get rolled into the next change the significantly alters the test vectors.",
+      "createdAt": "2025-02-07T21:09:57Z",
+      "updatedAt": "2025-02-07T21:10:36Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "f94fdf1fac0bfd6b5a92c530c915adebb72add49",
+      "headRepository": "chris-wood/draft-arc",
+      "headRefName": "cathie/nit",
+      "headRefOid": "54d37041cca74a12fbf4e460ab6f0b42eaee93ed",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
