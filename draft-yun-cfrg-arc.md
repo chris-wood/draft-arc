@@ -21,7 +21,7 @@ author:
     ins: C. Yun
     name: Cathie Yun
     organization: Apple, Inc.
-    email: cathie@apple.com
+    email: cathieyun@gmail.com
  -
     ins: C. A. Wood
     name: Christopher A. Wood
@@ -1323,7 +1323,7 @@ Parameters:
 - contextString: public input
 
 def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, presentationContext, credential, V, r, z, nonce, m1Tag)
-  prover = Prover(contextString + "PresentationProof")
+  prover = Prover(contextString + "CredentialPresentation")
 
   m1Var = prover.AppendScalar("m1", credential.m1)
   zVar = prover.AppendScalar("z", z)
@@ -1397,7 +1397,7 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
   V = serverPrivateKey.x0 * presentation.U + serverPrivateKey.x1 * presentation.m1Commit + serverPrivateKey.x2 * m2 * presentation.U - presentation.UPrimeCommit
   generatorT = G.HashToGroup(presentationContext, "Tag")
 
-  verifier = Verifier(contextString + "PresentationProof")
+  verifier = Verifier(contextString + "CredentialPresentation")
 
   m1Var = verifier.AppendScalar("m1")
   zVar = verifier.AppendScalar("z")

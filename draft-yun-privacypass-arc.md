@@ -22,7 +22,7 @@ author:
     ins: C. Yun
     name: Cathie Yun
     organization: Apple, Inc.
-    email: cathie@apple.com
+    email: cathieyun@gmail.com
  -
     ins: C. A. Wood
     name: Christopher A. Wood
