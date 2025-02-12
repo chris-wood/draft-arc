@@ -20,7 +20,7 @@ class Proof(object):
 
 class ProofParticipant(object):
     def __init__(self, label):
-        self.label = ""
+        self.label = label
         self.scalar_labels = []
         self.elements = []
         self.element_labels = []

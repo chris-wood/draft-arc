@@ -21,7 +21,7 @@ author:
     ins: C. Yun
     name: Cathie Yun
     organization: Apple, Inc.
-    email: cathie@apple.com
+    email: cathieyun@gmail.com
  -
     ins: C. A. Wood
     name: Christopher A. Wood
@@ -672,7 +672,6 @@ Inputs:
   - U: Element, re-randomized from the U in the response.
   - UPrimeCommit: Element, a public key to the issued UPrime.
   - m1Commit: Element, a public key to the client secret (m1).
-  - nonce: Integer, the nonce associated with this presentation.
   - tag: Element, the tag element used for enforcing the presentation limit.
   - presentationProof: ZKProof, a proof of correct generation of the presentation.
 - presentationLimit: Integer, the fixed presentation limit.
@@ -1066,8 +1065,8 @@ The response proof is a proof of knowledge of (x0, x1, x2, x0Blinding, b) used i
   4a. HAux = b * generatorH
   4b: X0Aux = x0Blinding * HAux (= b * x0Blinding * generatorH)
 5. X1Aux = b * x1 * generatorH
-  5a. X1Aux = b * X1 (X1 = x1 * generatorH)
-  5b. X1Aux = t1 * generatorH (t1 = b * x1)
+  5a. X1Aux = t1 * generatorH (t1 = b * x1)
+  5b. X1Aux = b * X1 (X1 = x1 * generatorH)
 6. X2Aux = b * x2 * generatorH
   6a. X2Aux = b * X2 (X2 = x2 * generatorH)
   6b. X2Aux = t2 * generatorH (t2 = b * x2)
@@ -1144,7 +1143,7 @@ def MakeCredentialResponseProof(serverPrivateKey, serverPublicKey, request, b, U
 
   # 1. X0 = x0 * generatorG + x0Blinding * generatorH
   prover.Constrain(X0Var, [(x0Var, genGVar), (x0BlindingVar, genHVar)])
-  # 2. 2. X1 = x1 * generatorH
+  # 2. X1 = x1 * generatorH
   prover.Constrain(X1Var, [(x1Var, genHVar)])
   # 3. X2 = x2 * generatorH
   prover.Constrain(X2Var, [(x2Var, genHVar)])
@@ -1155,10 +1154,10 @@ def MakeCredentialResponseProof(serverPrivateKey, serverPublicKey, request, b, U
   # 4b: X0Aux = x0Blinding * HAux (= b * x0Blinding * generatorH)
   prover.Constrain(X0AuxVar, [(x0BlindingVar, HAuxVar)])
 
-  #5. X1Aux = b * x1 * generatorH
-  # 5a. X1Aux = b * X1 (X1 = x1 * generatorH)
+  # 5. X1Aux = b * x1 * generatorH
+  # 5a. X1Aux = t1 * generatorH (t1 = b * x1)
   prover.Constrain(X1AuxVar, [(t1Var, genHVar)])
-  # 5b. X1Aux = t1 * generatorH (t1 = b * x1)
+  # 5b. X1Aux = b * X1 (X1 = x1 * generatorH)
   prover.Constrain(X1AuxVar, [(bVar, X1Var)])
 
   # 6. X2Aux = b * x2 * generatorH
@@ -1242,7 +1241,7 @@ def VerifyCredentialResponseProof(serverPublicKey, response, request):
 
   # 1. X0 = x0 * generatorG + x0Blinding * generatorH
   verifier.Constrain(X0Var, [(x0Var, genGVar), (x0BlindingVar, genHVar)])
-  # 2. 2. X1 = x1 * generatorH
+  # 2. X1 = x1 * generatorH
   verifier.Constrain(X1Var, [(x1Var, genHVar)])
   # 3. X2 = x2 * generatorH
   verifier.Constrain(X2Var, [(x2Var, genHVar)])
@@ -1253,10 +1252,10 @@ def VerifyCredentialResponseProof(serverPublicKey, response, request):
   # 4b: X0Aux = x0Blinding * HAux (= b * x0Blinding * generatorH)
   verifier.Constrain(X0AuxVar, [(x0BlindingVar, HAuxVar)])
 
-  #5. X1Aux = b * x1 * generatorH
-  # 5a. X1Aux = b * X1 (X1 = x1 * generatorH)
+  # 5. X1Aux = b * x1 * generatorH
+  # 5a. X1Aux = t1 * generatorH (t1 = b * x1)
   verifier.Constrain(X1AuxVar, [(t1Var, genHVar)])
-  # 5b. X1Aux = t1 * generatorH (t1 = b * x1)
+  # 5b. X1Aux = b * X1 (X1 = x1 * generatorH)
   verifier.Constrain(X1AuxVar, [(bVar, X1Var)])
 
   # 6. X2Aux = b * x2 * generatorH
@@ -1324,7 +1323,7 @@ Parameters:
 - contextString: public input
 
 def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, presentationContext, credential, V, r, z, nonce, m1Tag)
-  prover = Prover(contextString + "PresentationProof")
+  prover = Prover(contextString + "CredentialPresentation")
 
   m1Var = prover.AppendScalar("m1", credential.m1)
   zVar = prover.AppendScalar("z", z)
@@ -1398,7 +1397,7 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
   V = serverPrivateKey.x0 * presentation.U + serverPrivateKey.x1 * presentation.m1Commit + serverPrivateKey.x2 * m2 * presentation.U - presentation.UPrimeCommit
   generatorT = G.HashToGroup(presentationContext, "Tag")
 
-  verifier = Verifier(contextString + "PresentationProof")
+  verifier = Verifier(contextString + "CredentialPresentation")
 
   m1Var = verifier.AppendScalar("m1")
   zVar = verifier.AppendScalar("z")

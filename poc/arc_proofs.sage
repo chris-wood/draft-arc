@@ -69,7 +69,7 @@ class CredentialResponseProof(object):
         # 1. X0 = x0 * generatorG + x0Blinding * generatorH
         prover.constrain(X0_var, [(x0_var, gen_G_var), (xb_var, gen_H_var)])
 
-        # 2. 2. X1 = x1 * generatorH
+        # 2. X1 = x1 * generatorH
         prover.constrain(X1_var, [(x1_var, gen_H_var)])
         
         # 3. X2 = x2 * generatorH
@@ -81,10 +81,10 @@ class CredentialResponseProof(object):
         # 4b: X0Aux = x0Blinding * HAux (= b * x0Blinding * generatorH)
         prover.constrain(X0_aux_var, [(xb_var, H_aux_var)])
 
-        #5. X1Aux = b * x1 * generatorH
-        # 5a. X1Aux = b * X1 (X1 = x1 * generatorH)
+        # 5. X1Aux = b * x1 * generatorH
+        # 5a. X1Aux = t1 * generatorH (t1 = b * x1)
         prover.constrain(X1_aux_var, [(t1_var, gen_H_var)])
-        # 5b. X1Aux = t1 * generatorH (t1 = b * x1)
+        # 5b. X1Aux = b * X1 (X1 = x1 * generatorH)
         prover.constrain(X1_aux_var, [(b_var, X1_var)])
 
         # 6. X2Aux = b * x2 * generatorH
@@ -130,7 +130,7 @@ class CredentialResponseProof(object):
         # 1. X0 = x0 * generatorG + x0Blinding * generatorH
         verifier.constrain(X0_var, [(x0_var, gen_G_var), (xb_var, gen_H_var)])
 
-        # 2. 2. X1 = x1 * generatorH
+        # 2. X1 = x1 * generatorH
         verifier.constrain(X1_var, [(x1_var, gen_H_var)])
         
         # 3. X2 = x2 * generatorH
@@ -142,10 +142,10 @@ class CredentialResponseProof(object):
         # 4b: X0Aux = x0Blinding * HAux (= b * x0Blinding * generatorH)
         verifier.constrain(X0_aux_var, [(xb_var, H_aux_var)])
 
-        #5. X1Aux = b * x1 * generatorH
-        # 5a. X1Aux = b * X1 (X1 = x1 * generatorH)
+        # 5. X1Aux = b * x1 * generatorH
+        # 5a. X1Aux = t1 * generatorH (t1 = b * x1)
         verifier.constrain(X1_aux_var, [(t1_var, gen_H_var)])
-        # 5b. X1Aux = t1 * generatorH (t1 = b * x1)
+        # 5b. X1Aux = b * X1 (X1 = x1 * generatorH)
         verifier.constrain(X1_aux_var, [(b_var, X1_var)])
 
         # 6. X2Aux = b * x2 * generatorH
@@ -165,7 +165,7 @@ class CredentialResponseProof(object):
 class PresentationProof(object):
     @classmethod
     def prove(cls, U, U_prime_commit, m1_commit, tag, generator_T, credential, V, r, z, nonce, m1_tag, rng):
-        prover = Prover(context_string + "PresentationProof", rng)
+        prover = Prover(context_string + "CredentialPresentation", rng)
 
         m1_var = prover.append_scalar("m1", credential.m1)
         z_var = prover.append_scalar("z", z)
@@ -196,7 +196,7 @@ class PresentationProof(object):
 
     @classmethod
     def verify(cls, server_private_key, server_public_key, request_context, presentation_context, presentation, m1_tag):
-        verifier = Verifier(context_string + "PresentationProof")
+        verifier = Verifier(context_string + "CredentialPresentation")
 
         m2 = hash_to_scalar(request_context, to_bytes("requestContext"))
         V = server_private_key.x0 * presentation.U + server_private_key.x1 * presentation.m1_commit + server_private_key.x2 * m2 * presentation.U - presentation.U_prime_commit
