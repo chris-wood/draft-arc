@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-02-20T00:08:42.659077+00:00",
+  "timestamp": "2025-02-23T00:09:23.840151+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -49,7 +49,40 @@
       "color": "ffffff"
     }
   ],
-  "issues": [],
+  "issues": [
+    {
+      "number": 7,
+      "id": "I_kwDONyB6uM6rFQ2R",
+      "title": "Use ZKProof spec for generation of Schnorr proofs",
+      "url": "https://github.com/chris-wood/draft-arc/issues/7",
+      "state": "OPEN",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Currently, ARC defines and uses its own ZKP Schnorr compiler.\nTo reuse redundancy and reuse tooling across projects, it would be better to use the ZKProof spec defined here:\nhttps://mmaker.github.io/spfs/draft-orru-zkproof-sigma.html#name-ciphersuites\n\nHowever, adopting the ZKProof spec is blocking on it having a reference implementation and test vectors, which I filed an issue for here:\nhttps://github.com/mmaker/spfs/issues/1",
+      "createdAt": "2025-02-22T00:36:06Z",
+      "updatedAt": "2025-02-22T00:36:06Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 8,
+      "id": "I_kwDONyB6uM6rFSQW",
+      "title": "Define ARC protocol over a generic MAC protocol",
+      "url": "https://github.com/chris-wood/draft-arc/issues/8",
+      "state": "OPEN",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Currently, the ARC protocol is defined in relation to the CMZ14 MAC_GGM protocol. To more clearly illustrate which parts of the protocol are specific to ARC, and which can be generic over any MAC, we should define the ARC protocol over a generic MAC protocol, and then specify that MAC as CMZ14 MAC_GGM in a following section. \n\nThis will make it easier to later introduce different MAC backends, which have different tradeoffs (eg BBS MAC, muCMZ MAC, etc) without changing the protocol itself. \n\nThe initial change (defining the ARC protocol over a generic MAC, and defining CMZ14 MAC_GGM in a different section) will not change the functionality (test vectors will not be affected, for example) and is primarily editorial.",
+      "createdAt": "2025-02-22T00:42:00Z",
+      "updatedAt": "2025-02-22T00:42:00Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
   "pulls": [
     {
       "number": 1,
