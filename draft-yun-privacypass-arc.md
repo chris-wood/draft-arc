@@ -30,7 +30,7 @@ author:
     email: caw@heapingbits.net
 
 normative:
-  ARC: I-D.yun-cfrg-arc
+  ARC: I-D.draft-yun-cfrg-arc-00
   ARCHITECTURE: RFC9576
   AUTHSCHEME: RFC9577
   ISSUANCE: RFC9578
@@ -60,7 +60,7 @@ This means that applications which wish to limit access to a given user, e.g.,
 for the purposes of throttling or rate limiting them, must issue one token
 for each redemption.
 
-The Anonymous Rate-Limited Credential (ARC) protocol, as specified in [TODO],
+The Anonymous Rate-Limited Credential (ARC) protocol, as specified in {{ARC}},
 offers a more scalable approach to rate limiting. In particular, ARC credentials
 can be issued once and then presented (or redeemed) up to some fixed-amount
 of time for distinct, per-origin presentation contexts. This means that a Client
