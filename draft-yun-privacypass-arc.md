@@ -244,7 +244,7 @@ the Client first creates a credential request message using the `CredentialReque
 function from {{ARC}} as follows:
 
 ~~~
-request_context = concat(tokenChallenge.issuer_name, 
+request_context = concat(tokenChallenge.issuer_name,
   tokenChallenge.origin_info,
   tokenChallenge.credential_context,
   issuer_key_id)
