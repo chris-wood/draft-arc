@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-02-23T00:09:23.840151+00:00",
+  "timestamp": "2025-02-25T00:11:36.725052+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -62,9 +62,31 @@
       "labels": [],
       "body": "Currently, ARC defines and uses its own ZKP Schnorr compiler.\nTo reuse redundancy and reuse tooling across projects, it would be better to use the ZKProof spec defined here:\nhttps://mmaker.github.io/spfs/draft-orru-zkproof-sigma.html#name-ciphersuites\n\nHowever, adopting the ZKProof spec is blocking on it having a reference implementation and test vectors, which I filed an issue for here:\nhttps://github.com/mmaker/spfs/issues/1",
       "createdAt": "2025-02-22T00:36:06Z",
-      "updatedAt": "2025-02-22T00:36:06Z",
+      "updatedAt": "2025-02-24T20:28:12Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "body": "@mmaker, it looks like this draft is still unpublished, so we can't use it yet (beyond the reference implementation and test vector issue that Cathie mentioned above). What is your plan to get this published and worked on in the IETF?",
+          "createdAt": "2025-02-24T18:11:33Z",
+          "updatedAt": "2025-02-24T18:11:33Z"
+        },
+        {
+          "author": "mmaker",
+          "authorAssociation": "NONE",
+          "body": "@chris-wood  I'm happy to have it worked with the IETF and integrate your compiler into one that can be compatible also with other specs.\nCan you give me ~1week-10days to publish an implementation?\n",
+          "createdAt": "2025-02-24T20:16:07Z",
+          "updatedAt": "2025-02-24T20:17:37Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "body": "Sorry, let me rephrase: do you intend to submit this to the [datatracker](https://datatracker.ietf.org)? As it stands now, the specification _does not exist_, because it's not published on the dataracker. In order for us to use it, we need it to be published in the datatracker. Additionally, are you opposed to co-authors on that specification? (If not, I recommend @cathieyun join to help out!) It will progress faster through the IETF that way.\n\nAnd yeah, there's no rush for the implementation. We're not blocked by any of this. We can move to a separate ZKP compiler if and when it becomes available. Until then, we will continue using the one specified in our draft.",
+          "createdAt": "2025-02-24T20:19:08Z",
+          "updatedAt": "2025-02-24T20:28:12Z"
+        }
+      ]
     },
     {
       "number": 8,
@@ -79,6 +101,54 @@
       "body": "Currently, the ARC protocol is defined in relation to the CMZ14 MAC_GGM protocol. To more clearly illustrate which parts of the protocol are specific to ARC, and which can be generic over any MAC, we should define the ARC protocol over a generic MAC protocol, and then specify that MAC as CMZ14 MAC_GGM in a following section. \n\nThis will make it easier to later introduce different MAC backends, which have different tradeoffs (eg BBS MAC, muCMZ MAC, etc) without changing the protocol itself. \n\nThe initial change (defining the ARC protocol over a generic MAC, and defining CMZ14 MAC_GGM in a different section) will not change the functionality (test vectors will not be affected, for example) and is primarily editorial.",
       "createdAt": "2025-02-22T00:42:00Z",
       "updatedAt": "2025-02-22T00:42:00Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 10,
+      "id": "I_kwDONyB6uM6rbGWx",
+      "title": "Statistical anonymity is not (yet) achieved",
+      "url": "https://github.com/chris-wood/draft-arc/issues/10",
+      "state": "OPEN",
+      "author": "mmaker",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "The specification currently writes:\n\n> The resulting request is therefore perfetly hiding, and independent from other requests from the same client. More details about this unlinkability property can be found in {{KVAC}} and {{REVISITING_KVAC}}.\n\nThis is not true. The  public parameters in your spec `X_0` is defined as\n```\n  X0 = x0 * G.GeneratorG() + x0Blinding * G.GeneratorH()\n```\nwhich is only computationally binding. \nAn adversary breaking DL could in theory find `x0` and `x0'`, both committing to `X0`, and use them to sign different credentials. \n\nThis is the reason why in {{REVISITING_KVAC}} I **don't** set `X0` in this way. \nIn order to achieve stronger privacy you need to commit to X0 differently. \n\n(Nitpick: I am also not sure how you can get more than statistical anonymity, from thm 5.10 you also need soundness of the user proofs.)",
+      "createdAt": "2025-02-24T19:53:28Z",
+      "updatedAt": "2025-02-24T19:53:28Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 11,
+      "id": "I_kwDONyB6uM6rbV1E",
+      "title": "Improve issuance of credentials, from linear to constant communication",
+      "url": "https://github.com/chris-wood/draft-arc/issues/11",
+      "state": "OPEN",
+      "author": "mmaker",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "You can change the issuance protocol and have half communication on the server side and the client side.\nFor generic credentials, this is a constant vs linear improvement. \n\nReplace \n```\n  m1Enc = m1 * generatorG + r1 * generatorH\n  m2Enc = m2 * generatorG + r2 * generatorH\n```\n\nWith\n```\nmEnc = m1 * X1 + m2 * X2 + r * generatorG\n```\n\nas in {{REVISITING_KVAC}}",
+      "createdAt": "2025-02-24T20:25:33Z",
+      "updatedAt": "2025-02-24T20:26:10Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 12,
+      "id": "I_kwDONyB6uM6rb8z_",
+      "title": "Reference implementation cleanup: seeded PRNGs for test vectors",
+      "url": "https://github.com/chris-wood/draft-arc/issues/12",
+      "state": "OPEN",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Currently we get deterministic ZKP output by using an incrementing counter for blinding:\nhttps://github.com/chris-wood/draft-arc/blob/main/poc/zkp.sage#L62\n\nWe should move to a seeded PRNG instead, this is better practice. \n\n(Suggestion from Michele / @mmaker)",
+      "createdAt": "2025-02-24T21:47:37Z",
+      "updatedAt": "2025-02-24T21:47:37Z",
       "closedAt": null,
       "comments": []
     }
@@ -424,6 +494,86 @@
           "createdAt": "2025-02-12T16:19:00Z",
           "updatedAt": "2025-02-12T16:19:00Z",
           "comments": []
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "id": "PR_kwDONyB6uM6MM1HU",
+      "title": "Fixing nits",
+      "url": "https://github.com/chris-wood/draft-arc/pull/9",
+      "state": "OPEN",
+      "author": "thibmeu",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Small editorial nits",
+      "createdAt": "2025-02-23T15:41:17Z",
+      "updatedAt": "2025-02-24T18:04:38Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "7c4fa7e7b36d94ba140f6ef36a3b71cd4f9529d1",
+      "headRepository": "thibmeu/draft-arc",
+      "headRefName": "main",
+      "headRefOid": "3dde9c120cd584c2ad2ff38a4f8a0445238e8911",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDONyB6uM6dPLoU",
+          "commit": {
+            "abbreviatedOid": "49371a3"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-24T18:03:07Z",
+          "updatedAt": "2025-02-24T18:03:07Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\n  ARC: I-D.draft-yun-cfrg-arc\r\n```",
+              "createdAt": "2025-02-24T18:03:07Z",
+              "updatedAt": "2025-02-24T18:03:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM6dPOIq",
+          "commit": {
+            "abbreviatedOid": "3dde9c1"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "Thanks!",
+          "createdAt": "2025-02-24T18:04:05Z",
+          "updatedAt": "2025-02-24T18:04:05Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDONyB6uM6dPPgy",
+          "commit": {
+            "abbreviatedOid": "49371a3"
+          },
+          "author": null,
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-24T18:04:38Z",
+          "updatedAt": "2025-02-24T18:04:38Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "I did not know that was supported. That's nice",
+              "createdAt": "2025-02-24T18:04:38Z",
+              "updatedAt": "2025-02-24T18:04:38Z"
+            }
+          ]
         }
       ]
     }
