@@ -373,7 +373,7 @@ The length of this encoded request structure is `Nrequest = 2*Ne + 5*Ns`.
 Given a credential request and server public and private keys, the process
 for creating a credential response is as follows.
 
-~~~ psuedocode
+~~~ pseudocode
 response = CredentialResponse(serverPrivateKey, serverPublicKey, request)
 
 Inputs:
@@ -446,7 +446,7 @@ struct {
   uint8 response4[Ns];
   uint8 response5[Ns];
   uint8 response6[Ns];
-}
+} CredentialResponse
 ~~~
 
 The length of this encoded response structure is `Nresponse = 6*Ne + 8*Ns`.
@@ -642,7 +642,7 @@ struct {
   uint8 response2[Ns];
   uint8 response3[Ns];
   uint8 response4[Ns];
-}
+} Presentation
 ~~~
 
 The length of this structure is `Npresentation = 4*Ne + 6*Ns`.
@@ -1519,7 +1519,7 @@ necessary for these properties to hold.
 
 ## Credential Issuance Unlinkability
 
-Client credential requests are constructed such that the server cannot distinguish between any two credential requests from the same client and two requests from different clients. We refer to this property as issuance unlinkability. This property is achieved by the way the credential requests are constructed. In particular, each credential request consists of two Pedersen commitments with fresh blinding factors, which are used to commit to a freshly generated client secret and request context. The resulting request is therefore perfetly hiding, and independent from other requests from the same client. More details about this unlinkability property can be found in {{KVAC}} and {{REVISITING_KVAC}}.
+Client credential requests are constructed such that the server cannot distinguish between any two credential requests from the same client and two requests from different clients. We refer to this property as issuance unlinkability. This property is achieved by the way the credential requests are constructed. In particular, each credential request consists of two Pedersen commitments with fresh blinding factors, which are used to commit to a freshly generated client secret and request context. The resulting request is therefore perfectly hiding, and independent from other requests from the same client. More details about this unlinkability property can be found in {{KVAC}} and {{REVISITING_KVAC}}.
 
 ## Presentation Unlinkability {#pres-unlinkability}
 
