@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Informational                               Apple, Inc.
-Expires: 16 August 2025                                 12 February 2025
+Expires: 29 August 2025                                 25 February 2025
 
 
                    Anonymous Rate-Limited Credentials
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 16 August 2025.
+   This Internet-Draft will expire on 29 August 2025.
 
 Copyright Notice
 
@@ -528,7 +528,7 @@ def CredentialRequest(requestContext):
      uint8 response4[Ns];
      uint8 response5[Ns];
      uint8 response6[Ns];
-   }
+   } CredentialResponse
 
    The length of this encoded response structure is Nresponse = 6*Ne +
    8*Ns.
@@ -730,7 +730,7 @@ def Present(state):
      uint8 response2[Ns];
      uint8 response3[Ns];
      uint8 response4[Ns];
-   }
+   } Presentation
 
    The length of this structure is Npresentation = 4*Ne + 6*Ns.
 
@@ -1651,7 +1651,7 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
    credential request consists of two Pedersen commitments with fresh
    blinding factors, which are used to commit to a freshly generated
    client secret and request context.  The resulting request is
-   therefore perfetly hiding, and independent from other requests from
+   therefore perfectly hiding, and independent from other requests from
    the same client.  More details about this unlinkability property can
    be found in [KVAC] and [REVISITING_KVAC].
 
