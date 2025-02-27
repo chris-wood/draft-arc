@@ -183,9 +183,9 @@ structure is as follows:
 struct {
     uint16_t token_type = 0xC7D3; /* Type ARC(P-384) */
     opaque issuer_name<1..2^16-1>;
+    opaque redemption_context<0..32>;
     opaque origin_info<0..2^16-1>;
     opaque credential_context<0..32>;
-    opaque redemption_context<0..32>;
 } TokenChallenge;
 ~~~
 
