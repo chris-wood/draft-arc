@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-02-25T00:11:36.725052+00:00",
+  "timestamp": "2025-02-27T00:08:42.898300+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -62,7 +62,7 @@
       "labels": [],
       "body": "Currently, ARC defines and uses its own ZKP Schnorr compiler.\nTo reuse redundancy and reuse tooling across projects, it would be better to use the ZKProof spec defined here:\nhttps://mmaker.github.io/spfs/draft-orru-zkproof-sigma.html#name-ciphersuites\n\nHowever, adopting the ZKProof spec is blocking on it having a reference implementation and test vectors, which I filed an issue for here:\nhttps://github.com/mmaker/spfs/issues/1",
       "createdAt": "2025-02-22T00:36:06Z",
-      "updatedAt": "2025-02-24T20:28:12Z",
+      "updatedAt": "2025-02-25T11:01:28Z",
       "closedAt": null,
       "comments": [
         {
@@ -85,6 +85,20 @@
           "body": "Sorry, let me rephrase: do you intend to submit this to the [datatracker](https://datatracker.ietf.org)? As it stands now, the specification _does not exist_, because it's not published on the dataracker. In order for us to use it, we need it to be published in the datatracker. Additionally, are you opposed to co-authors on that specification? (If not, I recommend @cathieyun join to help out!) It will progress faster through the IETF that way.\n\nAnd yeah, there's no rush for the implementation. We're not blocked by any of this. We can move to a separate ZKP compiler if and when it becomes available. Until then, we will continue using the one specified in our draft.",
           "createdAt": "2025-02-24T20:19:08Z",
           "updatedAt": "2025-02-24T20:28:12Z"
+        },
+        {
+          "author": "mmaker",
+          "authorAssociation": "NONE",
+          "body": "I am happy to submit this to the datatracker. \nI am also happy to have co-authors: in fact, you and @cathieyun are already contributors with push access to the repository.\n\nHowever, this is also the first ietf spec I write, so please consider that if I don't do something it's just that I was not aware of the policy! \n(For instance, I thought it'd be added to the data tracker **after** sharing it with the cfrg, and to do so i needed to make a good case with other working groups and write an implementation that suits them.)",
+          "createdAt": "2025-02-25T05:39:38Z",
+          "updatedAt": "2025-02-25T05:39:50Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "body": "@mmaker understood, and no worries. You can (and should) submit to the datatracker frequently and often! This is just the place where IETF specifications live. IETF working groups and research groups require a draft to exist on the datatracker before it can be presented and considered for adoption. So, concretely, here's what I recommend you do:\n\n1. Update the co-authors to include whomever you like. (I think it's fine if you include me and Cathie -- our affiliation is included below).\n2. Submit to the datatracker.\n3. Share with CFRG and ask for time to present in Bangkok. \n\nThe reference implementation and test vectors can definitely come later, and that's OK. All that matters for now is that the draft be published so we can start \"the process.\" \n\nDoes that all make sense?\n\n------\n\nHere's the affiliation:\n\n```\nauthor:\n -\n    ins: C. Yun\n    name: Cathie Yun\n    organization: Apple, Inc.\n    email: cathieyun@gmail.com\n -\n    ins: C. A. Wood\n    name: Christopher A. Wood\n    org: Apple, Inc.\n    email: caw@heapingbits.net\n```",
+          "createdAt": "2025-02-25T11:01:25Z",
+          "updatedAt": "2025-02-25T11:01:25Z"
         }
       ]
     },
@@ -502,24 +516,26 @@
       "id": "PR_kwDONyB6uM6MM1HU",
       "title": "Fixing nits",
       "url": "https://github.com/chris-wood/draft-arc/pull/9",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "thibmeu",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Small editorial nits",
       "createdAt": "2025-02-23T15:41:17Z",
-      "updatedAt": "2025-02-24T18:04:38Z",
+      "updatedAt": "2025-02-25T19:54:53Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "7c4fa7e7b36d94ba140f6ef36a3b71cd4f9529d1",
       "headRepository": "thibmeu/draft-arc",
       "headRefName": "main",
       "headRefOid": "3dde9c120cd584c2ad2ff38a4f8a0445238e8911",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-02-25T19:54:53Z",
+      "mergedAt": "2025-02-25T19:54:53Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "9779d28674e161a1cea3962be58bb6796ebbb50e"
+      },
       "comments": [],
       "reviews": [
         {
@@ -572,6 +588,87 @@
               "body": "I did not know that was supported. That's nice",
               "createdAt": "2025-02-24T18:04:38Z",
               "updatedAt": "2025-02-24T18:04:38Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "id": "PR_kwDONyB6uM6MiM6G",
+      "title": "Add new TokenChallenge to separate credential and token construction",
+      "url": "https://github.com/chris-wood/draft-arc/pull/13",
+      "state": "OPEN",
+      "author": "chris-wood",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "cc @thibmeu, @tfpauly ",
+      "createdAt": "2025-02-25T21:20:20Z",
+      "updatedAt": "2025-02-26T17:33:27Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "9779d28674e161a1cea3962be58bb6796ebbb50e",
+      "headRepository": "chris-wood/draft-arc",
+      "headRefName": "caw/new-challenge",
+      "headRefOid": "6059e577af3e3df6dbb8bd75ba78160f308c710a",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "LGTM, thanks for adding this - this will help with credential expiry enforcement!",
+          "createdAt": "2025-02-25T21:26:47Z",
+          "updatedAt": "2025-02-25T21:26:47Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDONyB6uM6djQIf",
+          "commit": {
+            "abbreviatedOid": "6059e57"
+          },
+          "author": "thibmeu",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T06:41:00Z",
+          "updatedAt": "2025-02-26T06:48:27Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "This matches the ([yet-unwritten](https://datatracker.ietf.org/doc/html/draft-hendrickson-pp-attesterissuer-00#name-attester-to-issuer-request)) convention of putting token_type as the first byte.",
+              "createdAt": "2025-02-26T06:41:00Z",
+              "updatedAt": "2025-02-26T06:48:27Z"
+            },
+            {
+              "originalPosition": 18,
+              "body": "It would be great to reorder to have a structure that extends the Token Challenge Structure defined in [Section 2.1.1 of RFC9577](https://datatracker.ietf.org/doc/html/rfc9577#name-token-challenge-structure)\r\n```suggestion\r\n    opaque issuer_name<1..2^16-1>;\r\n    opaque redemption_context<0..32>;\r\n    opaque origin_info<0..2^16-1>;\r\n    opaque credential_context<0..32>;\r\n} TokenChallenge;\r\n```",
+              "createdAt": "2025-02-26T06:44:32Z",
+              "updatedAt": "2025-02-26T06:48:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM6drAQu",
+          "commit": {
+            "abbreviatedOid": "6059e57"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T17:33:26Z",
+          "updatedAt": "2025-02-26T17:33:27Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "I thought about extending it, but opted not to since this is new parsing code based on the token type anyway. What do you see as the value in extending it?",
+              "createdAt": "2025-02-26T17:33:26Z",
+              "updatedAt": "2025-02-26T17:33:27Z"
             }
           ]
         }
