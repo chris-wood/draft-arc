@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-02-27T00:08:42.898300+00:00",
+  "timestamp": "2025-03-02T00:09:23.601613+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -163,6 +163,22 @@
       "body": "Currently we get deterministic ZKP output by using an incrementing counter for blinding:\nhttps://github.com/chris-wood/draft-arc/blob/main/poc/zkp.sage#L62\n\nWe should move to a seeded PRNG instead, this is better practice. \n\n(Suggestion from Michele / @mmaker)",
       "createdAt": "2025-02-24T21:47:37Z",
       "updatedAt": "2025-02-24T21:47:37Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 14,
+      "id": "I_kwDONyB6uM6sL0dM",
+      "title": "NotImplementedError",
+      "url": "https://github.com/chris-wood/draft-arc/issues/14",
+      "state": "OPEN",
+      "author": "mmaker",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Python has a specific exception for not-implemented errors, called \"[NotImplementedError](https://docs.python.org/3/library/exceptions.html#NotImplementedError)\". This should be preferred to raising a string object \"Not implemented\"",
+      "createdAt": "2025-03-01T09:56:10Z",
+      "updatedAt": "2025-03-01T09:56:37Z",
       "closedAt": null,
       "comments": []
     }
@@ -605,13 +621,13 @@
       "labels": [],
       "body": "cc @thibmeu, @tfpauly ",
       "createdAt": "2025-02-25T21:20:20Z",
-      "updatedAt": "2025-02-26T17:33:27Z",
+      "updatedAt": "2025-02-27T16:27:29Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "9779d28674e161a1cea3962be58bb6796ebbb50e",
       "headRepository": "chris-wood/draft-arc",
       "headRefName": "caw/new-challenge",
-      "headRefOid": "6059e577af3e3df6dbb8bd75ba78160f308c710a",
+      "headRefOid": "8284c0fdad2def4d1153f7ad1dc6fe713779c733",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -669,6 +685,86 @@
               "body": "I thought about extending it, but opted not to since this is new parsing code based on the token type anyway. What do you see as the value in extending it?",
               "createdAt": "2025-02-26T17:33:26Z",
               "updatedAt": "2025-02-26T17:33:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM6dx--a",
+          "commit": {
+            "abbreviatedOid": "6059e57"
+          },
+          "author": "thibmeu",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-27T09:18:51Z",
+          "updatedAt": "2025-02-27T09:18:51Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "Mostly to match what exists. I agree this would be parsed anyway, but given this is the TokenChallenge it takes inspiration from at the moment could have the same order, I feel it makes sense to do it.",
+              "createdAt": "2025-02-27T09:18:51Z",
+              "updatedAt": "2025-02-27T09:18:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM6d15Fp",
+          "commit": {
+            "abbreviatedOid": "6059e57"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-27T15:17:01Z",
+          "updatedAt": "2025-02-27T15:17:01Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "I don't feel strongly, so I'm happy to take this.",
+              "createdAt": "2025-02-27T15:17:01Z",
+              "updatedAt": "2025-02-27T15:17:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM6d16NK",
+          "commit": {
+            "abbreviatedOid": "8284c0f"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-27T15:18:22Z",
+          "updatedAt": "2025-02-27T15:18:22Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "Isn't this specified [in the auth-scheme draft](https://ietf-wg-privacypass.github.io/base-drafts/draft-ietf-privacypass-auth-scheme.html#name-token-challenge-structure)?\r\n\r\n```\r\nAll token challenges MUST begin with a 2-octet integer that defines the token type, in network byte order. This type indicates the issuance protocol used to generate the token and determines the structure and semantics of the rest of the structure. Values are registered in an IANA registry, [Section 6.2](https://ietf-wg-privacypass.github.io/base-drafts/draft-ietf-privacypass-auth-scheme.html#token-types). Client MUST ignore challenges with token types they do not support.[\u00b6](https://ietf-wg-privacypass.github.io/base-drafts/draft-ietf-privacypass-auth-scheme.html#section-2.1.1-2)\r\n```",
+              "createdAt": "2025-02-27T15:18:22Z",
+              "updatedAt": "2025-02-27T15:18:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM6d2yQD",
+          "commit": {
+            "abbreviatedOid": "6059e57"
+          },
+          "author": "thibmeu",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-27T16:27:29Z",
+          "updatedAt": "2025-02-27T16:27:29Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "You are right. My bad. For the token challenge it works.",
+              "createdAt": "2025-02-27T16:27:29Z",
+              "updatedAt": "2025-02-27T16:27:29Z"
             }
           ]
         }
