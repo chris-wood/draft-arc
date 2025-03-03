@@ -641,11 +641,10 @@ struct {
   uint8 response1[Ns];
   uint8 response2[Ns];
   uint8 response3[Ns];
-  uint8 response4[Ns];
 } Presentation
 ~~~
 
-The length of this structure is `Npresentation = 4*Ne + 6*Ns`.
+The length of this structure is `Npresentation = 4*Ne + 5*Ns`.
 
 ### Presentation Verification
 
