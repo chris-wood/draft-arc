@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-02T00:09:23.601613+00:00",
+  "timestamp": "2025-03-04T00:08:42.878670+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -179,6 +179,70 @@
       "body": "Python has a specific exception for not-implemented errors, called \"[NotImplementedError](https://docs.python.org/3/library/exceptions.html#NotImplementedError)\". This should be preferred to raising a string object \"Not implemented\"",
       "createdAt": "2025-03-01T09:56:10Z",
       "updatedAt": "2025-03-01T09:56:37Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 16,
+      "id": "I_kwDONyB6uM6sXSHS",
+      "title": "MakePresentationState adds a nonce to the state",
+      "url": "https://github.com/chris-wood/draft-arc/issues/16",
+      "state": "OPEN",
+      "author": "karulont",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "The code block at https://chris-wood.github.io/draft-arc/draft-yun-cfrg-arc.html#name-presentation-state that describes making the presentation state (`MakePresentationState`) also adds a single random nonce to the `presentationNonceSet`. It seems to me that it is not required, because `Present` will also pick a random nonce and add it to the set of used nonces.",
+      "createdAt": "2025-03-03T16:55:06Z",
+      "updatedAt": "2025-03-03T16:55:06Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 17,
+      "id": "I_kwDONyB6uM6sXVn4",
+      "title": "PrivacyPass: Section 8.1 improvements",
+      "url": "https://github.com/chris-wood/draft-arc/issues/17",
+      "state": "OPEN",
+      "author": "karulont",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "1. [Section 8.1](https://chris-wood.github.io/draft-arc/draft-yun-privacypass-arc.html#name-token-creation) could define what `challenge_digest` is.\n2. Notice the difference in description between `token_type` and `presentation_nonce`.\n```\n\"token_type\" is a 2-octet integer, in network byte order, equal to 0xC7D3.\n\"presentation_nonce\" is a 32-bit encoding of the nonce output from ARC.\n```\nOne defines the byte order, the other does not specify which \"32-bit encoding\". I suggest to use \"4-octet integer, in network byte order\"",
+      "createdAt": "2025-03-03T16:59:57Z",
+      "updatedAt": "2025-03-03T16:59:57Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 18,
+      "id": "I_kwDONyB6uM6sXYXW",
+      "title": "PrivacyPass: Token Verification should mention checking the presentation tag.",
+      "url": "https://github.com/chris-wood/draft-arc/issues/18",
+      "state": "OPEN",
+      "author": "karulont",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "[Section 8.2 Token Verification](https://chris-wood.github.io/draft-arc/draft-yun-privacypass-arc.html#section-8.2)\nShould mention that to avoid double spending, we need to check that the presentation tag has not been observed before.\nIt is mentioned in the ARC spec, but not in the privacy pass adoption.",
+      "createdAt": "2025-03-03T17:04:55Z",
+      "updatedAt": "2025-03-03T17:04:55Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 19,
+      "id": "I_kwDONyB6uM6sXYrS",
+      "title": "PrivacyPass: Section 9: the last link to Section 7.2 of [AUTHSCHEME] should instead be to: Section 6.2 of [ARCHITECTURE]",
+      "url": "https://github.com/chris-wood/draft-arc/issues/19",
+      "state": "OPEN",
+      "author": "karulont",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "[Section 9](https://chris-wood.github.io/draft-arc/draft-yun-privacypass-arc.html#name-security-considerations): the last link to Section 7.2 of [AUTHSCHEME] should instead be to: Section 6.2 of [ARCHITECTURE]",
+      "createdAt": "2025-03-03T17:05:30Z",
+      "updatedAt": "2025-03-03T17:05:30Z",
       "closedAt": null,
       "comments": []
     }
@@ -614,24 +678,26 @@
       "id": "PR_kwDONyB6uM6MiM6G",
       "title": "Add new TokenChallenge to separate credential and token construction",
       "url": "https://github.com/chris-wood/draft-arc/pull/13",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "chris-wood",
       "authorAssociation": "OWNER",
       "assignees": [],
       "labels": [],
       "body": "cc @thibmeu, @tfpauly ",
       "createdAt": "2025-02-25T21:20:20Z",
-      "updatedAt": "2025-02-27T16:27:29Z",
+      "updatedAt": "2025-03-03T17:45:12Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "9779d28674e161a1cea3962be58bb6796ebbb50e",
       "headRepository": "chris-wood/draft-arc",
       "headRefName": "caw/new-challenge",
       "headRefOid": "8284c0fdad2def4d1153f7ad1dc6fe713779c733",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-03-03T17:45:12Z",
+      "mergedAt": "2025-03-03T17:45:12Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "08c54fd64f198e85d8a90827a45944cb52e5fec3"
+      },
       "comments": [
         {
           "author": "cathieyun",
@@ -767,6 +833,61 @@
               "updatedAt": "2025-02-27T16:27:29Z"
             }
           ]
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "id": "PR_kwDONyB6uM6NDipV",
+      "title": "Remove extra response from presentation struct",
+      "url": "https://github.com/chris-wood/draft-arc/pull/15",
+      "state": "MERGED",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fix a typo where I had an extra response field in the presentation struct",
+      "createdAt": "2025-03-02T06:56:23Z",
+      "updatedAt": "2025-03-03T17:44:56Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "9779d28674e161a1cea3962be58bb6796ebbb50e",
+      "headRepository": "chris-wood/draft-arc",
+      "headRefName": "cathie/typofix",
+      "headRefOid": "200ae5f53265189174d80a560cfc4fba88510784",
+      "closedAt": "2025-03-03T17:44:55Z",
+      "mergedAt": "2025-03-03T17:44:55Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "bf1ab809e30959ab97c743eb402d28fed786c37b"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDONyB6uM6eH4yg",
+          "commit": {
+            "abbreviatedOid": "200ae5f"
+          },
+          "author": "clangreformers",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "I have verified the change with test vectors. This change also matches [5.4.1. ]Presentation Proof Creation and [5.4.2. ] Presentation Proof Verification.\r\n\r\n-- Yingxian Wang",
+          "createdAt": "2025-03-03T00:19:26Z",
+          "updatedAt": "2025-03-03T00:19:26Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDONyB6uM6ePV5i",
+          "commit": {
+            "abbreviatedOid": "200ae5f"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-03-03T17:44:49Z",
+          "updatedAt": "2025-03-03T17:44:49Z",
+          "comments": []
         }
       ]
     }
