@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-06T00:08:57.859447+00:00",
+  "timestamp": "2025-03-09T00:07:53.940857+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -243,6 +243,22 @@
       "body": "[Section 9](https://chris-wood.github.io/draft-arc/draft-yun-privacypass-arc.html#name-security-considerations): the last link to Section 7.2 of [AUTHSCHEME] should instead be to: Section 6.2 of [ARCHITECTURE]",
       "createdAt": "2025-03-03T17:05:30Z",
       "updatedAt": "2025-03-03T17:05:30Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 20,
+      "id": "I_kwDONyB6uM6s1EU7",
+      "title": "PrivacyPass: Section 8.2 `request_context` and `presentation_context` are wrong",
+      "url": "https://github.com/chris-wood/draft-arc/issues/20",
+      "state": "OPEN",
+      "author": "karulont",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "What happened is that #13 changed the `request_context` and `presentation_context` definitions, but it forgot to update them in Section 8.2: Token Verification.",
+      "createdAt": "2025-03-06T07:30:14Z",
+      "updatedAt": "2025-03-06T07:30:40Z",
       "closedAt": null,
       "comments": []
     }
