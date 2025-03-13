@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-11T00:08:47.960020+00:00",
+  "timestamp": "2025-03-13T00:09:06.038726+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -259,6 +259,22 @@
       "body": "What happened is that #13 changed the `request_context` and `presentation_context` definitions, but it forgot to update them in Section 8.2: Token Verification.",
       "createdAt": "2025-03-06T07:30:14Z",
       "updatedAt": "2025-03-06T07:30:40Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 21,
+      "id": "I_kwDONyB6uM6tbECF",
+      "title": "Confusion between instances and objects",
+      "url": "https://github.com/chris-wood/draft-arc/issues/21",
+      "state": "OPEN",
+      "author": "mmaker",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "It seems there's some confusion about class attributes and instance attributes. For instance, in \n\nhttps://github.com/chris-wood/draft-arc/blob/main/poc/groups.sage#L220\n\nattributes like order, identity, etc can be accessed without instantiating the class (and it shouldn't be instantiated!)\nSame goes for other groups.\n\n",
+      "createdAt": "2025-03-11T08:10:03Z",
+      "updatedAt": "2025-03-11T08:10:03Z",
       "closedAt": null,
       "comments": []
     }
