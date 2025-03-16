@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-13T00:09:06.038726+00:00",
+  "timestamp": "2025-03-16T00:09:33.193787+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -275,6 +275,22 @@
       "body": "It seems there's some confusion about class attributes and instance attributes. For instance, in \n\nhttps://github.com/chris-wood/draft-arc/blob/main/poc/groups.sage#L220\n\nattributes like order, identity, etc can be accessed without instantiating the class (and it shouldn't be instantiated!)\nSame goes for other groups.\n\n",
       "createdAt": "2025-03-11T08:10:03Z",
       "updatedAt": "2025-03-11T08:10:03Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 22,
+      "id": "I_kwDONyB6uM6t59an",
+      "title": "PrivacyPass: 7.2. Issuer-to-Client Request: title should say \"Response\"",
+      "url": "https://github.com/chris-wood/draft-arc/issues/22",
+      "state": "OPEN",
+      "author": "karulont",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "To better align with [existing docs](https://www.rfc-editor.org/rfc/rfc9578.html#name-issuer-to-client-response-2): the title should be \"Issuer-to-Client Response\"",
+      "createdAt": "2025-03-13T15:53:20Z",
+      "updatedAt": "2025-03-13T15:53:20Z",
       "closedAt": null,
       "comments": []
     }
