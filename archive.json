@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-18T00:08:38.154929+00:00",
+  "timestamp": "2025-03-20T00:08:45.554686+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -293,6 +293,53 @@
       "updatedAt": "2025-03-13T15:53:20Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 23,
+      "id": "I_kwDONyB6uM6uluWU",
+      "title": "PrivacyPass: pointless renaming",
+      "url": "https://github.com/chris-wood/draft-arc/issues/23",
+      "state": "OPEN",
+      "author": "karulont",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "There are instances of things in the ARC privacypass proposal that rename things slightly when compared to the rest of the privacy pass documents. This increases friction for implementations which want to support multiple token types.\n\nConcrete examples where the previous term is replaced with a new slightly different name, but without changing the meaning.\n`token_key_id` -> `issuer_key_id`\n`truncated_token_key_id` -> `truncated_issuer_key_id`\n`application/private-token-request` -> `application/private-credential-request`\n`application/private-token-response` -> `application/private-credential-response`\n\nI do not believe that the new names add any extra value, but they might cause confusion(subjective opinion) and they will increase friction for implementations (objective opinion).",
+      "createdAt": "2025-03-18T16:28:31Z",
+      "updatedAt": "2025-03-18T16:28:31Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 24,
+      "id": "I_kwDONyB6uM6uqiLL",
+      "title": "Commonize handling process of presentationContext and nonce",
+      "url": "https://github.com/chris-wood/draft-arc/issues/24",
+      "state": "OPEN",
+      "author": "akakou",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "I notice that the presentationContext and nonce serve similar roles at the protocol level; however, they are incorporated differently. In my opinion, it might be simpler to define generatorT = H(presentationContext || nonce), or to set tag = g^{(H(presentationContext) + nonce + credential.m)}^{-1} instead. \n\nbut I have no confidence...Is it correct? ",
+      "createdAt": "2025-03-19T04:03:23Z",
+      "updatedAt": "2025-03-19T07:25:00Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "akakou",
+          "authorAssociation": "NONE",
+          "body": "(I like the first approach because it can minimize the complexity of handling secret keys. Moreover, it may be better for compatibility with secure hardware[1, 2], similar to a rate limiter with secure hardware storage.)\n\n[1] https://www.ndss-symposium.org/wp-content/uploads/2024-445-paper.pdf\n[2] https://github.com/akakou/scrappy/wiki/Scrappy-Extension-for-Counter-based-Rate%E2%80%90Limiting",
+          "createdAt": "2025-03-19T04:04:47Z",
+          "updatedAt": "2025-03-19T04:35:14Z"
+        },
+        {
+          "author": "akakou",
+          "authorAssociation": "NONE",
+          "body": "(In addition, is it impossible to eliminate the q-SDH assumption in the former case?)",
+          "createdAt": "2025-03-19T07:24:59Z",
+          "updatedAt": "2025-03-19T07:24:59Z"
+        }
+      ]
     }
   ],
   "pulls": [
