@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-27T00:08:50.795120+00:00",
+  "timestamp": "2025-03-30T00:09:41.949879+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -320,9 +320,9 @@
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
-      "body": "I notice that the presentationContext and nonce serve similar roles at the protocol level; however, they are incorporated differently. In my opinion, it might be simpler to define generatorT = H(presentationContext || nonce), or to set tag = g^{(H(presentationContext) + nonce + credential.m)}^{-1} instead. \n\nbut I have no confidence...Is it correct? ",
+      "body": "I notice that the presentationContext and nonce serve similar roles at the protocol level; however, they are incorporated differently. In my opinion, it might be simpler to define \n$generatorT = H(presentationContext || nonce)$\n, or to set \n$tag = g^{1/{(H(presentationContext) + nonce + credential.m)}}$\ninstead. \n\nbut I have no confidence...Is it correct? ",
       "createdAt": "2025-03-19T04:03:23Z",
-      "updatedAt": "2025-03-19T07:25:00Z",
+      "updatedAt": "2025-03-27T18:35:42Z",
       "closedAt": null,
       "comments": [
         {
@@ -335,9 +335,9 @@
         {
           "author": "akakou",
           "authorAssociation": "NONE",
-          "body": "(In addition, is it impossible to eliminate the q-SDH assumption in the former case?)",
+          "body": "(In addition, is it possible to eliminate the q-SDH assumption in the former case?)",
           "createdAt": "2025-03-19T07:24:59Z",
-          "updatedAt": "2025-03-19T07:24:59Z"
+          "updatedAt": "2025-03-27T18:32:11Z"
         }
       ]
     },
