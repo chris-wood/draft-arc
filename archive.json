@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-30T00:09:41.949879+00:00",
+  "timestamp": "2025-04-01T00:10:28.289185+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -320,24 +320,17 @@
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
-      "body": "I notice that the presentationContext and nonce serve similar roles at the protocol level; however, they are incorporated differently. In my opinion, it might be simpler to define \n$generatorT = H(presentationContext || nonce)$\n, or to set \n$tag = g^{1/{(H(presentationContext) + nonce + credential.m)}}$\ninstead. \n\nbut I have no confidence...Is it correct? ",
+      "body": "I notice that the presentationContext and nonce serve similar roles at the protocol level; \nhowever, they are incorporated differently. \n\nIn my opinion, it might be simpler to \n- define `generatorT = G.HashToGroup(presentationContext || nonce, \"Tag\")`, or to \n- set `tag = (credential.m1 + nonce + HashToScalar(presentationContext))^(-1) * generatorT` instead. \n\nbut I have no confidence...Is it correct? ",
       "createdAt": "2025-03-19T04:03:23Z",
-      "updatedAt": "2025-03-27T18:35:42Z",
+      "updatedAt": "2025-03-30T07:30:12Z",
       "closedAt": null,
       "comments": [
         {
           "author": "akakou",
           "authorAssociation": "NONE",
-          "body": "(I like the first approach because it can minimize the complexity of handling secret keys. Moreover, it may be better for compatibility with secure hardware[1, 2], similar to a rate limiter with secure hardware storage.)\n\n[1] https://www.ndss-symposium.org/wp-content/uploads/2024-445-paper.pdf\n[2] https://github.com/akakou/scrappy/wiki/Scrappy-Extension-for-Counter-based-Rate%E2%80%90Limiting",
+          "body": "I like the first approach because it can minimize the complexity of handling secret keys. Moreover, it may be better for compatibility with secure hardware[1, 2], similar to a rate limiter with secure hardware storage. Also, it might to be possible to eliminate the q-SDH assumption in the former case.\n\n[1] https://www.ndss-symposium.org/wp-content/uploads/2024-445-paper.pdf\n[2] https://github.com/akakou/scrappy/wiki/Scrappy-Extension-for-Counter-based-Rate%E2%80%90Limiting",
           "createdAt": "2025-03-19T04:04:47Z",
-          "updatedAt": "2025-03-19T04:35:14Z"
-        },
-        {
-          "author": "akakou",
-          "authorAssociation": "NONE",
-          "body": "(In addition, is it possible to eliminate the q-SDH assumption in the former case?)",
-          "createdAt": "2025-03-19T07:24:59Z",
-          "updatedAt": "2025-03-27T18:32:11Z"
+          "updatedAt": "2025-03-30T07:30:11Z"
         }
       ]
     },
