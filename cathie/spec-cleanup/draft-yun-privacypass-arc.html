@@ -11,15 +11,15 @@
        This document specifies the issuance and redemption protocols for
 tokens based on the Anonymous Rate-Limited Credential (ARC) protocol. 
     " name="description">
-<meta content="xml2rfc 3.26.0" name="generator">
+<meta content="xml2rfc 3.28.0" name="generator">
 <meta content="draft-yun-privacypass-arc-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.26.0
-    Python 3.12.8
+  xml2rfc 3.28.0
+    Python 3.12.9
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
     intervaltree 3.1.0
-    Jinja2 3.1.5
+    Jinja2 3.1.6
     lxml 5.3.0
     platformdirs 4.3.6
     pycountry 24.6.1
@@ -436,7 +436,7 @@ dl {
     margin-bottom: 0;
   }
 }
-dl > dt {
+dl:not(.dlNewline) > dt {
   float: left;
   margin-right: 2ch;
   min-width: 8ch;
@@ -1045,11 +1045,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">Privacy Pass Issuance Protocol for ARC</td>
-<td class="right">February 2025</td>
+<td class="right">April 2025</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Yun &amp; Wood</td>
-<td class="center">Expires 9 August 2025</td>
+<td class="center">Expires 4 October 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1062,12 +1062,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-yun-privacypass-arc-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-02-05" class="published">5 February 2025</time>
+<time datetime="2025-04-02" class="published">2 April 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-08-09">9 August 2025</time></dd>
+<dd class="expires"><time datetime="2025-10-04">4 October 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1121,7 +1121,7 @@ tokens based on the Anonymous Rate-Limited Credential (ARC) protocol.<a href="#s
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 9 August 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 4 October 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1175,7 +1175,7 @@ tokens based on the Anonymous Rate-Limited Credential (ARC) protocol.<a href="#s
                 <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-client-to-issuer-request" class="internal xref">Client-to-Issuer Request</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
-                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-issuer-to-client-request" class="internal xref">Issuer-to-Client Request</a></p>
+                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-issuer-to-client-response" class="internal xref">Issuer-to-Client Response</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3">
                 <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="auto internal xref">7.3</a>.  <a href="#name-credential-finalization" class="internal xref">Credential Finalization</a></p>
@@ -1238,7 +1238,7 @@ each token can only be spent once. These are often calle "one-time-use" tokens.
 This means that applications which wish to limit access to a given user, e.g.,
 for the purposes of throttling or rate limiting them, must issue one token
 for each redemption.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">The Anonymous Rate-Limited Credential (ARC) protocol, as specified in [TODO],
+<p id="section-1-2">The Anonymous Rate-Limited Credential (ARC) protocol, as specified in <span>[<a href="#ARC" class="cite xref">ARC</a>]</span>,
 offers a more scalable approach to rate limiting. In particular, ARC credentials
 can be issued once and then presented (or redeemed) up to some fixed-amount
 of time for distinct, per-origin presentation contexts. This means that a Client
@@ -1431,13 +1431,45 @@ where <code>pkI_serialized</code> is the serialized version of <code>pkI</code> 
       <h2 id="name-token-challenge-requirement">
 <a href="#section-6" class="section-number selfRef">6. </a><a href="#name-token-challenge-requirement" class="section-name selfRef">Token Challenge Requirements</a>
       </h2>
-<p id="section-6-1">Clients receive challenges for tokens as described in <span>[<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>]</span>.
-The HTTP authentication challenge also <span class="bcp14">SHOULD</span> contain the following
-additional attribute:<a href="#section-6-1" class="pilcrow">¶</a></p>
+<p id="section-6-1">The ARC protocol uses a modified TokenChallenge structure from the one
+specified in <span>[<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>]</span>. In particular, the updated TokenChallenge
+structure is as follows:<a href="#section-6-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6-2">
+<pre>
+struct {
+    uint16_t token_type = 0xC7D3; /* Type ARC(P-384) */
+    opaque issuer_name&lt;1..2^16-1&gt;;
+    opaque redemption_context&lt;0..32&gt;;
+    opaque origin_info&lt;0..2^16-1&gt;;
+    opaque credential_context&lt;0..32&gt;;
+} TokenChallenge;
+</pre><a href="#section-6-2" class="pilcrow">¶</a>
+</div>
+<p id="section-6-3">With the exception of <code>credential_context</code>, all fields are exactly as specified
+in <span><a href="https://rfc-editor.org/rfc/rfc9577#section-2.1.1" class="relref">Section 2.1.1</a> of [<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>]</span>. The <code>credential_context</code> field is defined as
+follows:<a href="#section-6-3" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-6-2.1">
-          <p id="section-6-2.1.1">"rate-limit", which contains a JSON number indicating the presentation
-limit to use for ARC.<a href="#section-6-2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-6-4.1">
+          <p id="section-6-4.1.1">"credential_context" is a field that is either 0 or 32 bytes, prefixed with a single
+octet indicating the length (either 0 or 32). If value is non-empty, it is a 32-byte value
+generated by the origin that allows the origin to require that clients fetch credentials
+bound to a specific context. Challenges with credential_context values of invalid lengths
+<span class="bcp14">MUST</span> be ignored.<a href="#section-6-4.1.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-6-5">Similar to the <code>redemption_context</code> field, the <code>credential_context</code> is used to bind
+information to the credential. This might be useful, for example, to enforce some
+expiration on the credential. Origins might do this by constructing <code>credential_context</code>
+as F(current time window), where F is a pseudorandom function. Semantically, this is
+equivalent to the Origin asking the Client for a token from a credential that is
+bound to "current time window."<a href="#section-6-5" class="pilcrow">¶</a></p>
+<p id="section-6-6">[[OPEN ISSUE: give more guidance about how to construct credential_context and redemption_context depending on the application's needs]]<a href="#section-6-6" class="pilcrow">¶</a></p>
+<p id="section-6-7">In addition to this updated TokenChallenge, the HTTP authentication challenge
+also <span class="bcp14">SHOULD</span> contain the following additional attribute:<a href="#section-6-7" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6-8.1">
+          <p id="section-6-8.1.1">"rate-limit", which contains a JSON number indicating the presentation
+limit to use for ARC.<a href="#section-6-8.1.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 </section>
@@ -1482,7 +1514,10 @@ the Client first creates a credential request message using the <code>Credential
 function from <span>[<a href="#ARC" class="cite xref">ARC</a>]</span> as follows:<a href="#section-7.1-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-7.1-2">
 <pre>
-request_context = concat(tokenChallenge.issuer_name, issuer_key_id)
+request_context = concat(tokenChallenge.issuer_name,
+  tokenChallenge.origin_info,
+  tokenChallenge.credential_context,
+  issuer_key_id)
 (clientSecrets, request) = CredentialRequest(request_context)
 </pre><a href="#section-7.1-2" class="pilcrow">¶</a>
 </div>
@@ -1530,10 +1565,10 @@ Content-Length: &lt;Length of TokenRequest&gt;
 </div>
 </section>
 </div>
-<div id="issuer-to-client-request">
+<div id="issuer-to-client-response">
 <section id="section-7.2">
-        <h3 id="name-issuer-to-client-request">
-<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-issuer-to-client-request" class="section-name selfRef">Issuer-to-Client Request</a>
+        <h3 id="name-issuer-to-client-response">
+<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-issuer-to-client-response" class="section-name selfRef">Issuer-to-Client Response</a>
         </h3>
 <p id="section-7.2-1">Upon receipt of the request, the Issuer validates the following conditions:<a href="#section-7.2-1" class="pilcrow">¶</a></p>
 <ul class="normal">
@@ -1633,7 +1668,10 @@ for the Issuer identifier in the challenge, denoted <code>credential</code>, Cli
 a credential presentation value as follows:<a href="#section-8.1-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-8.1-2">
 <pre>
-presentation_context = concat(challenge_digest, issuer_key_id)
+presentation_context = concat(tokenChallenge.issuer_name,
+  tokenChallenge.origin_info,
+  tokenChallenge.redemption_context,
+  issuer_key_id)
 state = MakePresentationState(credential, presentation_context, presentationLimit)
 newState, nonce, presentation = Present(state)
 </pre><a href="#section-8.1-2" class="pilcrow">¶</a>
@@ -1681,15 +1719,25 @@ obtained by deserializing a presentation according to [Section 4.3.2 of ARC],
 a presentation limit, denoted <code>presentation_limit</code>, a presentation nonce
 from a token, denoted <code>nonce</code>, and the digest of a token challenge, denoted
 <code>challenge_digest</code>, verifying a Token requires invoking the VerifyPresentation
-function from [Section 4.3.3 of ARC] in the following wayz:<a href="#section-8.2-1" class="pilcrow">¶</a></p>
+function from [Section 4.3.3 of ARC] in the following ways:<a href="#section-8.2-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-8.2-2">
 <pre>
-request_context = concat(tokenChallenge.issuer_name, issuer_key_id)
-presentation_context = concat(challenge_digest, issuer_key_id)
+request_context = concat(tokenChallenge.issuer_name,
+  tokenChallenge.origin_info,
+  tokenChallenge.credential_context,
+  issuer_key_id)
+presentation_context = concat(tokenChallenge.issuer_name,
+  tokenChallenge.origin_info,
+  tokenChallenge.redemption_context,
+  issuer_key_id)
 valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonce, presentation, presentation_limit)
 </pre><a href="#section-8.2-2" class="pilcrow">¶</a>
 </div>
 <p id="section-8.2-3">This function returns True if the CredentialToken is valid, and False otherwise.<a href="#section-8.2-3" class="pilcrow">¶</a></p>
+<p id="section-8.2-4">Implementation-specific steps: to prevent double spending, the server should perform a check that the
+tag (presentation.tag) has not previously been seen. It then stores the tag for use in future double
+spending checks. To reduce the overhead of performing double spend checks, the server can store and
+look up the tags corresponding to the associated request_context and presentation_context values.<a href="#section-8.2-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1706,7 +1754,7 @@ requires a joint Origin and Issuer configuration given that it is privately veri
 unlinkability, as described in <span><a href="https://rfc-editor.org/rfc/rfc9576#section-3.3" class="relref">Section 3.3</a> of [<a href="#ARCHITECTURE" class="cite xref">ARCHITECTURE</a>]</span>, with one exception.
 While redemption context unlinkability is achieved by re-randomizing credentials every time
 they are presented as tokens, there is a reduction in the anonymity set in the case of presentation
-nonce collisions, as detailed in <span><a href="https://rfc-editor.org/rfc/rfc9577#section-7.2" class="relref">Section 7.2</a> of [<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>]</span>.<a href="#section-9-2" class="pilcrow">¶</a></p>
+nonce collisions, as detailed in [Section 7.2 of ARC].<a href="#section-9-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
@@ -1769,7 +1817,7 @@ following entries.<a href="#section-10-1" class="pilcrow">¶</a></p>
 <dl class="references">
 <dt id="ARC">[ARC]</dt>
         <dd>
-<span class="refTitle">"*** BROKEN REFERENCE ***"</span>. </dd>
+<span class="refAuthor">Yun, C.</span> and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Anonymous Rate-Limited Credentials"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-yun-cfrg-arc-00</span>, <time datetime="2025-02-05" class="refDate">5 February 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-00">https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-00</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="ARCHITECTURE">[ARCHITECTURE]</dt>
         <dd>
@@ -1849,7 +1897,7 @@ for helpful discussions on rate-limited tokens.<a href="#appendix-A-1" class="pi
 <div dir="auto" class="left"><span class="org">Apple, Inc.</span></div>
 <div class="email">
 <span>Email:</span>
-<a href="mailto:cathie@apple.com" class="email">cathie@apple.com</a>
+<a href="mailto:cathieyun@gmail.com" class="email">cathieyun@gmail.com</a>
 </div>
 </address>
 <address class="vcard">

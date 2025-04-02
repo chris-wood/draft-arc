@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Informational                               Apple, Inc.
-Expires: 31 August 2025                                 27 February 2025
+Expires: 4 October 2025                                     2 April 2025
 
 
                    Anonymous Rate-Limited Credentials
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 31 August 2025.
+   This Internet-Draft will expire on 4 October 2025.
 
 Copyright Notice
 
@@ -641,8 +641,7 @@ Outputs:
 - presentationLimit: Integer, the fixed presentation limit.
 
 def MakePresentationState(credential, presentationContext, presentationLimit):
-  nonce = random_integer_uniform(0, presentationLimit)
-  return PresentationState(credential, presentationContext, [nonce], presentationLimit)
+  return PresentationState(credential, presentationContext, [], presentationLimit)
 
 4.3.2.  Presentation Construction
 
@@ -729,10 +728,9 @@ def Present(state):
      uint8 response1[Ns];
      uint8 response2[Ns];
      uint8 response3[Ns];
-     uint8 response4[Ns];
    } Presentation
 
-   The length of this structure is Npresentation = 4*Ne + 6*Ns.
+   The length of this structure is Npresentation = 4*Ne + 5*Ns.
 
 4.3.3.  Presentation Verification
 
