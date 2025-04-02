@@ -552,8 +552,7 @@ Outputs:
 - presentationLimit: Integer, the fixed presentation limit.
 
 def MakePresentationState(credential, presentationContext, presentationLimit):
-  nonce = random_integer_uniform(0, presentationLimit)
-  return PresentationState(credential, presentationContext, [nonce], presentationLimit)
+  return PresentationState(credential, presentationContext, [], presentationLimit)
 ~~~
 
 ### Presentation Construction {#presentation-construction}
