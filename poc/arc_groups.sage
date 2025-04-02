@@ -1,9 +1,9 @@
-from sagelib.groups import GroupP384
+from sagelib.groups import GroupP256
 from util import to_bytes
 
-G = GroupP384()
+G = GroupP256()
 
-context_string = "ARCV1-P384"
+context_string = "ARCV1-P256"
 
 def hash_to_group(x, info):
     dst = to_bytes("HashToGroup-") + to_bytes(context_string) + info
