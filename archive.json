@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-01T00:10:28.289185+00:00",
+  "timestamp": "2025-04-03T00:08:44.901024+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -194,9 +194,17 @@
       "labels": [],
       "body": "The code block at https://chris-wood.github.io/draft-arc/draft-yun-cfrg-arc.html#name-presentation-state that describes making the presentation state (`MakePresentationState`) also adds a single random nonce to the `presentationNonceSet`. It seems to me that it is not required, because `Present` will also pick a random nonce and add it to the set of used nonces.",
       "createdAt": "2025-03-03T16:55:06Z",
-      "updatedAt": "2025-03-03T16:55:06Z",
+      "updatedAt": "2025-04-02T08:54:10Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Ah that was a leftover of the previous approach of selecting nonces. Will update and remove that.",
+          "createdAt": "2025-04-02T08:54:08Z",
+          "updatedAt": "2025-04-02T08:54:08Z"
+        }
+      ]
     },
     {
       "number": 17,
@@ -226,9 +234,17 @@
       "labels": [],
       "body": "[Section 8.2 Token Verification](https://chris-wood.github.io/draft-arc/draft-yun-privacypass-arc.html#section-8.2)\nShould mention that to avoid double spending, we need to check that the presentation tag has not been observed before.\nIt is mentioned in the ARC spec, but not in the privacy pass adoption.",
       "createdAt": "2025-03-03T17:04:55Z",
-      "updatedAt": "2025-03-03T17:04:55Z",
+      "updatedAt": "2025-04-02T09:23:07Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Added the same section to the privacy pass spec, thanks.",
+          "createdAt": "2025-04-02T09:23:06Z",
+          "updatedAt": "2025-04-02T09:23:06Z"
+        }
+      ]
     },
     {
       "number": 19,
@@ -242,9 +258,17 @@
       "labels": [],
       "body": "[Section 9](https://chris-wood.github.io/draft-arc/draft-yun-privacypass-arc.html#name-security-considerations): the last link to Section 7.2 of [AUTHSCHEME] should instead be to: Section 6.2 of [ARCHITECTURE]",
       "createdAt": "2025-03-03T17:05:30Z",
-      "updatedAt": "2025-03-03T17:05:30Z",
+      "updatedAt": "2025-04-02T09:14:39Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This should actually be linking to Section 7.2 of [ARC], as that is where the presentation nonce collisions are discussed. I will update the spec accordingly.",
+          "createdAt": "2025-04-02T09:14:38Z",
+          "updatedAt": "2025-04-02T09:14:38Z"
+        }
+      ]
     },
     {
       "number": 20,
@@ -306,9 +330,31 @@
       "labels": [],
       "body": "There are instances of things in the ARC privacypass proposal that rename things slightly when compared to the rest of the privacy pass documents. This increases friction for implementations which want to support multiple token types.\n\nConcrete examples where the previous term is replaced with a new slightly different name, but without changing the meaning.\n`token_key_id` -> `issuer_key_id`\n`truncated_token_key_id` -> `truncated_issuer_key_id`\n`application/private-token-request` -> `application/private-credential-request`\n`application/private-token-response` -> `application/private-credential-response`\n\nI do not believe that the new names add any extra value, but they might cause confusion(subjective opinion) and they will increase friction for implementations (objective opinion).",
       "createdAt": "2025-03-18T16:28:31Z",
-      "updatedAt": "2025-03-18T16:28:31Z",
+      "updatedAt": "2025-04-02T16:47:10Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "body": "These are intentional, since ARC is about issuing _credentials_ and not _tokens_. I think we'll keep these as-is.",
+          "createdAt": "2025-04-01T15:40:30Z",
+          "updatedAt": "2025-04-01T15:40:30Z"
+        },
+        {
+          "author": "karulont",
+          "authorAssociation": "NONE",
+          "body": "I see no benefit to renaming media types.\nIssuer who supports multiple token types, should parse the first 2 bytes of `TokenRequest` to figure out the token type.\n\nIn my opinion if you send a type called: `TokenRequest`, the media type should be `application-private-token-request`.\n\nAnyway, if you think that renaming the media type is appropriate, I have 2 followups:\n1. Why not rename \"TokenRequest\" / \"TokenResponse\"?\n2. You need to add the new media types to the [IANA MediaTypes registry](https://www.iana.org/assignments/media-types/media-types.xhtml).",
+          "createdAt": "2025-04-01T21:42:40Z",
+          "updatedAt": "2025-04-01T21:42:40Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "body": "Again, the thing being requested is _not_ a token, it's a credential. TokenRequest simply isn't precise.\n\nI'll reopen this to track the structure renaming and registry updates. Those should have been done.",
+          "createdAt": "2025-04-02T16:47:09Z",
+          "updatedAt": "2025-04-02T16:47:09Z"
+        }
+      ]
     },
     {
       "number": 24,
@@ -991,6 +1037,111 @@
           "body": "",
           "createdAt": "2025-03-03T17:44:49Z",
           "updatedAt": "2025-03-03T17:44:49Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 26,
+      "id": "PR_kwDONyB6uM6RDrh6",
+      "title": "Clean up specs for clarity",
+      "url": "https://github.com/chris-wood/draft-arc/pull/26",
+      "state": "OPEN",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Addresses the following issues:\r\nhttps://github.com/chris-wood/draft-arc/issues/16\r\nhttps://github.com/chris-wood/draft-arc/issues/18\r\nhttps://github.com/chris-wood/draft-arc/issues/20\r\nhttps://github.com/chris-wood/draft-arc/issues/22",
+      "createdAt": "2025-04-02T09:26:02Z",
+      "updatedAt": "2025-04-02T16:59:57Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "08c54fd64f198e85d8a90827a45944cb52e5fec3",
+      "headRepository": "chris-wood/draft-arc",
+      "headRefName": "cathie/spec-cleanup",
+      "headRefOid": "06f049654e3f5719ba4151e72082a2231d23d301",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDONyB6uM6jIuoY",
+          "commit": {
+            "abbreviatedOid": "06f0496"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "CHANGES_REQUESTED",
+          "body": "Some nits on double spending. The server implementation won't parse out the tag, so it can't reasonably enforce double spending on that value. I think it's probably fine to simply say that the relevant presentation values (nonce and presentation) itself cannot be spent more than once. ",
+          "createdAt": "2025-04-02T16:54:09Z",
+          "updatedAt": "2025-04-02T16:59:57Z",
+          "comments": [
+            {
+              "originalPosition": 32,
+              "body": "```suggestion\r\nImplementation-specific steps: to prevent double spending, the Origin should perform a check that the\r\n```",
+              "createdAt": "2025-04-02T16:54:09Z",
+              "updatedAt": "2025-04-02T16:59:57Z"
+            },
+            {
+              "originalPosition": 33,
+              "body": "```suggestion\r\npresentation (`presentation_nonce` and `presentation`) has not previously been seen for a given request and credential context. It then stores the presentation values for use in future double\r\n```",
+              "createdAt": "2025-04-02T16:54:42Z",
+              "updatedAt": "2025-04-02T16:59:57Z"
+            },
+            {
+              "originalPosition": 34,
+              "body": "```suggestion\r\nspending checks. To reduce the overhead of performing double spend checks, the Origin can store and\r\n```",
+              "createdAt": "2025-04-02T16:54:49Z",
+              "updatedAt": "2025-04-02T16:59:57Z"
+            },
+            {
+              "originalPosition": 35,
+              "body": "```suggestion\r\nlook up the presentation values corresponding to the associated request_context and presentation_context values.\r\n```",
+              "createdAt": "2025-04-02T16:57:06Z",
+              "updatedAt": "2025-04-02T16:59:57Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 27,
+      "id": "PR_kwDONyB6uM6RHDAk",
+      "title": "Move ARC to use P256 by default",
+      "url": "https://github.com/chris-wood/draft-arc/pull/27",
+      "state": "OPEN",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "For performance, we can move from P384 to P256 as the default curve. \r\n- This will give us approximately an order of magnitude speedup.\r\n- This is acceptable from a security standpoint for most applications - P384 was originally chosen as a very conservative starting point, but with the understanding that it may be overly conservative at the cost of performance.\r\n",
+      "createdAt": "2025-04-02T15:23:03Z",
+      "updatedAt": "2025-04-02T16:33:13Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "08c54fd64f198e85d8a90827a45944cb52e5fec3",
+      "headRepository": "chris-wood/draft-arc",
+      "headRefName": "cathie/p256",
+      "headRefOid": "21256c089aca2b62faf5cb5e2de724ae0fcaa8fc",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDONyB6uM6jIhvo",
+          "commit": {
+            "abbreviatedOid": "21256c0"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-04-02T16:33:13Z",
+          "updatedAt": "2025-04-02T16:33:13Z",
           "comments": []
         }
       ]
