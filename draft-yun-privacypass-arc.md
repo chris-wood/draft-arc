@@ -214,6 +214,8 @@ also SHOULD contain the following additional attribute:
 - "rate-limit", which contains a JSON number indicating the presentation
   limit to use for ARC.
 
+Implementation-specific steps: the client should store the Origin-provided input `tokenChallenge` so that when they receive a new `tokenChallenge` value, they can check if it has changed and which fields are different. This will inform the client's behavior - for example, if `credential_context` is being used to enforce an expiration on the credential, then if the `credential_context` has changed, this can prompt the client to request a new credential.
+
 # Credential Issuance Protocol
 
 Issuers provide an Issuer Private and Public Key, denoted `skI` and `pkI`
@@ -427,9 +429,9 @@ valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonc
 
 This function returns True if the CredentialToken is valid, and False otherwise.
 
-Implementation-specific steps: to prevent double spending, the server should perform a check that the
+Implementation-specific steps: to prevent double spending, the Origin should perform a check that the
 tag (presentation.tag) has not previously been seen. It then stores the tag for use in future double
-spending checks. To reduce the overhead of performing double spend checks, the server can store and
+spending checks. To reduce the overhead of performing double spend checks, the Origin can store and
 look up the tags corresponding to the associated request_context and presentation_context values.
 
 # Security Considerations {#security}
