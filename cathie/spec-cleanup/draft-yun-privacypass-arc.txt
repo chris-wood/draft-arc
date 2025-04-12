@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Standards Track                             Apple, Inc.
-Expires: 4 October 2025                                     2 April 2025
+Expires: 14 October 2025                                   12 April 2025
 
 
  Privacy Pass Issuance Protocol for Anonymous Rate-Limited Credentials
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 October 2025.
+   This Internet-Draft will expire on 14 October 2025.
 
 Copyright Notice
 
@@ -269,6 +269,14 @@ Table of Contents
    *  "rate-limit", which contains a JSON number indicating the
       presentation limit to use for ARC.
 
+   Implementation-specific steps: the client should store the Origin-
+   provided input tokenChallenge so that when they receive a new
+   tokenChallenge value, they can check if it has changed and which
+   fields are different.  This will inform the client's behavior - for
+   example, if credential_context is being used to enforce an expiration
+   on the credential, then if the credential_context has changed, this
+   can prompt the client to request a new credential.
+
 7.  Credential Issuance Protocol
 
    Issuers provide an Issuer Private and Public Key, denoted skI and pkI
@@ -486,11 +494,11 @@ valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonc
    This function returns True if the CredentialToken is valid, and False
    otherwise.
 
-   Implementation-specific steps: to prevent double spending, the server
+   Implementation-specific steps: to prevent double spending, the Origin
    should perform a check that the tag (presentation.tag) has not
    previously been seen.  It then stores the tag for use in future
    double spending checks.  To reduce the overhead of performing double
-   spend checks, the server can store and look up the tags corresponding
+   spend checks, the Origin can store and look up the tags corresponding
    to the associated request_context and presentation_context values.
 
 9.  Security Considerations
