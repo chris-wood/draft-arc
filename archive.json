@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-06T00:09:49.279089+00:00",
+  "timestamp": "2025-04-13T00:33:24.648562+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -361,15 +361,15 @@
       "id": "I_kwDONyB6uM6uqiLL",
       "title": "Commonize handling process of presentationContext and nonce",
       "url": "https://github.com/chris-wood/draft-arc/issues/24",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "akakou",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "I notice that the presentationContext and nonce serve similar roles at the protocol level; \nhowever, they are incorporated differently. \n\nIn my opinion, it might be simpler to \n- define `generatorT = G.HashToGroup(presentationContext || nonce, \"Tag\")`, or to \n- set `tag = (credential.m1 + nonce + HashToScalar(presentationContext))^(-1) * generatorT` instead. \n\nbut I have no confidence...Is it correct? ",
       "createdAt": "2025-03-19T04:03:23Z",
-      "updatedAt": "2025-03-30T07:30:12Z",
-      "closedAt": null,
+      "updatedAt": "2025-04-12T08:45:25Z",
+      "closedAt": "2025-04-12T04:01:32Z",
       "comments": [
         {
           "author": "akakou",
@@ -377,6 +377,34 @@
           "body": "I like the first approach because it can minimize the complexity of handling secret keys. Moreover, it may be better for compatibility with secure hardware[1, 2], similar to a rate limiter with secure hardware storage. Also, it might to be possible to eliminate the q-SDH assumption in the former case.\n\n[1] https://www.ndss-symposium.org/wp-content/uploads/2024-445-paper.pdf\n[2] https://github.com/akakou/scrappy/wiki/Scrappy-Extension-for-Counter-based-Rate%E2%80%90Limiting",
           "createdAt": "2025-03-19T04:04:47Z",
           "updatedAt": "2025-03-30T07:30:11Z"
+        },
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thanks for your questions. I responded in the privacy pass mailing list thread here:\nhttps://mailarchive.ietf.org/arch/msg/privacy-pass/O7tXyXtcc9XKLk0UxLfDblJl9n0/\n\nHopefully that answers your questions. The first approach makes it much harder to hide the nonce in the future (without changing the tag construction), and the second approach can work but does not have any obvious advantage over our current ARC tag construction (and requires one more element in the presentation proof). If you have follow-up questions, feel free to re-open this issue or make a new issue. Thanks for your interest!",
+          "createdAt": "2025-04-12T04:01:32Z",
+          "updatedAt": "2025-04-12T04:01:32Z"
+        },
+        {
+          "author": "akakou",
+          "authorAssociation": "NONE",
+          "body": "@cathieyun \n\nThank you for your clear response. I fully understand your explanation regarding the first answer\u2014it makes perfect sense. \nRegarding the second point, I apologize for any confusion in my previous message. I would like to clarify the unclear parts here.\n\n---\n\n## Explanation of `generatorT`\n\n> This might be true, but I haven't looked into this construction because if you remove the nonce, then the rate limiting capabilities of ARC are also removed, so this was not of interest to us. I would question the utility of a construction `tag = credential.m1 * generatorT` because it would be the same value for all presentations from one credential, so the presentations from one credential would be trivially linkable.\n\nI realize I did not explain the definition of `generatorT` in my earlier question. \nIn fact, this question is a continuation of [my previous discussion](https://mailarchive.ietf.org/arch/msg/privacy-pass/kxs6bErx252ENFD9YRnmzGCFhGE/). Please assume that `generatorT` is defined as:\n> generatorT = G.HashToGroup(presentationContext || nonce, \"Tag\")\n\nTo be more precise, the procedure I have in mind is:\n```\n1. generatorT = G.HashToGroup(presentationContext || nonce, \"Tag\") \n2. tag = credential.m1 * generatorT\n```\n\nIn this process, the nonce is used to compute the tag, which enables rate-limiting functionality.\n\n## Compatibility\n\n> I'm not sure what compatibility this refers to. To my understanding, ARC is compatible with the same extensions that BBS would be compatible with. For example, the per-verifier-linkability BBS spec (https://datatracker.ietf.org/doc/draft-irtf-cfrg-bbs-per-verifier-linkability/) could in theory use the rate limiting tag extension from ARC, and the other way around is true as well. \n\nI am under the assumption that you are interseted in compatibility for existing secure hardware (such as Trusted Platform Modules, TPMs), referring to the following [lines](https://chris-wood.github.io/draft-arc/draft-yun-cfrg-arc.html#name-alternatives-considered):\n> The BBS anonymous credential scheme, as detailed in [BBS] and its variants, is efficient and publicly verifiable, but requires pairings for verification. This is problematic for adoption because pairings are not supported as widely in software and **hardware** as non-pairing elliptic curves.\n\nMy concern is that most existing hardware may not support a calculation like `(credential.m1 + nonce)^(-1) * generatorT` because many devices do not offer functionality for such complex cryptographic operations. \nOn the other hand, some hardware might support simpler multiplications, such as `credential.m1 * generatorT` which might make the procedure described above feasible. \n(I\u2019m not an expert on secure hardware, but I know TPMs can at least perform such multiplication.)",
+          "createdAt": "2025-04-12T07:03:57Z",
+          "updatedAt": "2025-04-12T07:03:57Z"
+        },
+        {
+          "author": "akakou",
+          "authorAssociation": "NONE",
+          "body": "As you mentioned before, this scheme involves a clear trade-off as hardware compatibility & removing q-SDH assumption v.s. a simpler range-proof mechanism. To be honest, I'm not sure whether this discussion should be included in the draft. However, if you or the community are interested in it, it is possibility to be beneficial to include it as an extension point.",
+          "createdAt": "2025-04-12T07:06:13Z",
+          "updatedAt": "2025-04-12T08:45:25Z"
+        },
+        {
+          "author": "akakou",
+          "authorAssociation": "NONE",
+          "body": "I would like to ask if this makes sense.\n\n",
+          "createdAt": "2025-04-12T07:17:37Z",
+          "updatedAt": "2025-04-12T07:17:37Z"
         }
       ]
     },
@@ -393,6 +421,22 @@
       "body": "To construct a request context one has to do:\n```\nrequest_context = concat(tokenChallenge.issuer_name,\n  tokenChallenge.origin_info,\n  tokenChallenge.credential_context,\n  issuer_key_id)\n```\n\nThen when one looks at:\n```\nstruct {\n    uint16_t token_type = 0xC7D3; /* Type ARC(P-384) */\n    opaque issuer_name<1..2^16-1>;\n    opaque redemption_context<0..32>;\n    opaque origin_info<0..2^16-1>;\n    opaque credential_context<0..32>;\n} TokenChallenge;\n```\n\nSo let's give a simple example:\nIssuer name is \"issuer.example.net\" & other fields are left empty.\n\nSo now should the `request_context` be\n```\n69 73 73 75 65 72 2e 65 78 61 6d 70 6c 65 2e 6e 65 74 <token_key_id>\n```\nOr should the request context contain all the length prefixes?\n```\n00 12 69 73 73 75 65 72 2e 65 78 61 6d 70 6c 65 2e 6e 65 74 00 00 00 <token_key_id>\n```\nNote we begin with 2 bytes for issuer name length, and end with 3 bytes of zeros, 2 for origin_info length and 1 for credential_context length.\n\nI assume the right interpretation is the second one where each field in the token challenge is prefixed by a length.\nBut when writing an implementation it is easy to make a mistake and forgot to include the length prefix. The spec should clarify it.",
       "createdAt": "2025-03-22T04:07:58Z",
       "updatedAt": "2025-03-22T04:07:58Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 28,
+      "id": "I_kwDONyB6uM6yDBLF",
+      "title": "Privacy pass spec: client should hold onto tokenChallenge",
+      "url": "https://github.com/chris-wood/draft-arc/issues/28",
+      "state": "OPEN",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The client needs to hold onto their latest tokenChallenge, so that they have something to compare to when they get a new tokenChallenge - to see if the credential_context, origin_info, redemption_context, or issuer_name changed.\n\nFor example, if any of those fields except redemption_context change, they will need to fetch a new credential.\nIf the redemption_context changes, they will need to use the new redemption context for making presentations (and will have a new rate limit, which may be relevant if they ran out of their rate limit for the previous redemption context).",
+      "createdAt": "2025-04-10T23:07:31Z",
+      "updatedAt": "2025-04-10T23:07:31Z",
       "closedAt": null,
       "comments": []
     }
@@ -1053,13 +1097,13 @@
       "labels": [],
       "body": "Addresses the following issues:\r\nhttps://github.com/chris-wood/draft-arc/issues/16\r\nhttps://github.com/chris-wood/draft-arc/issues/18\r\nhttps://github.com/chris-wood/draft-arc/issues/20\r\nhttps://github.com/chris-wood/draft-arc/issues/22",
       "createdAt": "2025-04-02T09:26:02Z",
-      "updatedAt": "2025-04-03T15:44:15Z",
+      "updatedAt": "2025-04-12T05:13:32Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "08c54fd64f198e85d8a90827a45944cb52e5fec3",
       "headRepository": "chris-wood/draft-arc",
       "headRefName": "cathie/spec-cleanup",
-      "headRefOid": "06f049654e3f5719ba4151e72082a2231d23d301",
+      "headRefOid": "dd47f5f07c30cbd36f9fd679d5ea965ad85e48a6",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -1071,6 +1115,13 @@
           "body": "> The server implementation won't parse out the tag, so it can't reasonably enforce double spending on that value...\r\n\r\nWhy not?\r\nImplementation in swift-crypto already exposes the tag:\r\nhttps://github.com/apple/swift-crypto/blob/main/Sources/_CryptoExtras/ARC/ARC%2BAPI.swift#L245\r\nStoring the whole presentation vs just the tag has performance implications.",
           "createdAt": "2025-04-03T15:43:52Z",
           "updatedAt": "2025-04-03T15:44:14Z"
+        },
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Discussed with Chris - for Privacy Pass interoperability, the *ideal* behavior which would fit cleanly into the current Privacy Pass workflow, would be if the server could store the entire ARC token for double spending checks (this maps most cleanly to how the server currently stores the entire RSA signature value for double spend checks). So, I understand the motivation/reasoning here.\r\n\r\nHowever for ARC, this isn't possible because the tag is the only item in the presentation which is \"weight bearing\" for rate limiting. That is, we can only use the tag for double-spend prevention. If we tried to use the whole presentation for double-spend prevention, it would not work because it is possible to make multiple presentations with the same tag, but where the other presentation elements are different (since they are re-randomized each time). So it would be trivial for a malicious client to exceed the rate limit by reusing the same nonce for multiple presentations.",
+          "createdAt": "2025-04-12T04:26:56Z",
+          "updatedAt": "2025-04-12T04:26:56Z"
         }
       ],
       "reviews": [
@@ -1109,6 +1160,46 @@
               "body": "```suggestion\r\nlook up the presentation values corresponding to the associated request_context and presentation_context values.\r\n```",
               "createdAt": "2025-04-02T16:57:06Z",
               "updatedAt": "2025-04-02T16:59:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM6koTR_",
+          "commit": {
+            "abbreviatedOid": "06f0496"
+          },
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-12T04:13:02Z",
+          "updatedAt": "2025-04-12T04:13:02Z",
+          "comments": [
+            {
+              "originalPosition": 33,
+              "body": "The server should just store the tag for double spending, as the tag is the \"weight bearing\" field for rate limiting purposes. The other presentation elements may be re-randomized (and therefore look different) even if the rate limit is exceeded (eg if a nonce is reused), so checking the whole presentation is not the right way to enforce rate limiting.",
+              "createdAt": "2025-04-12T04:13:02Z",
+              "updatedAt": "2025-04-12T04:13:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM6koTS9",
+          "commit": {
+            "abbreviatedOid": "06f0496"
+          },
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-12T04:13:17Z",
+          "updatedAt": "2025-04-12T04:13:17Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "Same as above.",
+              "createdAt": "2025-04-12T04:13:17Z",
+              "updatedAt": "2025-04-12T04:13:17Z"
             }
           ]
         }
