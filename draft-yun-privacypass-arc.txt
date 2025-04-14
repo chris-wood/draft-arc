@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Standards Track                             Apple, Inc.
-Expires: 4 September 2025                                   3 March 2025
+Expires: 16 October 2025                                   14 April 2025
 
 
  Privacy Pass Issuance Protocol for Anonymous Rate-Limited Credentials
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 September 2025.
+   This Internet-Draft will expire on 16 October 2025.
 
 Copyright Notice
 
@@ -233,7 +233,7 @@ Table of Contents
    TokenChallenge structure is as follows:
 
    struct {
-       uint16_t token_type = 0xC7D3; /* Type ARC(P-384) */
+       uint16_t token_type = 0xE5AC; /* Type ARC(P-256) */
        opaque issuer_name<1..2^16-1>;
        opaque redemption_context<0..32>;
        opaque origin_info<0..2^16-1>;
@@ -312,7 +312,7 @@ Table of Contents
    The Client then creates a TokenRequest structure as follows:
 
    struct {
-     uint16_t token_type = 0xC7D3; /* Type ARC(P-384) */
+     uint16_t token_type = 0xE5AC; /* Type ARC(P-256) */
      uint8_t truncated_issuer_key_id;
      uint8_t encoded_request[Nrequest];
    } TokenRequest;
@@ -352,7 +352,7 @@ Table of Contents
    conditions:
 
    *  The TokenRequest contains a supported token_type equal to value
-      0xC7D3.
+      0xE5AC.
 
    *  The TokenRequest.truncated_token_key_id corresponds to the
       truncated key ID of an Issuer Public Key, with corresponding
@@ -442,7 +442,7 @@ newState, nonce, presentation = Present(state)
    The resulting Token value is then constructed as follows:
 
    struct {
-       uint16_t token_type = 0xC7D3; /* Type ARC(P-384) */
+       uint16_t token_type = 0xE5AC; /* Type ARC(P-256) */
        uint8_t issuer_key_id[Nid];
        uint32_t presentation_nonce;
        uint8_t presentation[Npresentation];
@@ -451,7 +451,7 @@ newState, nonce, presentation = Present(state)
    The structure fields are defined as follows:
 
    *  "token_type" is a 2-octet integer, in network byte order, equal to
-      0xC7D3.
+      0xE5AC.
 
    *  "issuer_key_id" is a Nid-octet identifier for the Issuer Public
       Key, computed as defined in Section 5.
@@ -500,9 +500,9 @@ valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonc
    This document updates the "Privacy Pass Token Type" Registry with the
    following entries.
 
-   *  Value: 0xC7D3
+   *  Value: 0xE5AC
 
-   *  Name: ARC (P-384)
+   *  Name: ARC (P-256)
 
    *  Token Structure: As defined in Section 2.2 of [AUTHSCHEME]
 

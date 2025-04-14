@@ -17,17 +17,17 @@ presentation is unlinkable from the others as well as the original credential
 creation. ARC is useful in applications where a server needs to throttle or
 rate-limit access from anonymous clients. 
     " name="description">
-<meta content="xml2rfc 3.28.0" name="generator">
+<meta content="xml2rfc 3.28.1" name="generator">
 <meta content="draft-yun-cfrg-arc-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.28.0
+  xml2rfc 3.28.1
     Python 3.12.9
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
     intervaltree 3.1.0
-    Jinja2 3.1.5
+    Jinja2 3.1.6
     lxml 5.3.0
-    platformdirs 4.3.6
+    platformdirs 4.3.7
     pycountry 24.6.1
     PyYAML 6.0.2
     requests 2.32.3
@@ -1051,11 +1051,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">ARC</td>
-<td class="right">March 2025</td>
+<td class="right">April 2025</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Yun &amp; Wood</td>
-<td class="center">Expires 4 September 2025</td>
+<td class="center">Expires 16 October 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1068,12 +1068,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-yun-cfrg-arc-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-03-03" class="published">3 March 2025</time>
+<time datetime="2025-04-14" class="published">14 April 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-09-04">4 September 2025</time></dd>
+<dd class="expires"><time datetime="2025-10-16">16 October 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1134,7 +1134,7 @@ rate-limit access from anonymous clients.<a href="#section-abstract-1" class="pi
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 4 September 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 16 October 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1268,16 +1268,19 @@ rate-limit access from anonymous clients.<a href="#section-abstract-1" class="pi
             <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-ciphersuites" class="internal xref">Ciphersuites</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
-                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-arcp-384" class="internal xref">ARC(P-384)</a></p>
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-arcp-256" class="internal xref">ARC(P-256)</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
-                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-random-scalar-generation" class="internal xref">Random Scalar Generation</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2.2.1">
-                    <p id="section-toc.1-1.6.2.2.2.1.1"><a href="#section-6.2.1" class="auto internal xref">6.2.1</a>.  <a href="#name-rejection-sampling" class="internal xref">Rejection Sampling</a></p>
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-arcp-384" class="internal xref">ARC(P-384)</a></p>
 </li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2.2.2">
-                    <p id="section-toc.1-1.6.2.2.2.2.1"><a href="#section-6.2.2" class="auto internal xref">6.2.2</a>.  <a href="#name-random-number-generation-us" class="internal xref">Random Number Generation Using Extra Random Bits</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3">
+                <p id="section-toc.1-1.6.2.3.1"><a href="#section-6.3" class="auto internal xref">6.3</a>.  <a href="#name-random-scalar-generation" class="internal xref">Random Scalar Generation</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3.2.1">
+                    <p id="section-toc.1-1.6.2.3.2.1.1"><a href="#section-6.3.1" class="auto internal xref">6.3.1</a>.  <a href="#name-rejection-sampling" class="internal xref">Rejection Sampling</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3.2.2">
+                    <p id="section-toc.1-1.6.2.3.2.2.1"><a href="#section-6.3.2" class="auto internal xref">6.3.2</a>.  <a href="#name-random-number-generation-us" class="internal xref">Random Number Generation Using Extra Random Bits</a></p>
 </li>
                 </ul>
 </li>
@@ -1307,7 +1310,7 @@ rate-limit access from anonymous clients.<a href="#section-abstract-1" class="pi
             <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-test-vectors" class="internal xref">Test Vectors</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.1">
-                <p id="section-toc.1-1.10.2.1.1"><a href="#section-10.1" class="auto internal xref">10.1</a>.  <a href="#name-arcv1-p384" class="internal xref">ARCV1-P384</a></p>
+                <p id="section-toc.1-1.10.2.1.1"><a href="#section-10.1" class="auto internal xref">10.1</a>.  <a href="#name-arcv1-p256" class="internal xref">ARCV1-P256</a></p>
 </li>
             </ul>
 </li>
@@ -2937,20 +2940,20 @@ reducing integer values to a member of the corresponding scalar field.<a href="#
       </ul>
 <p id="section-6-4">This section includes an initial set of ciphersuites with supported groups.
 It also includes implementation details for each ciphersuite, focusing on input validation.<a href="#section-6-4" class="pilcrow">¶</a></p>
-<div id="arcp-384">
+<div id="arcp-256">
 <section id="section-6.1">
-        <h3 id="name-arcp-384">
-<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-arcp-384" class="section-name selfRef">ARC(P-384)</a>
+        <h3 id="name-arcp-256">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-arcp-256" class="section-name selfRef">ARC(P-256)</a>
         </h3>
-<p id="section-6.1-1">This ciphersuite uses P-384 <span>[<a href="#NISTCurves" class="cite xref">NISTCurves</a>]</span> for the Group.
-The value of the ciphersuite identifier is "P384". The value of
-contextString is "ARCV1-P384".<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.1-1">This ciphersuite uses P-256 <span>[<a href="#NISTCurves" class="cite xref">NISTCurves</a>]</span> for the Group.
+The value of the ciphersuite identifier is "P256". The value of
+contextString is "ARCV1-P256".<a href="#section-6.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-6.1-2.1">
-            <p id="section-6.1-2.1.1">Group: P-384 (secp384r1) <span>[<a href="#NISTCurves" class="cite xref">NISTCurves</a>]</span><a href="#section-6.1-2.1.1" class="pilcrow">¶</a></p>
+            <p id="section-6.1-2.1.1">Group: P-256 (secp256r1) <span>[<a href="#NISTCurves" class="cite xref">NISTCurves</a>]</span><a href="#section-6.1-2.1.1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-6.1-2.1.2.1">
-                <p id="section-6.1-2.1.2.1.1">Order(): Return 0xffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf581a0db248b0a77aecec196accc52973.<a href="#section-6.1-2.1.2.1.1" class="pilcrow">¶</a></p>
+                <p id="section-6.1-2.1.2.1.1">Order(): Return 0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551.<a href="#section-6.1-2.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-6.1-2.1.2.2">
                 <p id="section-6.1-2.1.2.2.1">Identity(): As defined in <span>[<a href="#NISTCurves" class="cite xref">NISTCurves</a>]</span>.<a href="#section-6.1-2.1.2.2.1" class="pilcrow">¶</a></p>
@@ -2960,16 +2963,16 @@ contextString is "ARCV1-P384".<a href="#section-6.1-1" class="pilcrow">¶</a></p
 </li>
               <li class="normal" id="section-6.1-2.1.2.4">
                 <p id="section-6.1-2.1.2.4.1">RandomScalar(): Implemented by returning a uniformly random Scalar in the range
-[0, <code>G.Order()</code> - 1]. Refer to <a href="#random-scalar" class="auto internal xref">Section 6.2</a> for implementation guidance.<a href="#section-6.1-2.1.2.4.1" class="pilcrow">¶</a></p>
+[0, <code>G.Order()</code> - 1]. Refer to <a href="#random-scalar" class="auto internal xref">Section 6.3</a> for implementation guidance.<a href="#section-6.1-2.1.2.4.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-6.1-2.1.2.5">
-                <p id="section-6.1-2.1.2.5.1">HashToGroup(x, info): Use hash_to_curve with suite P384_XMD:SHA-384_SSWU_RO_
+                <p id="section-6.1-2.1.2.5.1">HashToGroup(x, info): Use hash_to_curve with suite P256_XMD:SHA-256_SSWU_RO_
 <span>[<a href="#I-D.irtf-cfrg-hash-to-curve" class="cite xref">I-D.irtf-cfrg-hash-to-curve</a>]</span>, input <code>x</code>, and DST =
 "HashToGroup-" || contextString || info.<a href="#section-6.1-2.1.2.5.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-6.1-2.1.2.6">
                 <p id="section-6.1-2.1.2.6.1">HashToScalar(x, info): Use hash_to_field from <span>[<a href="#I-D.irtf-cfrg-hash-to-curve" class="cite xref">I-D.irtf-cfrg-hash-to-curve</a>]</span>
-using L = 72, <code>expand_message_xmd</code> with SHA-384, input <code>x</code> and
+using L = 48, <code>expand_message_xmd</code> with SHA-256, input <code>x</code> and
 DST = "HashToScalar-" || contextString || info, and
 prime modulus equal to <code>Group.Order()</code>.<a href="#section-6.1-2.1.2.6.1" class="pilcrow">¶</a></p>
 </li>
@@ -2978,10 +2981,10 @@ prime modulus equal to <code>Group.Order()</code>.<a href="#section-6.1-2.1.2.6.
 </li>
               <li class="normal" id="section-6.1-2.1.2.8">
                 <p id="section-6.1-2.1.2.8.1">SerializeElement(A): Implemented using the compressed Elliptic-Curve-Point-to-Octet-String
-method according to <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>; Ne = 49.<a href="#section-6.1-2.1.2.8.1" class="pilcrow">¶</a></p>
+method according to <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>; Ne = 33.<a href="#section-6.1-2.1.2.8.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-6.1-2.1.2.9">
-                <p id="section-6.1-2.1.2.9.1">DeserializeElement(buf): Implemented by attempting to deserialize a 49-byte array  to
+                <p id="section-6.1-2.1.2.9.1">DeserializeElement(buf): Implemented by attempting to deserialize a 33-byte array to
 a public key using the compressed Octet-String-to-Elliptic-Curve-Point method according to <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>,
 and then performs partial public-key validation as defined in section 5.6.2.3.4 of
 <span>[<a href="#KEYAGREEMENT" class="cite xref">KEYAGREEMENT</a>]</span>. This includes checking that the
@@ -2992,10 +2995,10 @@ If these checks fail, deserialization returns an InputValidationError error.<a h
 </li>
               <li class="normal" id="section-6.1-2.1.2.10">
                 <p id="section-6.1-2.1.2.10.1">SerializeScalar(s): Implemented using the Field-Element-to-Octet-String conversion
-according to <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>; Ns = 48.<a href="#section-6.1-2.1.2.10.1" class="pilcrow">¶</a></p>
+according to <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>; Ns = 32.<a href="#section-6.1-2.1.2.10.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-6.1-2.1.2.11">
-                <p id="section-6.1-2.1.2.11.1">DeserializeScalar(buf): Implemented by attempting to deserialize a Scalar from a 48-byte
+                <p id="section-6.1-2.1.2.11.1">DeserializeScalar(buf): Implemented by attempting to deserialize a Scalar from a 32-byte
 string using Octet-String-to-Field-Element from <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>. This function can fail if the
 input does not represent a Scalar in the range [0, <code>G.Order()</code> - 1].<a href="#section-6.1-2.1.2.11.1" class="pilcrow">¶</a></p>
 </li>
@@ -3004,39 +3007,106 @@ input does not represent a Scalar in the range [0, <code>G.Order()</code> - 1].<
         </ul>
 </section>
 </div>
-<div id="random-scalar">
+<div id="arcp-384">
 <section id="section-6.2">
-        <h3 id="name-random-scalar-generation">
-<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-random-scalar-generation" class="section-name selfRef">Random Scalar Generation</a>
+        <h3 id="name-arcp-384">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-arcp-384" class="section-name selfRef">ARC(P-384)</a>
         </h3>
-<p id="section-6.2-1">Two popular algorithms for generating a random integer uniformly distributed in
-the range [0, G.Order() -1] are as follows:<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.2-1">This ciphersuite uses P-384 <span>[<a href="#NISTCurves" class="cite xref">NISTCurves</a>]</span> for the Group.
+The value of the ciphersuite identifier is "P384". The value of
+contextString is "ARCV1-P384".<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.2-2.1">
+            <p id="section-6.2-2.1.1">Group: P-384 (secp384r1) <span>[<a href="#NISTCurves" class="cite xref">NISTCurves</a>]</span><a href="#section-6.2-2.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.2-2.1.2.1">
+                <p id="section-6.2-2.1.2.1.1">Order(): Return 0xffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf581a0db248b0a77aecec196accc52973.<a href="#section-6.2-2.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-6.2-2.1.2.2">
+                <p id="section-6.2-2.1.2.2.1">Identity(): As defined in <span>[<a href="#NISTCurves" class="cite xref">NISTCurves</a>]</span>.<a href="#section-6.2-2.1.2.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-6.2-2.1.2.3">
+                <p id="section-6.2-2.1.2.3.1">Generator(): As defined in <span>[<a href="#NISTCurves" class="cite xref">NISTCurves</a>]</span>.<a href="#section-6.2-2.1.2.3.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-6.2-2.1.2.4">
+                <p id="section-6.2-2.1.2.4.1">RandomScalar(): Implemented by returning a uniformly random Scalar in the range
+[0, <code>G.Order()</code> - 1]. Refer to <a href="#random-scalar" class="auto internal xref">Section 6.3</a> for implementation guidance.<a href="#section-6.2-2.1.2.4.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-6.2-2.1.2.5">
+                <p id="section-6.2-2.1.2.5.1">HashToGroup(x, info): Use hash_to_curve with suite P384_XMD:SHA-384_SSWU_RO_
+<span>[<a href="#I-D.irtf-cfrg-hash-to-curve" class="cite xref">I-D.irtf-cfrg-hash-to-curve</a>]</span>, input <code>x</code>, and DST =
+"HashToGroup-" || contextString || info.<a href="#section-6.2-2.1.2.5.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-6.2-2.1.2.6">
+                <p id="section-6.2-2.1.2.6.1">HashToScalar(x, info): Use hash_to_field from <span>[<a href="#I-D.irtf-cfrg-hash-to-curve" class="cite xref">I-D.irtf-cfrg-hash-to-curve</a>]</span>
+using L = 72, <code>expand_message_xmd</code> with SHA-384, input <code>x</code> and
+DST = "HashToScalar-" || contextString || info, and
+prime modulus equal to <code>Group.Order()</code>.<a href="#section-6.2-2.1.2.6.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-6.2-2.1.2.7">
+                <p id="section-6.2-2.1.2.7.1">ScalarInverse(s): Returns the multiplicative inverse of input Scalar <code>s</code> mod <code>Group.Order()</code>.<a href="#section-6.2-2.1.2.7.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-6.2-2.1.2.8">
+                <p id="section-6.2-2.1.2.8.1">SerializeElement(A): Implemented using the compressed Elliptic-Curve-Point-to-Octet-String
+method according to <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>; Ne = 49.<a href="#section-6.2-2.1.2.8.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-6.2-2.1.2.9">
+                <p id="section-6.2-2.1.2.9.1">DeserializeElement(buf): Implemented by attempting to deserialize a 49-byte array to
+a public key using the compressed Octet-String-to-Elliptic-Curve-Point method according to <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>,
+and then performs partial public-key validation as defined in section 5.6.2.3.4 of
+<span>[<a href="#KEYAGREEMENT" class="cite xref">KEYAGREEMENT</a>]</span>. This includes checking that the
+coordinates of the resulting point are in the correct range, that the point is on
+the curve, and that the point is not the point at infinity. Additionally, this function
+validates that the resulting element is not the group identity element.
+If these checks fail, deserialization returns an InputValidationError error.<a href="#section-6.2-2.1.2.9.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-6.2-2.1.2.10">
+                <p id="section-6.2-2.1.2.10.1">SerializeScalar(s): Implemented using the Field-Element-to-Octet-String conversion
+according to <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>; Ns = 48.<a href="#section-6.2-2.1.2.10.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-6.2-2.1.2.11">
+                <p id="section-6.2-2.1.2.11.1">DeserializeScalar(buf): Implemented by attempting to deserialize a Scalar from a 48-byte
+string using Octet-String-to-Field-Element from <span>[<a href="#SEC1" class="cite xref">SEC1</a>]</span>. This function can fail if the
+input does not represent a Scalar in the range [0, <code>G.Order()</code> - 1].<a href="#section-6.2-2.1.2.11.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</li>
+        </ul>
+</section>
+</div>
+<div id="random-scalar">
+<section id="section-6.3">
+        <h3 id="name-random-scalar-generation">
+<a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-random-scalar-generation" class="section-name selfRef">Random Scalar Generation</a>
+        </h3>
+<p id="section-6.3-1">Two popular algorithms for generating a random integer uniformly distributed in
+the range [0, G.Order() -1] are as follows:<a href="#section-6.3-1" class="pilcrow">¶</a></p>
 <div id="rejection-sampling">
-<section id="section-6.2.1">
+<section id="section-6.3.1">
           <h4 id="name-rejection-sampling">
-<a href="#section-6.2.1" class="section-number selfRef">6.2.1. </a><a href="#name-rejection-sampling" class="section-name selfRef">Rejection Sampling</a>
+<a href="#section-6.3.1" class="section-number selfRef">6.3.1. </a><a href="#name-rejection-sampling" class="section-name selfRef">Rejection Sampling</a>
           </h4>
-<p id="section-6.2.1-1">Generate a random byte array with <code>Ns</code> bytes, and attempt to map to a Scalar
+<p id="section-6.3.1-1">Generate a random byte array with <code>Ns</code> bytes, and attempt to map to a Scalar
 by calling <code>DeserializeScalar</code> in constant time. If it succeeds, return the
 result. If it fails, try again with another random byte array, until the
 procedure succeeds. Failure to implement <code>DeserializeScalar</code> in constant time
-can leak information about the underlying corresponding Scalar.<a href="#section-6.2.1-1" class="pilcrow">¶</a></p>
-<p id="section-6.2.1-2">As an optimization, if the group order is very close to a power of
+can leak information about the underlying corresponding Scalar.<a href="#section-6.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.3.1-2">As an optimization, if the group order is very close to a power of
 2, it is acceptable to omit the rejection test completely.  In
 particular, if the group order is p, and there is an integer b
 such that |p - 2<sup>b</sup>| is less than 2<sup>(b/2)</sup>, then
 <code>RandomScalar</code> can simply return a uniformly random integer of at
-most b bits.<a href="#section-6.2.1-2" class="pilcrow">¶</a></p>
+most b bits.<a href="#section-6.3.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="random-number-generation-using-extra-random-bits">
-<section id="section-6.2.2">
+<section id="section-6.3.2">
           <h4 id="name-random-number-generation-us">
-<a href="#section-6.2.2" class="section-number selfRef">6.2.2. </a><a href="#name-random-number-generation-us" class="section-name selfRef">Random Number Generation Using Extra Random Bits</a>
+<a href="#section-6.3.2" class="section-number selfRef">6.3.2. </a><a href="#name-random-number-generation-us" class="section-name selfRef">Random Number Generation Using Extra Random Bits</a>
           </h4>
-<p id="section-6.2.2-1">Generate a random byte array with <code>L = ceil(((3 * ceil(log2(G.Order()))) / 2) / 8)</code>
+<p id="section-6.3.2-1">Generate a random byte array with <code>L = ceil(((3 * ceil(log2(G.Order()))) / 2) / 8)</code>
 bytes, and interpret it as an integer; reduce the integer modulo <code>G.Order()</code> and return the
-result. See <span>[<a href="#I-D.irtf-cfrg-hash-to-curve" class="cite xref">I-D.irtf-cfrg-hash-to-curve</a>], <a href="https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-hash-to-curve-16#section-5" class="relref">Section 5</a></span> for the underlying derivation of <code>L</code>.<a href="#section-6.2.2-1" class="pilcrow">¶</a></p>
+result. See <span>[<a href="#I-D.irtf-cfrg-hash-to-curve" class="cite xref">I-D.irtf-cfrg-hash-to-curve</a>], <a href="https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-hash-to-curve-16#section-5" class="relref">Section 5</a></span> for the underlying derivation of <code>L</code>.<a href="#section-6.3.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -3106,143 +3176,123 @@ necessary for these properties to hold.<a href="#section-7-2" class="pilcrow">¶
 <a href="#section-10" class="section-number selfRef">10. </a><a href="#name-test-vectors" class="section-name selfRef">Test Vectors</a>
       </h2>
 <p id="section-10-1">This section contains test vectors for the ARC ciphersuites specified in this document.<a href="#section-10-1" class="pilcrow">¶</a></p>
-<div id="arcv1-p384">
+<div id="arcv1-p256">
 <section id="section-10.1">
-        <h3 id="name-arcv1-p384">
-<a href="#section-10.1" class="section-number selfRef">10.1. </a><a href="#name-arcv1-p384" class="section-name selfRef">ARCV1-P384</a>
+        <h3 id="name-arcv1-p256">
+<a href="#section-10.1" class="section-number selfRef">10.1. </a><a href="#name-arcv1-p256" class="section-name selfRef">ARCV1-P256</a>
         </h3>
 <div class="alignLeft art-text artwork" id="section-10.1-1">
 <pre>
 // ServerKey
-x0 = 504650f53df8f16f6861633388936ea23338fa65ec36e0290022b48eb562889
-d89dbfa691d1cde91517fa222ed7ad364
-x1 = 803d955f0e073a04aa5d92b3fb739f56f9db001266677f62c095021db018cd8
-cbb55941d4073698ce45c405d1348b7b1
-x2 = a097e722ed2427de86966910acba9f5c350e8040f828bf6ceca27405420cdf3
-d63cb3aef005f40ba51943c8026877963
-xb = 3a349db178a923aa7dff7d2d15d89756fd293126bb49a6d793cd77d7db960f5
-692fec3b7ec07602c60cd32aee595dffd
-X0 = 02caa111a43a5909de4af5cb836897334e5a34857ffc3565223cad95a20f1f3
-2303eb8f7594b286238f243eca1a79c60b8
-X1 = 03ef0f59c9b0cc51c9e603dfcaa9a3e3719e186252b64f9ce1ebec352c5b605
-b805af308a9bd697df7c97b0f1147108c3a
-X2 = 028a9547a39d925bdd054706aa5ff7616c28aca94c92041c678970c52ee6572
-2f2c54d4f6cecba66abd721ecbcdb2b8a04
+x0 = 3338fa65ec36e0290022b48eb562889d89dbfa691d1cde91517fa222ed7ad36
+4
+x1 = f9db001266677f62c095021db018cd8cbb55941d4073698ce45c405d1348b7b
+1
+x2 = 350e8040f828bf6ceca27405420cdf3d63cb3aef005f40ba51943c802687796
+3
+xb = fd293126bb49a6d793cd77d7db960f5692fec3b7ec07602c60cd32aee595dff
+d
+X0 = 0232b5e93dc2ff489c20a986a84757c5cc4512f057e1ea92011a26d3ad2c562
+88d
+X1 = 03c413230a9bd956718aa46138a33f774f4c708d61c1d6400d404243049d4a3
+1dc
+X2 = 02db00f6f8e6d235786a120017bd356fe1c9d09069d3ac9352cc9be10ef1505
+a55
 
 // CredentialRequest
 request_context = 74657374207265717565737420636f6e74657874
-m1 = 5a32aaf031be0555089356d299ce24b0eedfe7939e2382934ab5b0f76aae441
-24955d2c5ebf9b41d88786259c34692d2
-m2 = ae93d3ea7e5856d5d951a0ae87f8845d767df2e97dd669c8025715e604cb1c4
-3569792b6864f592fed3abe29b9ebc950
-r1 = df2c61be3c0b37bc73dc89fc386c96b3008035081690bfde3b1e68b91443c22
-cc791d244340fe957d5aa44d7313740df
-r2 = 10fcb00134739cc403f27a79588ca05ad59c5e6ff560cc597c2b8ca25256c72
-0bceca2ab03921492c5e9e4ad3b558002
-m1_enc = 030a5167977e0c038a98fce96e127fc228aa58526f71a920044b74b2f22
-dd5839f0e1cf871e6419a1f522e94510ccf2d92
-m2_enc = 03a0fea0d3e83ee67b36cb86d8380d4b8420a75e23eb5dcb560a79e74d1
-36cf3c382bff7576f7e50c2cd3d247b56dbf56d
-proof = ec5a68b4b89b7c411d0073ec384c698016ecfeee8903b7c4cc6e63651a85
-44b4e06f2d61634a84304b4367bbca558609be6382768d7d070ea047831753b0c9ad
-d8db1e3bd9476d2661ac6109218cdccbe5b4250d3785b431114d9b53d66ff7cbc44a
-7ebbdf90dd5366187d7fbbb5d89f1e450ce8c87c75b94b726e931c81c963ba415eb0
-334a73b73379abdf34284410e079f18c8200b035b11ade92e8d5e381c1cd5d4db9bb
-a5aff1fe97ce1cebf29dc9389aea13dd64fd8fb1779b6bb549af335d4b9c4603dce2
-a6bc5ca7b6d9c40287bf265f28c7b1d0b0e2300e5854361670617562aa405d861d91
-70b08bc09e90
+m1 = eedfe7939e2382934ab5b0f76aae44124955d2c5ebf9b41d88786259c34692d
+2
+m2 = 911fb315257d9ae29d47ecb48c6fa27074dee6860a0489f8db6ac9a486be6a3
+e
+r1 = 008035081690bfde3b1e68b91443c22cc791d244340fe957d5aa44d7313740d
+f
+r2 = d59c5e6ff560cc597c2b8ca25256c720bceca2ab03921492c5e9e4ad3b55800
+2
+m1_enc = 03b8f11506a5302424143573e087fa20195cb5e893a67ef354eae3a78e2
+63c54e4
+m2_enc = 03f1ae4d7b78ba8030bd63859d4f4a909395c52bda34716b6620a2fdd52
+b336fc9
+proof = 0f361327abbc724ff0d37db365065bc4bd60e18125842bb4c03a7e5a632a
+1e95e74dcc440fcb9fb39106922e0d2544e6c82ca710abf35e8b10bf5d61296c9adb
+7d683eaed9a76a755b73f2b4b6e763a7c7883ce4b5c21bd02cd96b9af18cfb227f1a
+cb4ead77c85049d291ed7841405610843f163e9cc2f6a8869111582324cd32bf1300
+0c129d274ccf5386cb90e839916d5dff7eade18e3eabec415f613911
 
 // CredentialResponse
-b = b8b2e8c2103ad6f1970e873420d82a21e699140babbe599f7dd8f6e3e8f615e5
-f201d1c2b0bc2f821f19e80a0a0e1e7b
-U = 02be890d43908e52ed43ae7bc7098f3a7694617fe44a88c33c6fa4eb9e942c0b
-2bb9d2fd56a44e1d6094fc7b9e8b949055
-enc_U_prime = 027f43377c69a2ad931cc21a9cc4d6ea85f84d517d197db721c931
-276a9ed543a78055ddeb9cac6be3af34c212bca5f403
-X0_aux = 02890d3f4287e7878ce88b2bc1cc818b2c40fee0f93187af43acb479259
-979cef1c39d609ea69cc7d6ba1e2a55d107653f
-X1_aux = 0345f2be0dd21d49437a82b221f7a9f074b352e8698fe6ffa08aecad480
-e96e93a25b6dacd4531fc961e78cfb5503f0e69
-X2_aux = 020f31991b9a40be69bc06ef30c250d9353a824f4da88cc43e63bf92bc8
-ac8bca7e26bffed33a32cc124fd1fb6c73f8b77
-H_aux = 03c7714830e1d72604e52fec595c7a399fe0f3276766f84425fd1f98764a
-c76dab631c6dfd05e0200c4ffe6d6967304882
-proof = 1d5ea5448d22de8e4cb2193693a7c50874d37af3e2879cbf4484d26dd233
-62e6f3765bbf894599e9551deb31e6f362693a5d799f07fbaf2376976608d73c401a
-20db7385c89e4cd3b805c3ea9bdf03925b04bf24021246a778282adb1d740e82163f
-b5037c3ad3221f55dd3ed5e3b3c6a0492827c410efde6d315e3b0b7835459292e818
-05bea764e372fcd77776863c630b1f1509ef52e50a1fea5dc85b48523936408852d1
-9461a2a8410e7aa49182905a444e089f0ad6b116f065debd09798121793487d7c84d
-680331bacb1e8730928b897ac839b0b748cfd806833d79a3b50d736349b7bc674672
-de02e375ee20348f5e349e30ab03ccb0f3a530935f4fada0e63ccb52b58785ecd948
-3ea37cf3faf0ced66cc36ad33a80a94fa9b0041ff5be03e5fd1f74a748bd59866763
-90427c27696d6591ec0443fac2415e9c0a4d6197d81a242dd71c739a5f9989a51d8b
-245ecddb94ebb13c3da2bfc91d42ff992d4f0f1b567138ce1d1012053c4b70b10ed7
-56e102faeb9a1d982227ab16c353
+b = e699140babbe599f7dd8f6e3e8f615e5f201d1c2b0bc2f821f19e80a0a0e1e7b
+U = 033ee1ebbcff622bc26b10932ed1eb147226d832048fb2337dc0ad7722cb0748
+3d
+enc_U_prime = 035b8e09ce8776f1a2c7ef8610c9a6a39936c5666ab8b28d6629d3
+685056716482
+X0_aux = 02d453c121324114367906bd11ffc3b6e6a77b75382497279b1a60ab841
+2c1dec6
+X1_aux = 03b0e4b1f376c6207bf34efda46ce54b132a20b90bc28b9152f3e441fe2
+b508b63
+X2_aux = 0327369efcb7577abaeb7b56940e6e042126900bdf8bd8944c0adbb7be3
+ad98e2a
+H_aux = 03d3cd09eeb8d19716586a49260c69309c495a717a36cad3381f6c02ac80
+b70e64
+proof = dd4596175db0b4273fcdff330370d2b5e7a4bf92bf518141f4553af37ef0
+e1260cb8312affc2462800adba102117448b449985d1704d8afd0df9ac708231561d
+ca56faae325cb56b0a9e8ad07bdc6ce90f6e7430090e970a7240e289218de7a17672
+bea9a66187d102ffef976fb01af69d8d3aa3156a5a4223dc6d08b8ce9f1d2639a2ed
+c7052404bf1410adf6c41465bd687e3dfa5372ea71f804b56d947bae9482e5707f42
+dbe35f8b0e11b4a0d27a5a01e1b9a75b66d82b7945eb0b002ee400bebcdc4c3133f8
+04b22bd2d771762058cc35a5033365d2e15150fe46d3b0e98e18ee55f0451b0b1714
+20f73592292e4ff50603c1f0d7769dbd090936090f63
 
 // Credential
-m1 = 5a32aaf031be0555089356d299ce24b0eedfe7939e2382934ab5b0f76aae441
-24955d2c5ebf9b41d88786259c34692d2
-U = 02be890d43908e52ed43ae7bc7098f3a7694617fe44a88c33c6fa4eb9e942c0b
-2bb9d2fd56a44e1d6094fc7b9e8b949055
-U_prime = 02bec70edf38a3f5c77d5c6f39afd5f94cd266f958c804a954f6104b57
-a2c8310862a790cbc6b519f8db989d59aebaf081
-X1 = 03ef0f59c9b0cc51c9e603dfcaa9a3e3719e186252b64f9ce1ebec352c5b605
-b805af308a9bd697df7c97b0f1147108c3a
+m1 = eedfe7939e2382934ab5b0f76aae44124955d2c5ebf9b41d88786259c34692d
+2
+U = 033ee1ebbcff622bc26b10932ed1eb147226d832048fb2337dc0ad7722cb0748
+3d
+U_prime = 02637fe04cc143281ee607bd8f898e670293dce44a2840b9cbb9e0d1fc
+7a2b29b4
+X1 = 03c413230a9bd956718aa46138a33f774f4c708d61c1d6400d404243049d4a3
+1dc
 
 // Presentation1
 presentation_context = 746573742070726573656e746174696f6e20636f6e746
 57874
-a = ad00ec0f71b7a8fb7c0aef35c7243e17b78e57df8f0a95d102ff12bbb97e15ed
-35c23e54f9b4483d30b76772ee60d886
-r = e5cab8c896187b61abe017e57022528742252210dd60ddbbf1a57e3b144e26dd
-693b7644a9626a8c36896ede53d12930
-z = f61f4c924d3ef04b31e9196935ff27c5f5a4bbcf14e55e357df9f5ccb5ded37b
-2b14bc2e1a68e31f86416f0606ee75d1
-U = 03383b2ad2831739bc86c0c98119f256e54c9d89a762a9fc91b3904eb3aee726
-0350a19085ea093a8059369219f03da2c3
-U_prime_commit = 034af7c09ee5150fc914a3bb0adf17f7e90af3c4d9246ec8c51
-1f938467174113513b7577329cecd2a7bff0b97e43a9808
-m1_commit = 02fb95e1d8010da0c63d38ca212c1f76d768cecc8aa26ab07e775570
-70c8343e1da571230f071a15a03973cd57dc33ebf4
+a = b78e57df8f0a95d102ff12bbb97e15ed35c23e54f9b4483d30b76772ee60d886
+r = 42252210dd60ddbbf1a57e3b144e26dd693b7644a9626a8c36896ede53d12930
+z = f5a4bbcf14e55e357df9f5ccb5ded37b2b14bc2e1a68e31f86416f0606ee75d1
+U = 032704f22133d2ec70f9e6f4bbf64c582220b666f2e2c1d37c3f8995a2a5568c
+7e
+U_prime_commit = 03533cf1b2fd53a0716e02425eb42e4c55835aa6b2992d364cb
+a70810d0f8aeb51
+m1_commit = 03e412408579105213ed10b6447c85bcd672ba73ecae1e21c463d0df
+4ef7beb814
 nonce = 0x0
-tag = 0247e3fd325bc774c27329a78a62f616f5e409d3a4857609cecde3251140f2
-bb101905c4cbe66fe06a779e44f5d9e97f08
-proof = 91a355f96a4917bc81aa7e5573da2a79bc9e026508e8d161cdbba91f7c3f
-3f4a1a313adfe78c9e0025640720b1cd973b36fce60a4f82aaedc5cefc4c32760fce
-c573a2609dafaddf4283949445451b614331172be50abc83c32aaf5cb10b4aee06d2
-d1240cc7c4fb10491a96d125571dc4317c7583ad54c0971e22cb13b2c040e1d4791d
-ba0a25dd3d1b785e484e8a1e8f24ca91f0f6d0cddf8456a21fa42a06748fa865cd00
-8f3fe91e40a47126a47e54a321bec5c7b73700fbcb335c8a09880000000000000000
-00000000000000000000000000000000000000000000000000000000000000000000
-000000000004
+tag = 031a774fd87a8f18f6420bea43cf5425e7426eec8ba7b8df5c13dc05f10ec6
+52d9
+proof = a558da5f17c04adcb0898827aaded14be1dc612dcd12b0579c11bb387ce9
+ae4b7dbcb3bbe413caaaf754d99e5a342abb7e0041458d670f4b58eda37e745a6752
+95d7a7b86248141d6547b53d793e5c77896ec4dc8dd438ab66d9c8b43ef6b060938a
+1ca793057b154970ebc3c7ec3a23134e0852d0041f9098ce77311e5b5eca00000000
+00000000000000000000000000000000000000000000000000000004
 
 // Presentation2
 presentation_context = 746573742070726573656e746174696f6e20636f6e746
 57874
-a = a8e630484ba024bf9363805bc7a45f1695bcf45150a61f5c44a6cfbf343cd9e0
-f593f127b6f49bec0f9b20f0550504a2
-r = df6d39c3c0716d7cf8093073168bf967d7ed72750b6d366ed0febdc539b52d89
-434f468a578c59d7ca9015b7da240ad6
-z = 1b8e374ed4390e5a9023b309ecb94c0791eedfb168c556ff5ca3b89d047f482c
-9279b47f584aab6c7f895f7674251771
-U = 020c627c7ced92dd621860017ed29361bb78c4a17c8f7deb79f0c49a47723898
-99a7e3b7b21e6a6c73abfca1332dc7df6e
-U_prime_commit = 023d7eb948df3f49abe39e8ef32f4bb1bcca0f13f04836efd8b
-7bc9bd0a73f915531ce845dc8c334d03c13647e5e4cc908
-m1_commit = 036eea98df5b8248262fc5b511eef49bef1c2ec2a724df3e3a811296
-fcf7891298d99a22f05ef0b08a2d00857117d88ac7
+a = 95bcf45150a61f5c44a6cfbf343cd9e0f593f127b6f49bec0f9b20f0550504a2
+r = d7ed72750b6d366ed0febdc539b52d89434f468a578c59d7ca9015b7da240ad6
+z = 91eedfb168c556ff5ca3b89d047f482c9279b47f584aab6c7f895f7674251771
+U = 035fd233dee2c147155c6008ea64941b6ff7b315aced12531468f2e27bf22e3e
+f0
+U_prime_commit = 02434af337b87fd21d1e3d950aebfc8033a3d2e9dd2bb8b9e79
+53488078754496d
+m1_commit = 02a578fd3a84eb5b657367b02de39b45fd48ab7781ef8f94efe60127
+4a5ded2a07
 nonce = 0x1
-tag = 03f9ceb1690ef6cd9c1b7d4c29dc86cf25565e4045ae431f8d28029e0405f9
-ac251ef5a9e873f4a038ecd5a1e43d56bf5d
-proof = 5547662ff1c63f14292cc998b24f0c74c20149cd89accde1c7a02485ebac
-2c7888fd2ffbbafd539f79c8c4677dfcf79acf12a70bd0032c89c70e096620430169
-9a3c50d1a778d55d812f7d4ef71d29c8b8377607d6d8d5884a31ec8386c909145ee7
-aa6bc17558be1e2dece1329a9473782d97a7ea5819a60d03990563dd2efccd1fd1a6
-d4376b2f900a4092a73266e3fec867feae45e645e368178df894c3e1353acd57f375
-7faabf651b2ef04b87b426c1a695bed9002a0657b3752fdeaee4aab899d00e39c0eb
-d6d336674db0f38b3dfeb6327653321dffc328fc088b0166cf1cddb68db353db7323
-55034ec831dd
+tag = 03084fe6fff0ecc7c33ef5c49b492dda38083f52e9a2b70b88f3d4b4ba7b50
+afba
+proof = 050965cde906fc4723333b100ce0fd9f7b026315f1db16984d4cccb2bc4a
+a65eb7a17f5b8dfe4f14d40006506ee5fb323e829dd4cb9dc3c455b2e04dd691600a
+ec3cc3f1939198a80acb78b7f90b3bff769cab890f33e4d69b7c302d21ad35ec457d
+048d3ed7d13ee82c3c0aac2129ad0c8375cf29cd8ea3948a16b9247b1cc5faf69a31
+16f903b9dcccc4eff31f026041e49797b53c87eca66cfe1040187ef7
 
 </pre><a href="#section-10.1-1" class="pilcrow">¶</a>
 </div>
@@ -3308,7 +3358,7 @@ d6d336674db0f38b3dfeb6327653321dffc328fc088b0166cf1cddb68db353db7323
 <dd class="break"></dd>
 <dt id="NISTCurves">[NISTCurves]</dt>
         <dd>
-<span class="refTitle">"Digital signature standard (DSS)"</span>, <span class="refContent">National Institute of Standards and Technology (U.S.)</span>, <span class="seriesInfo">DOI 10.6028/nist.fips.186-4</span>, <time datetime="2013" class="refDate">2013</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.fips.186-4">https://doi.org/10.6028/nist.fips.186-4</a>&gt;</span>. </dd>
+<span class="refTitle">"Digital Signature Standard (DSS)"</span>, <span class="refContent">National Institute of Standards and Technology (U.S.)</span>, <span class="seriesInfo">DOI 10.6028/nist.fips.186-5</span>, <time datetime="2023-02" class="refDate">February 2023</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.fips.186-5">https://doi.org/10.6028/nist.fips.186-5</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="OPRFS">[OPRFS]</dt>
         <dd>
