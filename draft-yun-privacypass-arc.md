@@ -181,7 +181,7 @@ structure is as follows:
 
 ~~~
 struct {
-    uint16_t token_type = 0xC7D3; /* Type ARC(P-384) */
+    uint16_t token_type = 0xE5AC; /* Type ARC(P-256) */
     opaque issuer_name<1..2^16-1>;
     opaque redemption_context<0..32>;
     opaque origin_info<0..2^16-1>;
@@ -255,7 +255,7 @@ The Client then creates a TokenRequest structure as follows:
 
 ~~~
 struct {
-  uint16_t token_type = 0xC7D3; /* Type ARC(P-384) */
+  uint16_t token_type = 0xE5AC; /* Type ARC(P-256) */
   uint8_t truncated_issuer_key_id;
   uint8_t encoded_request[Nrequest];
 } TokenRequest;
@@ -293,7 +293,7 @@ Content-Length: <Length of TokenRequest>
 
 Upon receipt of the request, the Issuer validates the following conditions:
 
-- The TokenRequest contains a supported token_type equal to value 0xC7D3.
+- The TokenRequest contains a supported token_type equal to value 0xE5AC.
 - The TokenRequest.truncated_token_key_id corresponds to the truncated key ID
   of an Issuer Public Key, with corresponding secret key `skI`, owned by
   the Issuer.
@@ -385,7 +385,7 @@ The resulting Token value is then constructed as follows:
 
 ~~~
 struct {
-    uint16_t token_type = 0xC7D3; /* Type ARC(P-384) */
+    uint16_t token_type = 0xE5AC; /* Type ARC(P-256) */
     uint8_t issuer_key_id[Nid];
     uint32_t presentation_nonce;
     uint8_t presentation[Npresentation];
@@ -394,7 +394,7 @@ struct {
 
 The structure fields are defined as follows:
 
-- "token_type" is a 2-octet integer, in network byte order, equal to 0xC7D3.
+- "token_type" is a 2-octet integer, in network byte order, equal to 0xE5AC.
 
 - "issuer_key_id" is a Nid-octet identifier for the Issuer Public Key, computed
 as defined in {{setup}}.
@@ -438,8 +438,8 @@ nonce collisions, as detailed in {{Section 7.2 of AUTHSCHEME}}.
 This document updates the "Privacy Pass Token Type" Registry with the
 following entries.
 
-* Value: 0xC7D3
-* Name: ARC (P-384)
+* Value: 0xE5AC
+* Name: ARC (P-256)
 * Token Structure: As defined in {{Section 2.2 of AUTHSCHEME}}
 * Token Key Encoding: Serialized as described in {{setup}}
 * TokenChallenge Structure: As defined in {{Section 2.1 of AUTHSCHEME}}

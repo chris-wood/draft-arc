@@ -1,4 +1,4 @@
-from sagelib.groups import GroupP384
+from sagelib.groups import GroupP256
 from sagelib.arc_proofs import CredentialRequestProof, CredentialResponseProof, PresentationProof
 from sagelib.arc_groups import G, GenG, GenH, hash_to_group, hash_to_scalar
 from util import to_hex, to_bytes
@@ -52,7 +52,7 @@ class PresentationState(object):
         self.presentation_nonce_set.append(nonce)
 
         generator_T = hash_to_group(self.presentation_context, to_bytes("Tag"))
-        tag = inverse_mod(self.credential.m1 + nonce, GroupP384().order()) * generator_T
+        tag = inverse_mod(self.credential.m1 + nonce, GroupP256().order()) * generator_T
         V = (z * self.credential.X1) - (r * GenG)
         m1_tag = self.credential.m1 * tag
         

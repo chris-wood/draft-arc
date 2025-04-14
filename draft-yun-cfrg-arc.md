@@ -43,7 +43,7 @@ informative:
   BBDT17:
     title: Improved Algebraic MACs and Practical Keyed-Verification Anonymous Credentials
     target: https://link.springer.com/chapter/10.1007/978-3-319-69453-5_20
-  NISTCurves: DOI.10.6028/NIST.FIPS.186-4
+  NISTCurves: DOI.10.6028/NIST.FIPS.186-5
   SEC1:
     title: "SEC 1: Elliptic Curve Cryptography"
     target: https://www.secg.org/sec1-v2.pdf
@@ -1446,6 +1446,43 @@ A ciphersuite contains an instantiation of the following functionality:
 This section includes an initial set of ciphersuites with supported groups.
 It also includes implementation details for each ciphersuite, focusing on input validation.
 
+
+## ARC(P-256)
+
+This ciphersuite uses P-256 {{NISTCurves}} for the Group.
+The value of the ciphersuite identifier is "P256". The value of
+contextString is "ARCV1-P256".
+
+- Group: P-256 (secp256r1) {{NISTCurves}}
+  - Order(): Return 0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551.
+  - Identity(): As defined in {{NISTCurves}}.
+  - Generator(): As defined in {{NISTCurves}}.
+  - RandomScalar(): Implemented by returning a uniformly random Scalar in the range
+    \[0, `G.Order()` - 1\]. Refer to {{random-scalar}} for implementation guidance.
+  - HashToGroup(x, info): Use hash_to_curve with suite P256_XMD:SHA-256_SSWU_RO\_
+    {{!I-D.irtf-cfrg-hash-to-curve}}, input `x`, and DST =
+    "HashToGroup-" || contextString || info.
+  - HashToScalar(x, info): Use hash_to_field from {{!I-D.irtf-cfrg-hash-to-curve}}
+    using L = 48, `expand_message_xmd` with SHA-256, input `x` and
+    DST = "HashToScalar-" || contextString || info, and
+    prime modulus equal to `Group.Order()`.
+  - ScalarInverse(s): Returns the multiplicative inverse of input Scalar `s` mod `Group.Order()`.
+  - SerializeElement(A): Implemented using the compressed Elliptic-Curve-Point-to-Octet-String
+    method according to {{SEC1}}; Ne = 33.
+  - DeserializeElement(buf): Implemented by attempting to deserialize a 33-byte array to
+    a public key using the compressed Octet-String-to-Elliptic-Curve-Point method according to {{SEC1}},
+    and then performs partial public-key validation as defined in section 5.6.2.3.4 of
+    {{!KEYAGREEMENT=DOI.10.6028/NIST.SP.800-56Ar3}}. This includes checking that the
+    coordinates of the resulting point are in the correct range, that the point is on
+    the curve, and that the point is not the point at infinity. Additionally, this function
+    validates that the resulting element is not the group identity element.
+    If these checks fail, deserialization returns an InputValidationError error.
+  - SerializeScalar(s): Implemented using the Field-Element-to-Octet-String conversion
+    according to {{SEC1}}; Ns = 32.
+  - DeserializeScalar(buf): Implemented by attempting to deserialize a Scalar from a 32-byte
+    string using Octet-String-to-Field-Element from {{SEC1}}. This function can fail if the
+    input does not represent a Scalar in the range \[0, `G.Order()` - 1\].
+
 ## ARC(P-384)
 
 This ciphersuite uses P-384 {{NISTCurves}} for the Group.
@@ -1468,7 +1505,7 @@ contextString is "ARCV1-P384".
   - ScalarInverse(s): Returns the multiplicative inverse of input Scalar `s` mod `Group.Order()`.
   - SerializeElement(A): Implemented using the compressed Elliptic-Curve-Point-to-Octet-String
     method according to {{SEC1}}; Ne = 49.
-  - DeserializeElement(buf): Implemented by attempting to deserialize a 49-byte array  to
+  - DeserializeElement(buf): Implemented by attempting to deserialize a 49-byte array to
     a public key using the compressed Octet-String-to-Elliptic-Curve-Point method according to {{SEC1}},
     and then performs partial public-key validation as defined in section 5.6.2.3.4 of
     {{!KEYAGREEMENT=DOI.10.6028/NIST.SP.800-56Ar3}}. This includes checking that the
