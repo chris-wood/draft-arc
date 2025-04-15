@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-13T00:33:24.648562+00:00",
+  "timestamp": "2025-04-15T00:09:32.345920+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -368,7 +368,7 @@
       "labels": [],
       "body": "I notice that the presentationContext and nonce serve similar roles at the protocol level; \nhowever, they are incorporated differently. \n\nIn my opinion, it might be simpler to \n- define `generatorT = G.HashToGroup(presentationContext || nonce, \"Tag\")`, or to \n- set `tag = (credential.m1 + nonce + HashToScalar(presentationContext))^(-1) * generatorT` instead. \n\nbut I have no confidence...Is it correct? ",
       "createdAt": "2025-03-19T04:03:23Z",
-      "updatedAt": "2025-04-12T08:45:25Z",
+      "updatedAt": "2025-04-13T09:25:18Z",
       "closedAt": "2025-04-12T04:01:32Z",
       "comments": [
         {
@@ -388,9 +388,9 @@
         {
           "author": "akakou",
           "authorAssociation": "NONE",
-          "body": "@cathieyun \n\nThank you for your clear response. I fully understand your explanation regarding the first answer\u2014it makes perfect sense. \nRegarding the second point, I apologize for any confusion in my previous message. I would like to clarify the unclear parts here.\n\n---\n\n## Explanation of `generatorT`\n\n> This might be true, but I haven't looked into this construction because if you remove the nonce, then the rate limiting capabilities of ARC are also removed, so this was not of interest to us. I would question the utility of a construction `tag = credential.m1 * generatorT` because it would be the same value for all presentations from one credential, so the presentations from one credential would be trivially linkable.\n\nI realize I did not explain the definition of `generatorT` in my earlier question. \nIn fact, this question is a continuation of [my previous discussion](https://mailarchive.ietf.org/arch/msg/privacy-pass/kxs6bErx252ENFD9YRnmzGCFhGE/). Please assume that `generatorT` is defined as:\n> generatorT = G.HashToGroup(presentationContext || nonce, \"Tag\")\n\nTo be more precise, the procedure I have in mind is:\n```\n1. generatorT = G.HashToGroup(presentationContext || nonce, \"Tag\") \n2. tag = credential.m1 * generatorT\n```\n\nIn this process, the nonce is used to compute the tag, which enables rate-limiting functionality.\n\n## Compatibility\n\n> I'm not sure what compatibility this refers to. To my understanding, ARC is compatible with the same extensions that BBS would be compatible with. For example, the per-verifier-linkability BBS spec (https://datatracker.ietf.org/doc/draft-irtf-cfrg-bbs-per-verifier-linkability/) could in theory use the rate limiting tag extension from ARC, and the other way around is true as well. \n\nI am under the assumption that you are interseted in compatibility for existing secure hardware (such as Trusted Platform Modules, TPMs), referring to the following [lines](https://chris-wood.github.io/draft-arc/draft-yun-cfrg-arc.html#name-alternatives-considered):\n> The BBS anonymous credential scheme, as detailed in [BBS] and its variants, is efficient and publicly verifiable, but requires pairings for verification. This is problematic for adoption because pairings are not supported as widely in software and **hardware** as non-pairing elliptic curves.\n\nMy concern is that most existing hardware may not support a calculation like `(credential.m1 + nonce)^(-1) * generatorT` because many devices do not offer functionality for such complex cryptographic operations. \nOn the other hand, some hardware might support simpler multiplications, such as `credential.m1 * generatorT` which might make the procedure described above feasible. \n(I\u2019m not an expert on secure hardware, but I know TPMs can at least perform such multiplication.)",
+          "body": "@cathieyun \n\nThank you for your clear response. I fully understand your explanation regarding the first answer\u2014it makes perfect sense. \nRegarding the second point, I apologize for any confusion in my previous message. I would like to clarify the unclear parts here.\n\n---\n\n## Explanation of `generatorT`\n\n> This might be true, but I haven't looked into this construction because if you remove the nonce, then the rate limiting capabilities of ARC are also removed, so this was not of interest to us. I would question the utility of a construction `tag = credential.m1 * generatorT` because it would be the same value for all presentations from one credential, so the presentations from one credential would be trivially linkable.\n\nI realize I did not explain the definition of `generatorT` in my earlier question. \nIn fact, this question is a continuation of [my previous discussion](https://mailarchive.ietf.org/arch/msg/privacy-pass/kxs6bErx252ENFD9YRnmzGCFhGE/). Please assume that `generatorT` is defined as:\n> generatorT = G.HashToGroup(presentationContext || nonce, \"Tag\")\n\nTo be more precise, the procedure I have in mind is:\n```\n1. generatorT = G.HashToGroup(presentationContext || nonce, \"Tag\") \n2. tag = credential.m1 * generatorT\n```\n\nIn this process, the nonce is used to compute the tag, which enables rate-limiting functionality.\n\n## Compatibility\n\n> I'm not sure what compatibility this refers to. To my understanding, ARC is compatible with the same extensions that BBS would be compatible with. For example, the per-verifier-linkability BBS spec (https://datatracker.ietf.org/doc/draft-irtf-cfrg-bbs-per-verifier-linkability/) could in theory use the rate limiting tag extension from ARC, and the other way around is true as well. \n\nI am under the assumption that you are interseted in compatibility for existing secure hardware (such as Trusted Platform Modules, TPMs), referring to the following [lines](https://chris-wood.github.io/draft-arc/draft-yun-cfrg-arc.html#name-alternatives-considered):\n> The BBS anonymous credential scheme, as detailed in [BBS] and its variants, is efficient and publicly verifiable, but requires pairings for verification. This is problematic for adoption because pairings are not supported as widely in software and **hardware** as non-pairing elliptic curves.\n\nMy concern is that most existing hardware may not support a calculation like `(credential.m1 + nonce)^(-1) * generatorT` because many devices do not offer functionality for such complex cryptographic operations handling  the secret key. \nOn the other hand, some hardware might support simpler multiplications, such as `credential.m1 * generatorT` which might make the procedure described above feasible. \n(I\u2019m not an expert on secure hardware, but I know TPMs can at least perform such multiplication.)",
           "createdAt": "2025-04-12T07:03:57Z",
-          "updatedAt": "2025-04-12T07:03:57Z"
+          "updatedAt": "2025-04-13T09:25:17Z"
         },
         {
           "author": "akakou",
@@ -1210,24 +1210,26 @@
       "id": "PR_kwDONyB6uM6RHDAk",
       "title": "Move ARC to use P256 by default",
       "url": "https://github.com/chris-wood/draft-arc/pull/27",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "cathieyun",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "For performance, we can move from P384 to P256 as the default curve. \r\n- This will give us approximately an order of magnitude speedup.\r\n- This is acceptable from a security standpoint for most applications - P384 was originally chosen as a very conservative starting point, but with the understanding that it may be overly conservative at the cost of performance.\r\n",
       "createdAt": "2025-04-02T15:23:03Z",
-      "updatedAt": "2025-04-02T16:33:13Z",
+      "updatedAt": "2025-04-14T22:56:08Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "08c54fd64f198e85d8a90827a45944cb52e5fec3",
       "headRepository": "chris-wood/draft-arc",
       "headRefName": "cathie/p256",
       "headRefOid": "21256c089aca2b62faf5cb5e2de724ae0fcaa8fc",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-04-14T22:56:04Z",
+      "mergedAt": "2025-04-14T22:56:04Z",
+      "mergedBy": "cathieyun",
+      "mergeCommit": {
+        "oid": "3793df49d3813daf3123dc305c222404426b6b81"
+      },
       "comments": [],
       "reviews": [
         {
