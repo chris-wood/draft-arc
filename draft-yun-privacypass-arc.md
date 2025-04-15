@@ -214,6 +214,8 @@ also SHOULD contain the following additional attribute:
 - "rate-limit", which contains a JSON number indicating the presentation
   limit to use for ARC.
 
+Implementation-specific steps: the client should store the Origin-provided input `tokenChallenge` so that when they receive a new `tokenChallenge` value, they can check if it has changed and which fields are different. This will inform the client's behavior - for example, if `credential_context` is being used to enforce an expiration on the credential, then if the `credential_context` has changed, this can prompt the client to request a new credential.
+
 # Credential Issuance Protocol
 
 Issuers provide an Issuer Private and Public Key, denoted `skI` and `pkI`
@@ -289,7 +291,7 @@ Content-Length: <Length of TokenRequest>
 <Bytes containing the TokenRequest>
 ~~~
 
-## Issuer-to-Client Request
+## Issuer-to-Client Response
 
 Upon receipt of the request, the Issuer validates the following conditions:
 
@@ -411,15 +413,26 @@ obtained by deserializing a presentation according to [Section 4.3.2 of ARC],
 a presentation limit, denoted `presentation_limit`, a presentation nonce
 from a token, denoted `nonce`, and the digest of a token challenge, denoted
 `challenge_digest`, verifying a Token requires invoking the VerifyPresentation
-function from [Section 4.3.3 of ARC] in the following wayz:
+function from [Section 4.3.3 of ARC] in the following ways:
 
 ~~~
-request_context = concat(tokenChallenge.issuer_name, issuer_key_id)
-presentation_context = concat(challenge_digest, issuer_key_id)
+request_context = concat(tokenChallenge.issuer_name,
+  tokenChallenge.origin_info,
+  tokenChallenge.credential_context,
+  issuer_key_id)
+presentation_context = concat(tokenChallenge.issuer_name,
+  tokenChallenge.origin_info,
+  tokenChallenge.redemption_context,
+  issuer_key_id)
 valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonce, presentation, presentation_limit)
 ~~~
 
 This function returns True if the CredentialToken is valid, and False otherwise.
+
+Implementation-specific steps: to prevent double spending, the Origin should perform a check that the
+tag (presentation.tag) has not previously been seen. It then stores the tag for use in future double
+spending checks. To reduce the overhead of performing double spend checks, the Origin can store and
+look up the tags corresponding to the associated request_context and presentation_context values.
 
 # Security Considerations {#security}
 
@@ -431,7 +444,7 @@ ARC offers Origin-Client unlinkability, Issuer-Client unlinkability, and redempt
 unlinkability, as described in {{Section 3.3 of ARCHITECTURE}}, with one exception.
 While redemption context unlinkability is achieved by re-randomizing credentials every time
 they are presented as tokens, there is a reduction in the anonymity set in the case of presentation
-nonce collisions, as detailed in {{Section 7.2 of AUTHSCHEME}}.
+nonce collisions, as detailed in [Section 7.2 of ARC].
 
 # IANA Considerations
 
