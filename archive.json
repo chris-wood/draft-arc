@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-15T00:09:32.345920+00:00",
+  "timestamp": "2025-04-17T00:09:18.281680+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -187,15 +187,15 @@
       "id": "I_kwDONyB6uM6sXSHS",
       "title": "MakePresentationState adds a nonce to the state",
       "url": "https://github.com/chris-wood/draft-arc/issues/16",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "karulont",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "The code block at https://chris-wood.github.io/draft-arc/draft-yun-cfrg-arc.html#name-presentation-state that describes making the presentation state (`MakePresentationState`) also adds a single random nonce to the `presentationNonceSet`. It seems to me that it is not required, because `Present` will also pick a random nonce and add it to the set of used nonces.",
       "createdAt": "2025-03-03T16:55:06Z",
-      "updatedAt": "2025-04-02T08:54:10Z",
-      "closedAt": null,
+      "updatedAt": "2025-04-15T16:05:37Z",
+      "closedAt": "2025-04-15T16:05:37Z",
       "comments": [
         {
           "author": "cathieyun",
@@ -227,15 +227,15 @@
       "id": "I_kwDONyB6uM6sXYXW",
       "title": "PrivacyPass: Token Verification should mention checking the presentation tag.",
       "url": "https://github.com/chris-wood/draft-arc/issues/18",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "karulont",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "[Section 8.2 Token Verification](https://chris-wood.github.io/draft-arc/draft-yun-privacypass-arc.html#section-8.2)\nShould mention that to avoid double spending, we need to check that the presentation tag has not been observed before.\nIt is mentioned in the ARC spec, but not in the privacy pass adoption.",
       "createdAt": "2025-03-03T17:04:55Z",
-      "updatedAt": "2025-04-02T09:23:07Z",
-      "closedAt": null,
+      "updatedAt": "2025-04-15T16:05:37Z",
+      "closedAt": "2025-04-15T16:05:37Z",
       "comments": [
         {
           "author": "cathieyun",
@@ -275,15 +275,15 @@
       "id": "I_kwDONyB6uM6s1EU7",
       "title": "PrivacyPass: Section 8.2 `request_context` and `presentation_context` are wrong",
       "url": "https://github.com/chris-wood/draft-arc/issues/20",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "karulont",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "What happened is that #13 changed the `request_context` and `presentation_context` definitions, but it forgot to update them in Section 8.2: Token Verification.",
       "createdAt": "2025-03-06T07:30:14Z",
-      "updatedAt": "2025-03-06T07:30:40Z",
-      "closedAt": null,
+      "updatedAt": "2025-04-15T16:05:38Z",
+      "closedAt": "2025-04-15T16:05:38Z",
       "comments": []
     },
     {
@@ -307,15 +307,15 @@
       "id": "I_kwDONyB6uM6t59an",
       "title": "PrivacyPass: 7.2. Issuer-to-Client Request: title should say \"Response\"",
       "url": "https://github.com/chris-wood/draft-arc/issues/22",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "karulont",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "To better align with [existing docs](https://www.rfc-editor.org/rfc/rfc9578.html#name-issuer-to-client-response-2): the title should be \"Issuer-to-Client Response\"",
       "createdAt": "2025-03-13T15:53:20Z",
-      "updatedAt": "2025-03-13T15:53:20Z",
-      "closedAt": null,
+      "updatedAt": "2025-04-15T16:05:38Z",
+      "closedAt": "2025-04-15T16:05:38Z",
       "comments": []
     },
     {
@@ -429,16 +429,40 @@
       "id": "I_kwDONyB6uM6yDBLF",
       "title": "Privacy pass spec: client should hold onto tokenChallenge",
       "url": "https://github.com/chris-wood/draft-arc/issues/28",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "cathieyun",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The client needs to hold onto their latest tokenChallenge, so that they have something to compare to when they get a new tokenChallenge - to see if the credential_context, origin_info, redemption_context, or issuer_name changed.\n\nFor example, if any of those fields except redemption_context change, they will need to fetch a new credential.\nIf the redemption_context changes, they will need to use the new redemption context for making presentations (and will have a new rate limit, which may be relevant if they ran out of their rate limit for the previous redemption context).",
       "createdAt": "2025-04-10T23:07:31Z",
-      "updatedAt": "2025-04-10T23:07:31Z",
-      "closedAt": null,
+      "updatedAt": "2025-04-15T16:05:38Z",
+      "closedAt": "2025-04-15T16:05:38Z",
       "comments": []
+    },
+    {
+      "number": 29,
+      "id": "I_kwDONyB6uM6ypQJo",
+      "title": "Privacy pass: Verifier needs to parse out presentation tag for rate limiting",
+      "url": "https://github.com/chris-wood/draft-arc/issues/29",
+      "state": "OPEN",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The verifier needs to store `presentation.tag` for rate limiting, so it needs to be able to parse that out from the `presentation` opaque blob. There currently isn't an API for the verifier to explicitly access the tag.",
+      "createdAt": "2025-04-15T17:40:50Z",
+      "updatedAt": "2025-04-15T17:41:44Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Alternatively, can update `VerifyPresentation` to output not only a bool, but also the tag. I like this, it's cleaner / reduces API functions, and forces the verifier to verify the presentation before getting the tag (no invalid tag storage!)",
+          "createdAt": "2025-04-15T17:41:43Z",
+          "updatedAt": "2025-04-15T17:41:43Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -1090,24 +1114,26 @@
       "id": "PR_kwDONyB6uM6RDrh6",
       "title": "Clean up specs for clarity",
       "url": "https://github.com/chris-wood/draft-arc/pull/26",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "cathieyun",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Addresses the following issues:\r\nhttps://github.com/chris-wood/draft-arc/issues/16\r\nhttps://github.com/chris-wood/draft-arc/issues/18\r\nhttps://github.com/chris-wood/draft-arc/issues/20\r\nhttps://github.com/chris-wood/draft-arc/issues/22",
       "createdAt": "2025-04-02T09:26:02Z",
-      "updatedAt": "2025-04-12T05:13:32Z",
+      "updatedAt": "2025-04-15T16:05:36Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "08c54fd64f198e85d8a90827a45944cb52e5fec3",
       "headRepository": "chris-wood/draft-arc",
       "headRefName": "cathie/spec-cleanup",
       "headRefOid": "dd47f5f07c30cbd36f9fd679d5ea965ad85e48a6",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-04-15T16:05:36Z",
+      "mergedAt": "2025-04-15T16:05:36Z",
+      "mergedBy": "cathieyun",
+      "mergeCommit": {
+        "oid": "061e446a4eeed977735f06386f570f5ad1296d9d"
+      },
       "comments": [
         {
           "author": "karulont",
@@ -1122,6 +1148,13 @@
           "body": "Discussed with Chris - for Privacy Pass interoperability, the *ideal* behavior which would fit cleanly into the current Privacy Pass workflow, would be if the server could store the entire ARC token for double spending checks (this maps most cleanly to how the server currently stores the entire RSA signature value for double spend checks). So, I understand the motivation/reasoning here.\r\n\r\nHowever for ARC, this isn't possible because the tag is the only item in the presentation which is \"weight bearing\" for rate limiting. That is, we can only use the tag for double-spend prevention. If we tried to use the whole presentation for double-spend prevention, it would not work because it is possible to make multiple presentations with the same tag, but where the other presentation elements are different (since they are re-randomized each time). So it would be trivial for a malicious client to exceed the rate limit by reusing the same nonce for multiple presentations.",
           "createdAt": "2025-04-12T04:26:56Z",
           "updatedAt": "2025-04-12T04:26:56Z"
+        },
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Chris gave me the go-ahead to merge this PR.",
+          "createdAt": "2025-04-15T16:05:32Z",
+          "updatedAt": "2025-04-15T16:05:32Z"
         }
       ],
       "reviews": [
