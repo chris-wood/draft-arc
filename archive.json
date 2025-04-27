@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-17T00:09:18.281680+00:00",
+  "timestamp": "2025-04-27T00:10:13.987964+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -463,6 +463,22 @@
           "updatedAt": "2025-04-15T17:41:43Z"
         }
       ]
+    },
+    {
+      "number": 30,
+      "id": "I_kwDONyB6uM60DAn4",
+      "title": "ARC CFRG spec should include P256 test vectors",
+      "url": "https://github.com/chris-wood/draft-arc/issues/30",
+      "state": "OPEN",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Since the CFRG spec says P256 and P384 are both supported, both ciphersuites should have test vectors. Currently there are only test vectors for P384.",
+      "createdAt": "2025-04-25T17:59:54Z",
+      "updatedAt": "2025-04-25T17:59:54Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
