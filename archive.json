@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-27T00:10:13.987964+00:00",
+  "timestamp": "2025-06-15T00:11:07.794725+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -47,6 +47,11 @@
       "name": "wontfix",
       "description": "This will not be worked on",
       "color": "ffffff"
+    },
+    {
+      "name": "ietf123",
+      "description": "",
+      "color": "b829be"
     }
   ],
   "issues": [
@@ -126,11 +131,15 @@
       "state": "OPEN",
       "author": "mmaker",
       "authorAssociation": "NONE",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "cathieyun"
+      ],
+      "labels": [
+        "ietf123"
+      ],
       "body": "The specification currently writes:\n\n> The resulting request is therefore perfetly hiding, and independent from other requests from the same client. More details about this unlinkability property can be found in {{KVAC}} and {{REVISITING_KVAC}}.\n\nThis is not true. The  public parameters in your spec `X_0` is defined as\n```\n  X0 = x0 * G.GeneratorG() + x0Blinding * G.GeneratorH()\n```\nwhich is only computationally binding. \nAn adversary breaking DL could in theory find `x0` and `x0'`, both committing to `X0`, and use them to sign different credentials. \n\nThis is the reason why in {{REVISITING_KVAC}} I **don't** set `X0` in this way. \nIn order to achieve stronger privacy you need to commit to X0 differently. \n\n(Nitpick: I am also not sure how you can get more than statistical anonymity, from thm 5.10 you also need soundness of the user proofs.)",
       "createdAt": "2025-02-24T19:53:28Z",
-      "updatedAt": "2025-02-24T19:53:28Z",
+      "updatedAt": "2025-06-13T20:07:36Z",
       "closedAt": null,
       "comments": []
     },
@@ -158,11 +167,15 @@
       "state": "OPEN",
       "author": "cathieyun",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "chris-wood"
+      ],
+      "labels": [
+        "ietf123"
+      ],
       "body": "Currently we get deterministic ZKP output by using an incrementing counter for blinding:\nhttps://github.com/chris-wood/draft-arc/blob/main/poc/zkp.sage#L62\n\nWe should move to a seeded PRNG instead, this is better practice. \n\n(Suggestion from Michele / @mmaker)",
       "createdAt": "2025-02-24T21:47:37Z",
-      "updatedAt": "2025-02-24T21:47:37Z",
+      "updatedAt": "2025-06-13T20:07:56Z",
       "closedAt": null,
       "comments": []
     },
@@ -174,11 +187,15 @@
       "state": "OPEN",
       "author": "mmaker",
       "authorAssociation": "NONE",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "chris-wood"
+      ],
+      "labels": [
+        "ietf123"
+      ],
       "body": "Python has a specific exception for not-implemented errors, called \"[NotImplementedError](https://docs.python.org/3/library/exceptions.html#NotImplementedError)\". This should be preferred to raising a string object \"Not implemented\"",
       "createdAt": "2025-03-01T09:56:10Z",
-      "updatedAt": "2025-03-01T09:56:37Z",
+      "updatedAt": "2025-06-13T20:07:56Z",
       "closedAt": null,
       "comments": []
     },
@@ -214,11 +231,15 @@
       "state": "OPEN",
       "author": "karulont",
       "authorAssociation": "NONE",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "chris-wood"
+      ],
+      "labels": [
+        "ietf123"
+      ],
       "body": "1. [Section 8.1](https://chris-wood.github.io/draft-arc/draft-yun-privacypass-arc.html#name-token-creation) could define what `challenge_digest` is.\n2. Notice the difference in description between `token_type` and `presentation_nonce`.\n```\n\"token_type\" is a 2-octet integer, in network byte order, equal to 0xC7D3.\n\"presentation_nonce\" is a 32-bit encoding of the nonce output from ARC.\n```\nOne defines the byte order, the other does not specify which \"32-bit encoding\". I suggest to use \"4-octet integer, in network byte order\"",
       "createdAt": "2025-03-03T16:59:57Z",
-      "updatedAt": "2025-03-03T16:59:57Z",
+      "updatedAt": "2025-06-13T20:07:56Z",
       "closedAt": null,
       "comments": []
     },
@@ -254,11 +275,15 @@
       "state": "OPEN",
       "author": "karulont",
       "authorAssociation": "NONE",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "chris-wood"
+      ],
+      "labels": [
+        "ietf123"
+      ],
       "body": "[Section 9](https://chris-wood.github.io/draft-arc/draft-yun-privacypass-arc.html#name-security-considerations): the last link to Section 7.2 of [AUTHSCHEME] should instead be to: Section 6.2 of [ARCHITECTURE]",
       "createdAt": "2025-03-03T17:05:30Z",
-      "updatedAt": "2025-04-02T09:14:39Z",
+      "updatedAt": "2025-06-13T20:07:57Z",
       "closedAt": null,
       "comments": [
         {
@@ -294,11 +319,15 @@
       "state": "OPEN",
       "author": "mmaker",
       "authorAssociation": "NONE",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "chris-wood"
+      ],
+      "labels": [
+        "ietf123"
+      ],
       "body": "It seems there's some confusion about class attributes and instance attributes. For instance, in \n\nhttps://github.com/chris-wood/draft-arc/blob/main/poc/groups.sage#L220\n\nattributes like order, identity, etc can be accessed without instantiating the class (and it shouldn't be instantiated!)\nSame goes for other groups.\n\n",
       "createdAt": "2025-03-11T08:10:03Z",
-      "updatedAt": "2025-03-11T08:10:03Z",
+      "updatedAt": "2025-06-13T20:07:57Z",
       "closedAt": null,
       "comments": []
     },
@@ -326,11 +355,15 @@
       "state": "OPEN",
       "author": "karulont",
       "authorAssociation": "NONE",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "chris-wood"
+      ],
+      "labels": [
+        "ietf123"
+      ],
       "body": "There are instances of things in the ARC privacypass proposal that rename things slightly when compared to the rest of the privacy pass documents. This increases friction for implementations which want to support multiple token types.\n\nConcrete examples where the previous term is replaced with a new slightly different name, but without changing the meaning.\n`token_key_id` -> `issuer_key_id`\n`truncated_token_key_id` -> `truncated_issuer_key_id`\n`application/private-token-request` -> `application/private-credential-request`\n`application/private-token-response` -> `application/private-credential-response`\n\nI do not believe that the new names add any extra value, but they might cause confusion(subjective opinion) and they will increase friction for implementations (objective opinion).",
       "createdAt": "2025-03-18T16:28:31Z",
-      "updatedAt": "2025-04-02T16:47:10Z",
+      "updatedAt": "2025-06-13T20:07:58Z",
       "closedAt": null,
       "comments": [
         {
@@ -416,11 +449,15 @@
       "state": "OPEN",
       "author": "karulont",
       "authorAssociation": "NONE",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "chris-wood"
+      ],
+      "labels": [
+        "ietf123"
+      ],
       "body": "To construct a request context one has to do:\n```\nrequest_context = concat(tokenChallenge.issuer_name,\n  tokenChallenge.origin_info,\n  tokenChallenge.credential_context,\n  issuer_key_id)\n```\n\nThen when one looks at:\n```\nstruct {\n    uint16_t token_type = 0xC7D3; /* Type ARC(P-384) */\n    opaque issuer_name<1..2^16-1>;\n    opaque redemption_context<0..32>;\n    opaque origin_info<0..2^16-1>;\n    opaque credential_context<0..32>;\n} TokenChallenge;\n```\n\nSo let's give a simple example:\nIssuer name is \"issuer.example.net\" & other fields are left empty.\n\nSo now should the `request_context` be\n```\n69 73 73 75 65 72 2e 65 78 61 6d 70 6c 65 2e 6e 65 74 <token_key_id>\n```\nOr should the request context contain all the length prefixes?\n```\n00 12 69 73 73 75 65 72 2e 65 78 61 6d 70 6c 65 2e 6e 65 74 00 00 00 <token_key_id>\n```\nNote we begin with 2 bytes for issuer name length, and end with 3 bytes of zeros, 2 for origin_info length and 1 for credential_context length.\n\nI assume the right interpretation is the second one where each field in the token challenge is prefixed by a length.\nBut when writing an implementation it is easy to make a mistake and forgot to include the length prefix. The spec should clarify it.",
       "createdAt": "2025-03-22T04:07:58Z",
-      "updatedAt": "2025-03-22T04:07:58Z",
+      "updatedAt": "2025-06-13T20:07:58Z",
       "closedAt": null,
       "comments": []
     },
@@ -448,11 +485,15 @@
       "state": "OPEN",
       "author": "cathieyun",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "chris-wood"
+      ],
+      "labels": [
+        "ietf123"
+      ],
       "body": "The verifier needs to store `presentation.tag` for rate limiting, so it needs to be able to parse that out from the `presentation` opaque blob. There currently isn't an API for the verifier to explicitly access the tag.",
       "createdAt": "2025-04-15T17:40:50Z",
-      "updatedAt": "2025-04-15T17:41:44Z",
+      "updatedAt": "2025-06-13T20:07:59Z",
       "closedAt": null,
       "comments": [
         {
@@ -472,11 +513,15 @@
       "state": "OPEN",
       "author": "cathieyun",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "cathieyun"
+      ],
+      "labels": [
+        "ietf123"
+      ],
       "body": "Since the CFRG spec says P256 and P384 are both supported, both ciphersuites should have test vectors. Currently there are only test vectors for P384.",
       "createdAt": "2025-04-25T17:59:54Z",
-      "updatedAt": "2025-04-25T17:59:54Z",
+      "updatedAt": "2025-06-13T20:07:36Z",
       "closedAt": null,
       "comments": []
     }
