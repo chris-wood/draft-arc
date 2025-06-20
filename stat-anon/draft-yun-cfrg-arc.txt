@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Informational                               Apple, Inc.
-Expires: 4 October 2025                                     2 April 2025
+Expires: 22 December 2025                                   20 June 2025
 
 
                    Anonymous Rate-Limited Credentials
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 October 2025.
+   This Internet-Draft will expire on 22 December 2025.
 
 Copyright Notice
 
@@ -105,9 +105,10 @@ Table of Contents
        6.3.1.  Rejection Sampling
        6.3.2.  Random Number Generation Using Extra Random Bits
    7.  Security Considerations
-     7.1.  Credential Issuance Unlinkability
-     7.2.  Presentation Unlinkability
-     7.3.  Timing Leaks
+     7.1.  Credential Request Unlinkability
+     7.2.  Credential Issuance Unlinkability
+     7.3.  Presentation Unlinkability
+     7.4.  Timing Leaks
    8.  Alternatives considered
    9.  IANA Considerations
    10. Test Vectors
@@ -642,8 +643,7 @@ Outputs:
 - presentationLimit: Integer, the fixed presentation limit.
 
 def MakePresentationState(credential, presentationContext, presentationLimit):
-  nonce = random_integer_uniform(0, presentationLimit)
-  return PresentationState(credential, presentationContext, [nonce], presentationLimit)
+  return PresentationState(credential, presentationContext, [], presentationLimit)
 
 4.3.2.  Presentation Construction
 
@@ -1698,7 +1698,7 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
    This section elaborates on unlinkability properties for ARC and other
    implementation details necessary for these properties to hold.
 
-7.1.  Credential Issuance Unlinkability
+7.1.  Credential Request Unlinkability
 
    Client credential requests are constructed such that the server
    cannot distinguish between any two credential requests from the same
@@ -1712,7 +1712,27 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
    the same client.  More details about this unlinkability property can
    be found in [KVAC] and [REVISITING_KVAC].
 
-7.2.  Presentation Unlinkability
+7.2.  Credential Issuance Unlinkability
+
+   The server commitment to x0 is defined as X0 = x0 * G.generatorG() +
+   x0Blinding * G.GeneratorH(), following the definitions in [KVAC].
+   This is computationally binding to the secret key x0.  This means
+   that unless the discrete log is broken, the credentials issued under
+   one server commitment X0, X1, ... will all be issued under the same
+   private keys x0, x1, ...
+
+   However, an adversary breaking the discrete log (eg a quantum
+   adversary) could in theory find pairs (x0, x0Blinding) and (x0',
+   x0Blinding') both committing to X0 and use them to issue different
+   credentials.  This would require an active attack (eg an active
+   quantum adversary who is able to issue credentials), so is not an
+   immediate concern.  However if we want to prevent this attack, we can
+   achieve statistical anonymity by committing to x0 and x0Blinding`
+   separately, as in [REVISITING_KVAC].  The security of this
+   construction should be reviewed further, and it also incurs minor
+   additional overhead.
+
+7.3.  Presentation Unlinkability
 
    Client credential presentations are constructed so that all
    presentations are indistinguishable, even if coming from the same
@@ -1753,7 +1773,7 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
    [[OPEN ISSUE: hide the nonce and replace the tag proof with a range
    proof built from something like Bulletproofs.]]
 
-7.3.  Timing Leaks
+7.4.  Timing Leaks
 
    To ensure no information is leaked during protocol execution, all
    operations that use secret data MUST run in constant time.  This

@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Standards Track                             Apple, Inc.
-Expires: 4 October 2025                                     2 April 2025
+Expires: 22 December 2025                                   20 June 2025
 
 
  Privacy Pass Issuance Protocol for Anonymous Rate-Limited Credentials
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 October 2025.
+   This Internet-Draft will expire on 22 December 2025.
 
 Copyright Notice
 
@@ -73,7 +73,7 @@ Table of Contents
    6.  Token Challenge Requirements
    7.  Credential Issuance Protocol
      7.1.  Client-to-Issuer Request
-     7.2.  Issuer-to-Client Request
+     7.2.  Issuer-to-Client Response
      7.3.  Credential Finalization
    8.  Token Redemption Protocol
      8.1.  Token Creation
@@ -269,6 +269,14 @@ Table of Contents
    *  "rate-limit", which contains a JSON number indicating the
       presentation limit to use for ARC.
 
+   Implementation-specific steps: the client should store the Origin-
+   provided input tokenChallenge so that when they receive a new
+   tokenChallenge value, they can check if it has changed and which
+   fields are different.  This will inform the client's behavior - for
+   example, if credential_context is being used to enforce an expiration
+   on the credential, then if the credential_context has changed, this
+   can prompt the client to request a new credential.
+
 7.  Credential Issuance Protocol
 
    Issuers provide an Issuer Private and Public Key, denoted skI and pkI
@@ -346,7 +354,7 @@ Table of Contents
 
    <Bytes containing the TokenRequest>
 
-7.2.  Issuer-to-Client Request
+7.2.  Issuer-to-Client Response
 
    Upon receipt of the request, the Issuer validates the following
    conditions:
@@ -471,14 +479,27 @@ newState, nonce, presentation = Present(state)
    presentation_limit, a presentation nonce from a token, denoted nonce,
    and the digest of a token challenge, denoted challenge_digest,
    verifying a Token requires invoking the VerifyPresentation function
-   from [Section 4.3.3 of ARC] in the following wayz:
+   from [Section 4.3.3 of ARC] in the following ways:
 
-request_context = concat(tokenChallenge.issuer_name, issuer_key_id)
-presentation_context = concat(challenge_digest, issuer_key_id)
+request_context = concat(tokenChallenge.issuer_name,
+  tokenChallenge.origin_info,
+  tokenChallenge.credential_context,
+  issuer_key_id)
+presentation_context = concat(tokenChallenge.issuer_name,
+  tokenChallenge.origin_info,
+  tokenChallenge.redemption_context,
+  issuer_key_id)
 valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonce, presentation, presentation_limit)
 
    This function returns True if the CredentialToken is valid, and False
    otherwise.
+
+   Implementation-specific steps: to prevent double spending, the Origin
+   should perform a check that the tag (presentation.tag) has not
+   previously been seen.  It then stores the tag for use in future
+   double spending checks.  To reduce the overhead of performing double
+   spend checks, the Origin can store and look up the tags corresponding
+   to the associated request_context and presentation_context values.
 
 9.  Security Considerations
 
@@ -493,7 +514,7 @@ valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonc
    unlinkability is achieved by re-randomizing credentials every time
    they are presented as tokens, there is a reduction in the anonymity
    set in the case of presentation nonce collisions, as detailed in
-   Section 7.2 of [AUTHSCHEME].
+   [Section 7.2 of ARC].
 
 10.  IANA Considerations
 
@@ -579,9 +600,9 @@ valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonc
    [DAP]      Geoghegan, T., Patton, C., Pitman, B., Rescorla, E., and
               C. A. Wood, "Distributed Aggregation Protocol for Privacy
               Preserving Measurement", Work in Progress, Internet-Draft,
-              draft-ietf-ppm-dap-14, 3 February 2025,
+              draft-ietf-ppm-dap-15, 29 April 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-ppm-dap-
-              14>.
+              15>.
 
    [OHTTP]    Thomson, M. and C. A. Wood, "Oblivious HTTP", RFC 9458,
               DOI 10.17487/RFC9458, January 2024,
