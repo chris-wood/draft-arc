@@ -1482,42 +1482,6 @@ contextString is "ARCV1-P256".
     string using Octet-String-to-Field-Element from {{SEC1}}. This function can fail if the
     input does not represent a Scalar in the range \[0, `G.Order()` - 1\].
 
-## ARC(P-384)
-
-This ciphersuite uses P-384 {{NISTCurves}} for the Group.
-The value of the ciphersuite identifier is "P384". The value of
-contextString is "ARCV1-P384".
-
-- Group: P-384 (secp384r1) {{NISTCurves}}
-  - Order(): Return 0xffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf581a0db248b0a77aecec196accc52973.
-  - Identity(): As defined in {{NISTCurves}}.
-  - Generator(): As defined in {{NISTCurves}}.
-  - RandomScalar(): Implemented by returning a uniformly random Scalar in the range
-    \[0, `G.Order()` - 1\]. Refer to {{random-scalar}} for implementation guidance.
-  - HashToGroup(x, info): Use hash_to_curve with suite P384_XMD:SHA-384_SSWU_RO\_
-    {{!I-D.irtf-cfrg-hash-to-curve}}, input `x`, and DST =
-    "HashToGroup-" || contextString || info.
-  - HashToScalar(x, info): Use hash_to_field from {{!I-D.irtf-cfrg-hash-to-curve}}
-    using L = 72, `expand_message_xmd` with SHA-384, input `x` and
-    DST = "HashToScalar-" || contextString || info, and
-    prime modulus equal to `Group.Order()`.
-  - ScalarInverse(s): Returns the multiplicative inverse of input Scalar `s` mod `Group.Order()`.
-  - SerializeElement(A): Implemented using the compressed Elliptic-Curve-Point-to-Octet-String
-    method according to {{SEC1}}; Ne = 49.
-  - DeserializeElement(buf): Implemented by attempting to deserialize a 49-byte array to
-    a public key using the compressed Octet-String-to-Elliptic-Curve-Point method according to {{SEC1}},
-    and then performs partial public-key validation as defined in section 5.6.2.3.4 of
-    {{!KEYAGREEMENT=DOI.10.6028/NIST.SP.800-56Ar3}}. This includes checking that the
-    coordinates of the resulting point are in the correct range, that the point is on
-    the curve, and that the point is not the point at infinity. Additionally, this function
-    validates that the resulting element is not the group identity element.
-    If these checks fail, deserialization returns an InputValidationError error.
-  - SerializeScalar(s): Implemented using the Field-Element-to-Octet-String conversion
-    according to {{SEC1}}; Ns = 48.
-  - DeserializeScalar(buf): Implemented by attempting to deserialize a Scalar from a 48-byte
-    string using Octet-String-to-Field-Element from {{SEC1}}. This function can fail if the
-    input does not represent a Scalar in the range \[0, `G.Order()` - 1\].
-
 ## Random Scalar Generation {#random-scalar}
 
 Two popular algorithms for generating a random integer uniformly distributed in
