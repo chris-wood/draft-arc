@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-15T00:11:07.794725+00:00",
+  "timestamp": "2025-06-22T00:10:59.785436+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -139,9 +139,17 @@
       ],
       "body": "The specification currently writes:\n\n> The resulting request is therefore perfetly hiding, and independent from other requests from the same client. More details about this unlinkability property can be found in {{KVAC}} and {{REVISITING_KVAC}}.\n\nThis is not true. The  public parameters in your spec `X_0` is defined as\n```\n  X0 = x0 * G.GeneratorG() + x0Blinding * G.GeneratorH()\n```\nwhich is only computationally binding. \nAn adversary breaking DL could in theory find `x0` and `x0'`, both committing to `X0`, and use them to sign different credentials. \n\nThis is the reason why in {{REVISITING_KVAC}} I **don't** set `X0` in this way. \nIn order to achieve stronger privacy you need to commit to X0 differently. \n\n(Nitpick: I am also not sure how you can get more than statistical anonymity, from thm 5.10 you also need soundness of the user proofs.)",
       "createdAt": "2025-02-24T19:53:28Z",
-      "updatedAt": "2025-06-13T20:07:36Z",
+      "updatedAt": "2025-06-20T20:34:16Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "To clarify, the claim in the spec is that the *request* is perfectly hiding, meaning that multiple requests can't be linked to each other. This has nothing to do with the definition of the server keys, as the request doesn't use the server keys at all - only the response does. I'll make this clearer by renaming the section to \"Credential request unlinkability\" instead of \"Credential issuance unlinkability\", which may have led to the misunderstanding.",
+          "createdAt": "2025-06-20T20:34:16Z",
+          "updatedAt": "2025-06-20T20:34:16Z"
+        }
+      ]
     },
     {
       "number": 11,
@@ -1340,6 +1348,58 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 31,
+      "id": "PR_kwDONyB6uM6beW5g",
+      "title": "Clarify unlinkability properties",
+      "url": "https://github.com/chris-wood/draft-arc/pull/31",
+      "state": "OPEN",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Addresses https://github.com/chris-wood/draft-arc/issues/10",
+      "createdAt": "2025-06-20T21:04:35Z",
+      "updatedAt": "2025-06-20T21:04:36Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "061e446a4eeed977735f06386f570f5ad1296d9d",
+      "headRepository": "chris-wood/draft-arc",
+      "headRefName": "stat-anon",
+      "headRefOid": "e36f8268501eb145fa9dcf775677c1a1fd5efba5",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 32,
+      "id": "PR_kwDONyB6uM6becYP",
+      "title": "Remove P384 from the list of ARC supported curves",
+      "url": "https://github.com/chris-wood/draft-arc/pull/32",
+      "state": "OPEN",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "From discussion on the CFRG list and with authors, we decided to move to P256 instead of P384 for performance reasons. I kept P384 as a curve option originally, but it seems better to remove it for several reasons:\r\n- We want to move the proof to use the sigma proof spec, which only supports P256: https://github.com/mmaker/draft-zkproof-sigma-protocols/blob/main/draft-orru-zkproof-sigma-protocols.md#ciphersuites-ciphersuites\r\n- Implementors would prefer fewer rather than more curves. This will also help interoperability and adoption. Eg from the cfrg mailing list, on the call for adoption for sigma protocols, Chris Patton says:\r\n> As an implementer, in general I think fewer choices for curves is always better. In this case, I would rather have P384 only than a bunch of different options (including P256, ristretto, decaf, etc.). It just strikes me as odd to choose P384 over something smaller and more widely used, like P256. For TLS for example, both X25519 and P256 are much, much more common than P384.",
+      "createdAt": "2025-06-20T21:19:37Z",
+      "updatedAt": "2025-06-20T21:19:38Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "061e446a4eeed977735f06386f570f5ad1296d9d",
+      "headRepository": "chris-wood/draft-arc",
+      "headRefName": "update-curves",
+      "headRefOid": "baeff348cff7147dae75cb568fac472542ede7c2",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
