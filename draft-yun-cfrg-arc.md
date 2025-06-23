@@ -1554,7 +1554,7 @@ necessary for these properties to hold.
 
 ## Credential Request Unlinkability
 
-Client credential requests are constructed such that the server cannot distinguish between any two credential requests from the same client and two requests from different clients. We refer to this property as issuance unlinkability. This property is achieved by the way the credential requests are constructed. In particular, each credential request consists of two Pedersen commitments with fresh blinding factors, which are used to commit to a freshly generated client secret and request context. The resulting request is therefore perfectly hiding, and independent from other requests from the same client. More details about this unlinkability property can be found in {{KVAC}} and {{REVISITING_KVAC}}.
+Client credential requests are constructed such that the server cannot distinguish between any two credential requests from the same client and two requests from different clients. We refer to this property as issuance unlinkability. This property is achieved by the way the credential requests are constructed. In particular, each credential request consists of two Pedersen commitments with fresh blinding factors, which are used to commit to a freshly generated client secret and request context. The resulting request is therefore statistically hiding, and independent from other requests from the same client. More details about this unlinkability property can be found in {{KVAC}} and {{REVISITING_KVAC}}.
 
 ## Credential Issuance Unlinkability
 
