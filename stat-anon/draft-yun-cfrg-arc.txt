@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Informational                               Apple, Inc.
-Expires: 22 December 2025                                   20 June 2025
+Expires: 25 December 2025                                   23 June 2025
 
 
                    Anonymous Rate-Limited Credentials
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 22 December 2025.
+   This Internet-Draft will expire on 25 December 2025.
 
 Copyright Notice
 
@@ -1721,16 +1721,17 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
    one server commitment X0, X1, ... will all be issued under the same
    private keys x0, x1, ...
 
-   However, an adversary breaking the discrete log (eg a quantum
-   adversary) could in theory find pairs (x0, x0Blinding) and (x0',
-   x0Blinding') both committing to X0 and use them to issue different
-   credentials.  This would require an active attack (eg an active
-   quantum adversary who is able to issue credentials), so is not an
-   immediate concern.  However if we want to prevent this attack, we can
-   achieve statistical anonymity by committing to x0 and x0Blinding`
-   separately, as in [REVISITING_KVAC].  The security of this
-   construction should be reviewed further, and it also incurs minor
-   additional overhead.
+   However, an adversary breaking the discrete log (e.g., a quantum
+   adversary) can find pairs (x0, x0Blinding) and (x0', x0Blinding')
+   both committing to X0 and use them to issue different credentials.
+   This capability would let the adversary partitioning the client
+   anonymity set by linking clients to the underlying secret used for
+   credential issuance, i.e., x0 or x0'.  This requires an active attack
+   and therefore is not an immediate concern.
+
+   Statistical anonymity is possible by committing to x0 and x0Blinding`
+   separately, as in [REVISITING_KVAC].  However, the security of this
+   construction requires additional analysis.
 
 7.3.  Presentation Unlinkability
 

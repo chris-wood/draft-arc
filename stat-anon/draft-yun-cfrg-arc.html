@@ -1055,7 +1055,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Yun &amp; Wood</td>
-<td class="center">Expires 22 December 2025</td>
+<td class="center">Expires 25 December 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1068,12 +1068,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-yun-cfrg-arc-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-06-20" class="published">20 June 2025</time>
+<time datetime="2025-06-23" class="published">23 June 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-12-22">22 December 2025</time></dd>
+<dd class="expires"><time datetime="2025-12-25">25 December 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1134,7 +1134,7 @@ rate-limit access from anonymous clients.<a href="#section-abstract-1" class="pi
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 22 December 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 25 December 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -3138,7 +3138,8 @@ necessary for these properties to hold.<a href="#section-7-2" class="pilcrow">¶
 <a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-credential-issuance-unlinka" class="section-name selfRef">Credential Issuance Unlinkability</a>
         </h3>
 <p id="section-7.2-1">The server commitment to <code>x0</code> is defined as <code>X0 = x0 * G.generatorG() + x0Blinding * G.GeneratorH()</code>, following the definitions in <span>[<a href="#KVAC" class="cite xref">KVAC</a>]</span>. This is computationally binding to the secret key <code>x0</code>. This means that unless the discrete log is broken, the credentials issued under one server commitment <code>X0, X1, ...</code> will all be issued under the same private keys <code>x0, x1, ...</code><a href="#section-7.2-1" class="pilcrow">¶</a></p>
-<p id="section-7.2-2">However, an adversary breaking the discrete log (eg a quantum adversary) could in theory find pairs <code>(x0, x0Blinding)</code> and <code>(x0', x0Blinding')</code> both committing to <code>X0</code> and use them to issue different credentials. This would require an active attack (eg an active quantum adversary who is able to issue credentials), so is not an immediate concern. However if we want to prevent this attack, we can achieve statistical anonymity by committing to <code>x0</code> and x0Blinding` separately, as in <span>[<a href="#REVISITING_KVAC" class="cite xref">REVISITING_KVAC</a>]</span>. The security of this construction should be reviewed further, and it also incurs minor additional overhead.<a href="#section-7.2-2" class="pilcrow">¶</a></p>
+<p id="section-7.2-2">However, an adversary breaking the discrete log (e.g., a quantum adversary) can find pairs <code>(x0, x0Blinding)</code> and <code>(x0', x0Blinding')</code> both committing to <code>X0</code> and use them to issue different credentials. This capability would let the adversary partitioning the client anonymity set by linking clients to the underlying secret used for credential issuance, i.e., <code>x0</code> or <code>x0'</code>. This requires an active attack and therefore is not an immediate concern.<a href="#section-7.2-2" class="pilcrow">¶</a></p>
+<p id="section-7.2-3">Statistical anonymity is possible by committing to <code>x0</code> and x0Blinding` separately, as in <span>[<a href="#REVISITING_KVAC" class="cite xref">REVISITING_KVAC</a>]</span>. However, the security of this construction requires additional analysis.<a href="#section-7.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="pres-unlinkability">
