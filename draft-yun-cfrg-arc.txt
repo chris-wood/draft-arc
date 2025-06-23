@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Informational                               Apple, Inc.
-Expires: 17 October 2025                                   15 April 2025
+Expires: 25 December 2025                                   23 June 2025
 
 
                    Anonymous Rate-Limited Credentials
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 17 October 2025.
+   This Internet-Draft will expire on 25 December 2025.
 
 Copyright Notice
 
@@ -100,10 +100,9 @@ Table of Contents
        5.4.2.  Presentation Proof Verification
    6.  Ciphersuites
      6.1.  ARC(P-256)
-     6.2.  ARC(P-384)
-     6.3.  Random Scalar Generation
-       6.3.1.  Rejection Sampling
-       6.3.2.  Random Number Generation Using Extra Random Bits
+     6.2.  Random Scalar Generation
+       6.2.1.  Rejection Sampling
+       6.2.2.  Random Number Generation Using Extra Random Bits
    7.  Security Considerations
      7.1.  Credential Issuance Unlinkability
      7.2.  Presentation Unlinkability
@@ -1562,7 +1561,7 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
       -  Generator(): As defined in [NISTCurves].
 
       -  RandomScalar(): Implemented by returning a uniformly random
-         Scalar in the range [0, G.Order() - 1].  Refer to Section 6.3
+         Scalar in the range [0, G.Order() - 1].  Refer to Section 6.2
          for implementation guidance.
 
       -  HashToGroup(x, info): Use hash_to_curve with suite
@@ -1603,69 +1602,12 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
          input does not represent a Scalar in the range [0, G.Order() -
          1].
 
-6.2.  ARC(P-384)
-
-   This ciphersuite uses P-384 [NISTCurves] for the Group.  The value of
-   the ciphersuite identifier is "P384".  The value of contextString is
-   "ARCV1-P384".
-
-   *  Group: P-384 (secp384r1) [NISTCurves]
-
-      -  Order(): Return 0xfffffffffffffffffffffffffffffffffffffffffffff
-         fffc7634d81f4372ddf581a0db248b0a77aecec196accc52973.
-
-      -  Identity(): As defined in [NISTCurves].
-
-      -  Generator(): As defined in [NISTCurves].
-
-      -  RandomScalar(): Implemented by returning a uniformly random
-         Scalar in the range [0, G.Order() - 1].  Refer to Section 6.3
-         for implementation guidance.
-
-      -  HashToGroup(x, info): Use hash_to_curve with suite
-         P384_XMD:SHA-384_SSWU_RO_ [I-D.irtf-cfrg-hash-to-curve], input
-         x, and DST = "HashToGroup-" || contextString || info.
-
-      -  HashToScalar(x, info): Use hash_to_field from
-         [I-D.irtf-cfrg-hash-to-curve] using L = 72, expand_message_xmd
-         with SHA-384, input x and DST = "HashToScalar-" ||
-         contextString || info, and prime modulus equal to
-         Group.Order().
-
-      -  ScalarInverse(s): Returns the multiplicative inverse of input
-         Scalar s mod Group.Order().
-
-      -  SerializeElement(A): Implemented using the compressed Elliptic-
-         Curve-Point-to-Octet-String method according to [SEC1]; Ne =
-         49.
-
-      -  DeserializeElement(buf): Implemented by attempting to
-         deserialize a 49-byte array to a public key using the
-         compressed Octet-String-to-Elliptic-Curve-Point method
-         according to [SEC1], and then performs partial public-key
-         validation as defined in section 5.6.2.3.4 of [KEYAGREEMENT].
-         This includes checking that the coordinates of the resulting
-         point are in the correct range, that the point is on the curve,
-         and that the point is not the point at infinity.  Additionally,
-         this function validates that the resulting element is not the
-         group identity element.  If these checks fail, deserialization
-         returns an InputValidationError error.
-
-      -  SerializeScalar(s): Implemented using the Field-Element-to-
-         Octet-String conversion according to [SEC1]; Ns = 48.
-
-      -  DeserializeScalar(buf): Implemented by attempting to
-         deserialize a Scalar from a 48-byte string using Octet-String-
-         to-Field-Element from [SEC1].  This function can fail if the
-         input does not represent a Scalar in the range [0, G.Order() -
-         1].
-
-6.3.  Random Scalar Generation
+6.2.  Random Scalar Generation
 
    Two popular algorithms for generating a random integer uniformly
    distributed in the range [0, G.Order() -1] are as follows:
 
-6.3.1.  Rejection Sampling
+6.2.1.  Rejection Sampling
 
    Generate a random byte array with Ns bytes, and attempt to map to a
    Scalar by calling DeserializeScalar in constant time.  If it
@@ -1680,7 +1622,7 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
    that |p - 2^b| is less than 2^(b/2), then RandomScalar can simply
    return a uniformly random integer of at most b bits.
 
-6.3.2.  Random Number Generation Using Extra Random Bits
+6.2.2.  Random Number Generation Using Extra Random Bits
 
    Generate a random byte array with L = ceil(((3 *
    ceil(log2(G.Order()))) / 2) / 8) bytes, and interpret it as an

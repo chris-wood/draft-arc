@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Standards Track                             Apple, Inc.
-Expires: 17 October 2025                                   15 April 2025
+Expires: 25 December 2025                                   23 June 2025
 
 
  Privacy Pass Issuance Protocol for Anonymous Rate-Limited Credentials
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 17 October 2025.
+   This Internet-Draft will expire on 25 December 2025.
 
 Copyright Notice
 
@@ -600,9 +600,9 @@ valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonc
    [DAP]      Geoghegan, T., Patton, C., Pitman, B., Rescorla, E., and
               C. A. Wood, "Distributed Aggregation Protocol for Privacy
               Preserving Measurement", Work in Progress, Internet-Draft,
-              draft-ietf-ppm-dap-14, 3 February 2025,
+              draft-ietf-ppm-dap-15, 29 April 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-ppm-dap-
-              14>.
+              15>.
 
    [OHTTP]    Thomson, M. and C. A. Wood, "Oblivious HTTP", RFC 9458,
               DOI 10.17487/RFC9458, January 2024,
