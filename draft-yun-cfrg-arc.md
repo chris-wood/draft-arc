@@ -1560,7 +1560,9 @@ Client credential requests are constructed such that the server cannot distingui
 
 The server commitment to `x0` is defined as `X0 = x0 * G.generatorG() + x0Blinding * G.GeneratorH()`, following the definitions in {{KVAC}}. This is computationally binding to the secret key `x0`. This means that unless the discrete log is broken, the credentials issued under one server commitment `X0, X1, ...` will all be issued under the same private keys `x0, x1, ...`
 
-However, an adversary breaking the discrete log (eg a quantum adversary) could in theory find pairs `(x0, x0Blinding)` and `(x0', x0Blinding')` both committing to `X0` and use them to issue different credentials. This would require an active attack (eg an active quantum adversary who is able to issue credentials), so is not an immediate concern. However if we want to prevent this attack, we can achieve statistical anonymity by committing to `x0` and x0Blinding` separately, as in {{REVISITING_KVAC}}. The security of this construction should be reviewed further, and it also incurs minor additional overhead.
+However, an adversary breaking the discrete log (e.g., a quantum adversary) can find pairs `(x0, x0Blinding)` and `(x0', x0Blinding')` both committing to `X0` and use them to issue different credentials. This capability would let the adversary partitioning the client anonymity set by linking clients to the underlying secret used for credential issuance, i.e., `x0` or `x0'`. This requires an active attack and therefore is not an immediate concern.
+
+Statistical anonymity is possible by committing to `x0` and x0Blinding` separately, as in {{REVISITING_KVAC}}. However, the security of this construction requires additional analysis.
 
 ## Presentation Unlinkability {#pres-unlinkability}
 
