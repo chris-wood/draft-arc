@@ -1708,9 +1708,9 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
    credential request consists of two Pedersen commitments with fresh
    blinding factors, which are used to commit to a freshly generated
    client secret and request context.  The resulting request is
-   therefore perfectly hiding, and independent from other requests from
-   the same client.  More details about this unlinkability property can
-   be found in [KVAC] and [REVISITING_KVAC].
+   therefore statistically hiding, and independent from other requests
+   from the same client.  More details about this unlinkability property
+   can be found in [KVAC] and [REVISITING_KVAC].
 
 7.2.  Credential Issuance Unlinkability
 
