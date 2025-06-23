@@ -1516,9 +1516,17 @@ For arguments about correctness, unforgeability, anonymity, and blind issuance o
 This section elaborates on unlinkability properties for ARC and other implementation details
 necessary for these properties to hold.
 
+## Credential Request Unlinkability
+
+Client credential requests are constructed such that the server cannot distinguish between any two credential requests from the same client and two requests from different clients. We refer to this property as issuance unlinkability. This property is achieved by the way the credential requests are constructed. In particular, each credential request consists of two Pedersen commitments with fresh blinding factors, which are used to commit to a freshly generated client secret and request context. The resulting request is therefore statistically hiding, and independent from other requests from the same client. More details about this unlinkability property can be found in {{KVAC}} and {{REVISITING_KVAC}}.
+
 ## Credential Issuance Unlinkability
 
-Client credential requests are constructed such that the server cannot distinguish between any two credential requests from the same client and two requests from different clients. We refer to this property as issuance unlinkability. This property is achieved by the way the credential requests are constructed. In particular, each credential request consists of two Pedersen commitments with fresh blinding factors, which are used to commit to a freshly generated client secret and request context. The resulting request is therefore perfectly hiding, and independent from other requests from the same client. More details about this unlinkability property can be found in {{KVAC}} and {{REVISITING_KVAC}}.
+The server commitment to `x0` is defined as `X0 = x0 * G.generatorG() + x0Blinding * G.GeneratorH()`, following the definitions in {{KVAC}}. This is computationally binding to the secret key `x0`. This means that unless the discrete log is broken, the credentials issued under one server commitment `X0, X1, ...` will all be issued under the same private keys `x0, x1, ...`
+
+However, an adversary breaking the discrete log (e.g., a quantum adversary) can find pairs `(x0, x0Blinding)` and `(x0', x0Blinding')` both committing to `X0` and use them to issue different credentials. This capability would let the adversary partitioning the client anonymity set by linking clients to the underlying secret used for credential issuance, i.e., `x0` or `x0'`. This requires an active attack and therefore is not an immediate concern.
+
+Statistical anonymity is possible by committing to `x0` and x0Blinding` separately, as in {{REVISITING_KVAC}}. However, the security of this construction requires additional analysis.
 
 ## Presentation Unlinkability {#pres-unlinkability}
 
