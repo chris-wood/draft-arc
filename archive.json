@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-22T00:10:59.785436+00:00",
+  "timestamp": "2025-06-24T00:09:49.110587+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -128,7 +128,7 @@
       "id": "I_kwDONyB6uM6rbGWx",
       "title": "Statistical anonymity is not (yet) achieved",
       "url": "https://github.com/chris-wood/draft-arc/issues/10",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "mmaker",
       "authorAssociation": "NONE",
       "assignees": [
@@ -139,8 +139,8 @@
       ],
       "body": "The specification currently writes:\n\n> The resulting request is therefore perfetly hiding, and independent from other requests from the same client. More details about this unlinkability property can be found in {{KVAC}} and {{REVISITING_KVAC}}.\n\nThis is not true. The  public parameters in your spec `X_0` is defined as\n```\n  X0 = x0 * G.GeneratorG() + x0Blinding * G.GeneratorH()\n```\nwhich is only computationally binding. \nAn adversary breaking DL could in theory find `x0` and `x0'`, both committing to `X0`, and use them to sign different credentials. \n\nThis is the reason why in {{REVISITING_KVAC}} I **don't** set `X0` in this way. \nIn order to achieve stronger privacy you need to commit to X0 differently. \n\n(Nitpick: I am also not sure how you can get more than statistical anonymity, from thm 5.10 you also need soundness of the user proofs.)",
       "createdAt": "2025-02-24T19:53:28Z",
-      "updatedAt": "2025-06-20T20:34:16Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-23T20:54:39Z",
+      "closedAt": "2025-06-23T20:54:39Z",
       "comments": [
         {
           "author": "cathieyun",
@@ -518,7 +518,7 @@
       "id": "I_kwDONyB6uM60DAn4",
       "title": "ARC CFRG spec should include P256 test vectors",
       "url": "https://github.com/chris-wood/draft-arc/issues/30",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "cathieyun",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -529,8 +529,8 @@
       ],
       "body": "Since the CFRG spec says P256 and P384 are both supported, both ciphersuites should have test vectors. Currently there are only test vectors for P384.",
       "createdAt": "2025-04-25T17:59:54Z",
-      "updatedAt": "2025-06-13T20:07:36Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-23T18:38:44Z",
+      "closedAt": "2025-06-23T18:38:44Z",
       "comments": []
     }
   ],
@@ -1354,52 +1354,119 @@
       "id": "PR_kwDONyB6uM6beW5g",
       "title": "Clarify unlinkability properties",
       "url": "https://github.com/chris-wood/draft-arc/pull/31",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "cathieyun",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "Addresses https://github.com/chris-wood/draft-arc/issues/10",
+      "body": "Addresses https://github.com/chris-wood/draft-arc/issues/10 by adding clarifying that the original analysis for for credential request, and adding a privacy analysis for credential response (issuance).",
       "createdAt": "2025-06-20T21:04:35Z",
-      "updatedAt": "2025-06-20T21:04:36Z",
+      "updatedAt": "2025-06-23T21:27:40Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "061e446a4eeed977735f06386f570f5ad1296d9d",
       "headRepository": "chris-wood/draft-arc",
       "headRefName": "stat-anon",
-      "headRefOid": "e36f8268501eb145fa9dcf775677c1a1fd5efba5",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
-      "comments": [],
-      "reviews": []
+      "headRefOid": "63da92a60f0c7f2ac3bd66021ac22bdb62ec3b2d",
+      "closedAt": "2025-06-23T20:54:38Z",
+      "mergedAt": "2025-06-23T20:54:38Z",
+      "mergedBy": "cathieyun",
+      "mergeCommit": {
+        "oid": "be865e28cae741946a81ba5bd064f71f21767b4d"
+      },
+      "comments": [
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Added some changes suggested by Michele.",
+          "createdAt": "2025-06-23T20:52:07Z",
+          "updatedAt": "2025-06-23T20:52:07Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDONyB6uM6v6Cjp",
+          "commit": {
+            "abbreviatedOid": "e36f826"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "This LGTM with the suggested changes!",
+          "createdAt": "2025-06-23T18:56:06Z",
+          "updatedAt": "2025-06-23T18:56:19Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "```suggestion\r\nHowever, an adversary breaking the discrete log (e.g., a quantum adversary) can find pairs `(x0, x0Blinding)` and `(x0', x0Blinding')` both committing to `X0` and use them to issue different credentials. This capability would let the adversary partitioning the client anonymity set by linking clients to the underlying secret used for credential issuance, i.e., `x0` or `x0'`. This requires an active attack and therefore is not an immediate concern.\r\n\r\nStatistical anonymity is possible by committing to `x0` and x0Blinding` separately, as in {{REVISITING_KVAC}}. However, the security of this construction requires additional analysis.\r\n```",
+              "createdAt": "2025-06-23T18:56:06Z",
+              "updatedAt": "2025-06-23T18:56:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM6v6DI4",
+          "commit": {
+            "abbreviatedOid": "e36f826"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-23T18:57:11Z",
+          "updatedAt": "2025-06-23T18:57:11Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "I don't think we need to comment on performance for the alternative commitment scheme since security is the primary reason we would not use it. ",
+              "createdAt": "2025-06-23T18:57:11Z",
+              "updatedAt": "2025-06-23T18:57:11Z"
+            }
+          ]
+        }
+      ]
     },
     {
       "number": 32,
       "id": "PR_kwDONyB6uM6becYP",
       "title": "Remove P384 from the list of ARC supported curves",
       "url": "https://github.com/chris-wood/draft-arc/pull/32",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "cathieyun",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "From discussion on the CFRG list and with authors, we decided to move to P256 instead of P384 for performance reasons. I kept P384 as a curve option originally, but it seems better to remove it for several reasons:\r\n- We want to move the proof to use the sigma proof spec, which only supports P256: https://github.com/mmaker/draft-zkproof-sigma-protocols/blob/main/draft-orru-zkproof-sigma-protocols.md#ciphersuites-ciphersuites\r\n- Implementors would prefer fewer rather than more curves. This will also help interoperability and adoption. Eg from the cfrg mailing list, on the call for adoption for sigma protocols, Chris Patton says:\r\n> As an implementer, in general I think fewer choices for curves is always better. In this case, I would rather have P384 only than a bunch of different options (including P256, ristretto, decaf, etc.). It just strikes me as odd to choose P384 over something smaller and more widely used, like P256. For TLS for example, both X25519 and P256 are much, much more common than P384.",
       "createdAt": "2025-06-20T21:19:37Z",
-      "updatedAt": "2025-06-20T21:19:38Z",
+      "updatedAt": "2025-06-23T18:37:17Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "061e446a4eeed977735f06386f570f5ad1296d9d",
       "headRepository": "chris-wood/draft-arc",
       "headRefName": "update-curves",
       "headRefOid": "baeff348cff7147dae75cb568fac472542ede7c2",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-06-23T18:37:17Z",
+      "mergedAt": "2025-06-23T18:37:17Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "01234b0dbcb18d7e2109898ed4e7acbb04502c2c"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDONyB6uM6v50vj",
+          "commit": {
+            "abbreviatedOid": "baeff34"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-23T18:37:04Z",
+          "updatedAt": "2025-06-23T18:37:04Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
