@@ -171,7 +171,7 @@ skI, pkI = SetupServer()
 
 The Issuer Public Key ID, denoted `issuer_key_id`, is computed as the
 SHA-256 hash of the Issuer Public Key, i.e., `issuer_key_id = SHA-256(pkI_serialized)`,
-where `pkI_serialized` is the serialized version of `pkI` as described in [Section 4.1 of ARC].
+where `pkI_serialized` is the serialized version of `pkI` as described in {{Section 4.1 of ARC}}.
 
 # Token Challenge Requirements {#token-challenge-requirements}
 
@@ -206,7 +206,7 @@ as F(current time window), where F is a pseudorandom function. Semantically, thi
 equivalent to the Origin asking the Client for a token from a credential that is
 bound to "current time window."
 
-[[OPEN ISSUE: give more guidance about how to construct credential_context and redemption_context depending on the application's needs]]
+OPEN ISSUE: give more guidance about how to construct credential_context and redemption_context depending on the application's needs.
 
 In addition to this updated TokenChallenge, the HTTP authentication challenge
 also SHOULD contain the following additional attribute:
@@ -274,7 +274,7 @@ The structure fields are defined as follows:
   and referenced information for more details.
 
 - "encoded_request" is the Nrequest-octet request, computed as the serialization
-  of the `request` value as defined in [Section 4.2.1 of ARC].
+  of the `request` value as defined in {{Section 4.2.1 of ARC}}.
 
 The Client then generates an HTTP POST request to send to the Issuer Request URL,
 with the TokenRequest as the content. The media type for this request is
@@ -305,7 +305,7 @@ If any of these conditions is not met, the Issuer MUST return an HTTP 422
 (Unprocessable Content) error to the client.
 
 If these conditions are met, the Issuer then tries to deserialize
-TokenRequest.encoded_request according to [Section 4.2.1 of ARC], yielding `request`.
+TokenRequest.encoded_request according to {{Section 4.2.1 of ARC}}, yielding `request`.
 If this fails, the Issuer MUST return an HTTP 422 (Unprocessable Content)
 error to the client. Otherwise, if the Issuer is willing to produce a credential
 for the Client, the Issuer completes the issuance flow by an issuance response
@@ -326,7 +326,7 @@ struct {
 The structure fields are defined as follows:
 
 - "encoded_response" is the Nresponse-octet encoded issuance response message, computed
-  as the serialization of `response` as specified in [Section 4.2.2 of ARC].
+  as the serialization of `response` as specified in {{Section 4.2.2 of ARC}}.
 
 The Issuer generates an HTTP response with status code 200 whose content
 consists of TokenResponse, with the content type set as
@@ -343,7 +343,7 @@ Content-Length: <Length of TokenResponse>
 ## Credential Finalization
 
 Upon receipt, the Client handles the response and, if successful, deserializes
-the content values `TokenResponse.encoded_response` according to [Section 4.2.2 of ARC]
+the content values `TokenResponse.encoded_response` according to {{Section 4.2.2 of ARC}}
 yielding `response`. If deserialization fails, the Client aborts the protocol.
 Otherwise, the Client processes the response as follows:
 
@@ -404,16 +404,16 @@ as defined in {{setup}}.
 - "presentation_nonce" is a 32-bit encoding of the nonce output from ARC.
 
 - "presentation" is a Npresentation-octet presentation, set to the serialized
-`presentation` value (see [Section 4.3.2 of ARC] for serialiation details).
+`presentation` value (see {{Section 4.3.2 of ARC}} for serialiation details).
 
 ## Token Verification {#verification}
 
 Given a deserialized presentation from the token, denoted `presentation` and
-obtained by deserializing a presentation according to [Section 4.3.2 of ARC],
+obtained by deserializing a presentation according to {{Section 4.3.2 of ARC}},
 a presentation limit, denoted `presentation_limit`, a presentation nonce
 from a token, denoted `nonce`, and the digest of a token challenge, denoted
 `challenge_digest`, verifying a Token requires invoking the VerifyPresentation
-function from [Section 4.3.3 of ARC] in the following ways:
+function from {{Section 4.3.3 of ARC}} in the following ways:
 
 ~~~
 request_context = concat(tokenChallenge.issuer_name,
@@ -444,7 +444,7 @@ ARC offers Origin-Client unlinkability, Issuer-Client unlinkability, and redempt
 unlinkability, as described in {{Section 3.3 of ARCHITECTURE}}, with one exception.
 While redemption context unlinkability is achieved by re-randomizing credentials every time
 they are presented as tokens, there is a reduction in the anonymity set in the case of presentation
-nonce collisions, as detailed in [Section 7.2 of ARC].
+nonce collisions, as detailed in {{Section 7.2 of ARC}}.
 
 # IANA Considerations
 
