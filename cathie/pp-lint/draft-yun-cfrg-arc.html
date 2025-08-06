@@ -1983,7 +1983,7 @@ def Present(state):
   return state, nonce, presentation
 </pre><a href="#section-4.3.2-2" class="pilcrow">¶</a>
 </div>
-<p id="section-4.3.2-3">[[OPEN ISSUE: should the tag also fold in the presentation limit?]]<a href="#section-4.3.2-3" class="pilcrow">¶</a></p>
+<p id="section-4.3.2-3">OPEN ISSUE: should the tag also fold in the presentation limit?<a href="#section-4.3.2-3" class="pilcrow">¶</a></p>
 <p id="section-4.3.2-4">The resulting presentation can be serialized as follows. See <a href="#presentation-proof" class="auto internal xref">Section 5.4</a>
 for more details on the generation of the presentation proof.<a href="#section-4.3.2-4" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-4.3.2-5">
@@ -2142,7 +2142,7 @@ Inputs:
 - assignment: Scalar variable
 
 Outputs:
-- Integer: Integer representation of the new scalar variable
+- Integer representation of the new scalar variable
 
 def AppendScalar(label, assignment):
   state.scalars.append(assignment)
@@ -2166,7 +2166,7 @@ Inputs:
 - assignment: Element variable
 
 Outputs:
-- Integer: Integer representation of the new element variable
+- Integer representation of the new element variable
 
 def AppendElement(label, assignment):
   state.elements.append(assignment)
@@ -2325,7 +2325,7 @@ Inputs:
 - label: Data, Scalar variable label
 
 Outputs:
-- Integer: Integer representation of the new scalar variable
+- Integer representation of the new scalar variable
 
 def AppendScalar(label):
   state.scalar_labels.append(label)
@@ -3081,7 +3081,7 @@ necessary for these properties to hold.<a href="#section-7-2" class="pilcrow">¶
 <p id="section-7.3-2">The indistinguishability set for these presentation elements is <code>sum_{i=0}^c(p_i)</code>, where <code>c</code> is the number of credentials issued with the same server keys, and <code>p_i</code> is the number of presentations made for each of those credentials.<a href="#section-7.3-2" class="pilcrow">¶</a></p>
 <p id="section-7.3-3">The presentation elements <code>[tag, nonce, presentationContext, presentationProof]</code> are indistinguishable from all presentations made from credentials issued with the same server keys for that presentationContext, with the exception of presentations with the same nonce (since those presentations can be ascertained as being generated from different credentials, as long as the presentation tag is unique).<a href="#section-7.3-3" class="pilcrow">¶</a></p>
 <p id="section-7.3-4">The indistinguishability set for those presentation elements is <code>sum_{i=0}^c(p_i[presentationContext]) - k[presentationContext]</code>, where <code>c</code> is the number of credentials issued with the same server keys, <code>p_i[presentationContext]</code> is the number of presentations made for each of those credentials with the same presentationContext, and <code>k</code> is the number of presentations with the same nonce for that presentationContext. As long as the nonces are generated randomly from the range defined by the presentation limit, <code>k[presentationContext]</code> should be roughly equal to <code>sum_{i=0}^c(p_i[presentationContext]) / n</code>, where <code>n</code> is the presentation limit. Therefore, the indistinguishability set can be represented as <code>sum_{i=0}^c(p_i[presentationContext])(1 - 1/n)</code>, where a larger presentation limit results in a larger indistinguishability set and therefore stronger unlinkability properties.<a href="#section-7.3-4" class="pilcrow">¶</a></p>
-<p id="section-7.3-5">[[OPEN ISSUE: hide the nonce and replace the tag proof with a range proof built from something like Bulletproofs.]]<a href="#section-7.3-5" class="pilcrow">¶</a></p>
+<p id="section-7.3-5">OPEN ISSUE: hide the nonce and replace the tag proof with a range proof built from something like Bulletproofs.<a href="#section-7.3-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="timing-leaks">
