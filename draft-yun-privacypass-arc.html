@@ -11,10 +11,10 @@
        This document specifies the issuance and redemption protocols for
 tokens based on the Anonymous Rate-Limited Credential (ARC) protocol. 
     " name="description">
-<meta content="xml2rfc 3.29.0" name="generator">
+<meta content="xml2rfc 3.30.0" name="generator">
 <meta content="draft-yun-privacypass-arc-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.29.0
+  xml2rfc 3.30.0
     Python 3.12.11
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
@@ -1045,11 +1045,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">Privacy Pass Issuance Protocol for ARC</td>
-<td class="right">June 2025</td>
+<td class="right">August 2025</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Yun &amp; Wood</td>
-<td class="center">Expires 25 December 2025</td>
+<td class="center">Expires 7 February 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1062,12 +1062,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-yun-privacypass-arc-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-06-23" class="published">23 June 2025</time>
+<time datetime="2025-08-06" class="published">6 August 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-12-25">25 December 2025</time></dd>
+<dd class="expires"><time datetime="2026-02-07">7 February 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1121,7 +1121,7 @@ tokens based on the Anonymous Rate-Limited Credential (ARC) protocol.<a href="#s
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 25 December 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 7 February 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1423,7 +1423,7 @@ skI, pkI = SetupServer()
 </div>
 <p id="section-5-3">The Issuer Public Key ID, denoted <code>issuer_key_id</code>, is computed as the
 SHA-256 hash of the Issuer Public Key, i.e., <code>issuer_key_id = SHA-256(pkI_serialized)</code>,
-where <code>pkI_serialized</code> is the serialized version of <code>pkI</code> as described in [Section 4.1 of ARC].<a href="#section-5-3" class="pilcrow">¶</a></p>
+where <code>pkI_serialized</code> is the serialized version of <code>pkI</code> as described in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-00#section-4.1" class="relref">Section 4.1</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-5-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="token-challenge-requirements">
@@ -1463,7 +1463,7 @@ expiration on the credential. Origins might do this by constructing <code>creden
 as F(current time window), where F is a pseudorandom function. Semantically, this is
 equivalent to the Origin asking the Client for a token from a credential that is
 bound to "current time window."<a href="#section-6-5" class="pilcrow">¶</a></p>
-<p id="section-6-6">[[OPEN ISSUE: give more guidance about how to construct credential_context and redemption_context depending on the application's needs]]<a href="#section-6-6" class="pilcrow">¶</a></p>
+<p id="section-6-6">OPEN ISSUE: give more guidance about how to construct credential_context and redemption_context depending on the application's needs.<a href="#section-6-6" class="pilcrow">¶</a></p>
 <p id="section-6-7">In addition to this updated TokenChallenge, the HTTP authentication challenge
 also <span class="bcp14">SHOULD</span> contain the following additional attribute:<a href="#section-6-7" class="pilcrow">¶</a></p>
 <ul class="normal">
@@ -1546,7 +1546,7 @@ and referenced information for more details.<a href="#section-7.1-6.2.1" class="
 </li>
           <li class="normal" id="section-7.1-6.3">
             <p id="section-7.1-6.3.1">"encoded_request" is the Nrequest-octet request, computed as the serialization
-of the <code>request</code> value as defined in [Section 4.2.1 of ARC].<a href="#section-7.1-6.3.1" class="pilcrow">¶</a></p>
+of the <code>request</code> value as defined in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-00#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-7.1-6.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-7.1-7">The Client then generates an HTTP POST request to send to the Issuer Request URL,
@@ -1588,7 +1588,7 @@ the Issuer.<a href="#section-7.2-2.2.1" class="pilcrow">¶</a></p>
 <p id="section-7.2-3">If any of these conditions is not met, the Issuer <span class="bcp14">MUST</span> return an HTTP 422
 (Unprocessable Content) error to the client.<a href="#section-7.2-3" class="pilcrow">¶</a></p>
 <p id="section-7.2-4">If these conditions are met, the Issuer then tries to deserialize
-TokenRequest.encoded_request according to [Section 4.2.1 of ARC], yielding <code>request</code>.
+TokenRequest.encoded_request according to <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-00#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>, yielding <code>request</code>.
 If this fails, the Issuer <span class="bcp14">MUST</span> return an HTTP 422 (Unprocessable Content)
 error to the client. Otherwise, if the Issuer is willing to produce a credential
 for the Client, the Issuer completes the issuance flow by an issuance response
@@ -1610,7 +1610,7 @@ struct {
 <ul class="normal">
 <li class="normal" id="section-7.2-9.1">
             <p id="section-7.2-9.1.1">"encoded_response" is the Nresponse-octet encoded issuance response message, computed
-as the serialization of <code>response</code> as specified in [Section 4.2.2 of ARC].<a href="#section-7.2-9.1.1" class="pilcrow">¶</a></p>
+as the serialization of <code>response</code> as specified in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-00#section-4.2.2" class="relref">Section 4.2.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-7.2-9.1.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-7.2-10">The Issuer generates an HTTP response with status code 200 whose content
@@ -1633,7 +1633,7 @@ Content-Length: &lt;Length of TokenResponse&gt;
 <a href="#section-7.3" class="section-number selfRef">7.3. </a><a href="#name-credential-finalization" class="section-name selfRef">Credential Finalization</a>
         </h3>
 <p id="section-7.3-1">Upon receipt, the Client handles the response and, if successful, deserializes
-the content values <code>TokenResponse.encoded_response</code> according to [Section 4.2.2 of ARC]
+the content values <code>TokenResponse.encoded_response</code> according to <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-00#section-4.2.2" class="relref">Section 4.2.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>
 yielding <code>response</code>. If deserialization fails, the Client aborts the protocol.
 Otherwise, the Client processes the response as follows:<a href="#section-7.3-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-7.3-2">
@@ -1705,7 +1705,7 @@ as defined in <a href="#setup" class="auto internal xref">Section 5</a>.<a href=
 </li>
           <li class="normal" id="section-8.1-7.4">
             <p id="section-8.1-7.4.1">"presentation" is a Npresentation-octet presentation, set to the serialized
-<code>presentation</code> value (see [Section 4.3.2 of ARC] for serialiation details).<a href="#section-8.1-7.4.1" class="pilcrow">¶</a></p>
+<code>presentation</code> value (see <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-00#section-4.3.2" class="relref">Section 4.3.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span> for serialiation details).<a href="#section-8.1-7.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -1716,11 +1716,11 @@ as defined in <a href="#setup" class="auto internal xref">Section 5</a>.<a href=
 <a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-token-verification" class="section-name selfRef">Token Verification</a>
         </h3>
 <p id="section-8.2-1">Given a deserialized presentation from the token, denoted <code>presentation</code> and
-obtained by deserializing a presentation according to [Section 4.3.2 of ARC],
+obtained by deserializing a presentation according to <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-00#section-4.3.2" class="relref">Section 4.3.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>,
 a presentation limit, denoted <code>presentation_limit</code>, a presentation nonce
 from a token, denoted <code>nonce</code>, and the digest of a token challenge, denoted
 <code>challenge_digest</code>, verifying a Token requires invoking the VerifyPresentation
-function from [Section 4.3.3 of ARC] in the following ways:<a href="#section-8.2-1" class="pilcrow">¶</a></p>
+function from <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-00#section-4.3.3" class="relref">Section 4.3.3</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span> in the following ways:<a href="#section-8.2-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-8.2-2">
 <pre>
 request_context = concat(tokenChallenge.issuer_name,
@@ -1755,7 +1755,7 @@ requires a joint Origin and Issuer configuration given that it is privately veri
 unlinkability, as described in <span><a href="https://rfc-editor.org/rfc/rfc9576#section-3.3" class="relref">Section 3.3</a> of [<a href="#ARCHITECTURE" class="cite xref">ARCHITECTURE</a>]</span>, with one exception.
 While redemption context unlinkability is achieved by re-randomizing credentials every time
 they are presented as tokens, there is a reduction in the anonymity set in the case of presentation
-nonce collisions, as detailed in [Section 7.2 of ARC].<a href="#section-9-2" class="pilcrow">¶</a></p>
+nonce collisions, as detailed in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-00#section-7.2" class="relref">Section 7.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-9-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">

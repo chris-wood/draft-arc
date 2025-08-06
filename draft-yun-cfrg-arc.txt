@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Informational                               Apple, Inc.
-Expires: 25 December 2025                                   23 June 2025
+Expires: 7 February 2026                                   6 August 2025
 
 
                    Anonymous Rate-Limited Credentials
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 December 2025.
+   This Internet-Draft will expire on 7 February 2026.
 
 Copyright Notice
 
@@ -713,7 +713,7 @@ def Present(state):
 
   return state, nonce, presentation
 
-   [[OPEN ISSUE: should the tag also fold in the presentation limit?]]
+   OPEN ISSUE: should the tag also fold in the presentation limit?
 
    The resulting presentation can be serialized as follows.  See
    Section 5.4 for more details on the generation of the presentation
@@ -861,7 +861,7 @@ def VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presen
    - assignment: Scalar variable
 
    Outputs:
-   - Integer: Integer representation of the new scalar variable
+   - Integer representation of the new scalar variable
 
    def AppendScalar(label, assignment):
      state.scalars.append(assignment)
@@ -877,7 +877,7 @@ def VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presen
    - assignment: Element variable
 
    Outputs:
-   - Integer: Integer representation of the new element variable
+   - Integer representation of the new element variable
 
    def AppendElement(label, assignment):
      state.elements.append(assignment)
@@ -1010,7 +1010,7 @@ def ComposeChallenge(label, elements, blinded_elements):
    - label: Data, Scalar variable label
 
    Outputs:
-   - Integer: Integer representation of the new scalar variable
+   - Integer representation of the new scalar variable
 
    def AppendScalar(label):
      state.scalar_labels.append(label)
@@ -1713,8 +1713,8 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
    a larger presentation limit results in a larger indistinguishability
    set and therefore stronger unlinkability properties.
 
-   [[OPEN ISSUE: hide the nonce and replace the tag proof with a range
-   proof built from something like Bulletproofs.]]
+   OPEN ISSUE: hide the nonce and replace the tag proof with a range
+   proof built from something like Bulletproofs.
 
 7.4.  Timing Leaks
 
@@ -1875,8 +1875,8 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
 12.1.  Normative References
 
    [I-D.irtf-cfrg-hash-to-curve]
-              Faz-Hernandez, A., Scott, S., Sullivan, N., Wahby, R. S.,
-              and C. A. Wood, "Hashing to Elliptic Curves", Work in
+              Faz-Hernandez, A. F., Scott, S., Sullivan, N., Wahby, R.
+              S., and C. A. Wood, "Hashing to Elliptic Curves", Work in
               Progress, Internet-Draft, draft-irtf-cfrg-hash-to-curve-
               16, 15 June 2022, <https://datatracker.ietf.org/doc/html/
               draft-irtf-cfrg-hash-to-curve-16>.
