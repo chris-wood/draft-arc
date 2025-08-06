@@ -624,7 +624,7 @@ def Present(state):
   return state, nonce, presentation
 ~~~
 
-[[OPEN ISSUE: should the tag also fold in the presentation limit?]]
+OPEN ISSUE: should the tag also fold in the presentation limit?
 
 The resulting presentation can be serialized as follows. See {{presentation-proof}}
 for more details on the generation of the presentation proof.
@@ -750,7 +750,7 @@ Inputs:
 - assignment: Scalar variable
 
 Outputs:
-- Integer: Integer representation of the new scalar variable
+- Integer representation of the new scalar variable
 
 def AppendScalar(label, assignment):
   state.scalars.append(assignment)
@@ -768,7 +768,7 @@ Inputs:
 - assignment: Element variable
 
 Outputs:
-- Integer: Integer representation of the new element variable
+- Integer representation of the new element variable
 
 def AppendElement(label, assignment):
   state.elements.append(assignment)
@@ -898,7 +898,7 @@ Inputs:
 - label: Data, Scalar variable label
 
 Outputs:
-- Integer: Integer representation of the new scalar variable
+- Integer representation of the new scalar variable
 
 def AppendScalar(label):
   state.scalar_labels.append(label)
@@ -1538,7 +1538,7 @@ The presentation elements `[tag, nonce, presentationContext, presentationProof]`
 
 The indistinguishability set for those presentation elements is `sum_{i=0}^c(p_i[presentationContext]) - k[presentationContext]`, where `c` is the number of credentials issued with the same server keys, `p_i[presentationContext]` is the number of presentations made for each of those credentials with the same presentationContext, and `k` is the number of presentations with the same nonce for that presentationContext. As long as the nonces are generated randomly from the range defined by the presentation limit, `k[presentationContext]` should be roughly equal to `sum_{i=0}^c(p_i[presentationContext]) / n`, where `n` is the presentation limit. Therefore, the indistinguishability set can be represented as `sum_{i=0}^c(p_i[presentationContext])(1 - 1/n)`, where a larger presentation limit results in a larger indistinguishability set and therefore stronger unlinkability properties.
 
-[[OPEN ISSUE: hide the nonce and replace the tag proof with a range proof built from something like Bulletproofs.]]
+OPEN ISSUE: hide the nonce and replace the tag proof with a range proof built from something like Bulletproofs.
 
 ## Timing Leaks
 
