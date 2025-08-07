@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-24T00:09:49.110587+00:00",
+  "timestamp": "2025-08-07T00:10:47.372864+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -1361,7 +1361,7 @@
       "labels": [],
       "body": "Addresses https://github.com/chris-wood/draft-arc/issues/10 by adding clarifying that the original analysis for for credential request, and adding a privacy analysis for credential response (issuance).",
       "createdAt": "2025-06-20T21:04:35Z",
-      "updatedAt": "2025-06-23T21:27:40Z",
+      "updatedAt": "2025-08-06T20:43:28Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "061e446a4eeed977735f06386f570f5ad1296d9d",
@@ -1467,6 +1467,34 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 33,
+      "id": "PR_kwDONyB6uM6idmvY",
+      "title": "Fix ARC section references, open issues",
+      "url": "https://github.com/chris-wood/draft-arc/pull/33",
+      "state": "MERGED",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Tried to push the a new tag to the privacy pass datatracker, but it failed because of \"no link definition\" errors:\r\nhttps://github.com/chris-wood/draft-arc/actions/runs/16788723485/job/47545705794\r\n\r\nFixing those errors here.",
+      "createdAt": "2025-08-06T21:20:58Z",
+      "updatedAt": "2025-08-06T21:30:30Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "be865e28cae741946a81ba5bd064f71f21767b4d",
+      "headRepository": "chris-wood/draft-arc",
+      "headRefName": "cathie/pp-lint",
+      "headRefOid": "93d986fc3bd3f9499b599f1ad14e16c6c3bac91f",
+      "closedAt": "2025-08-06T21:30:30Z",
+      "mergedAt": "2025-08-06T21:30:30Z",
+      "mergedBy": "cathieyun",
+      "mergeCommit": {
+        "oid": "da1c77459c99717790b9068e4c5fbdd995076a82"
+      },
+      "comments": [],
+      "reviews": []
     }
   ]
 }
