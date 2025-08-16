@@ -48,9 +48,10 @@ def compose_challenge(label, elements, blinded_elements):
     return hash_to_scalar(challenge_input, to_bytes(label))
 
 class Prover(ProofParticipant):
-    def __init__(self, label, rng):
+    def __init__(self, label, rng, vectors):
         ProofParticipant.__init__(self, label)
         self.rng = rng
+        self.vectors = vectors
         self.scalars = []
     
     def append_scalar(self, label, assignment):
@@ -61,6 +62,8 @@ class Prover(ProofParticipant):
     def prove(self):
         # blindings = [G.random_scalar(self.rng) for i in range(len(self.scalars))]
         blindings = [i+1 for i in range(len(self.scalars))]
+        for i, b in enumerate(blindings):
+            self.vectors["Blinding_{}".format(i)] = to_hex(G.serialize_scalar(b))
         return self.prove_with_randomness(blindings)
 
     def prove_with_randomness(self, blindings):

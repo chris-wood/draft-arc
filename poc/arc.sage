@@ -56,7 +56,7 @@ class PresentationState(object):
         V = (z * self.credential.X1) - (r * GenG)
         m1_tag = self.credential.m1 * tag
         
-        proof = PresentationProof.prove(U, U_prime_commit, m1_commit, tag, generator_T, self.credential, V, r, z, nonce, m1_tag, rng)
+        proof = PresentationProof.prove(U, U_prime_commit, m1_commit, tag, generator_T, self.credential, V, r, z, nonce, m1_tag, rng, vectors)
         presentation = Presentation(U, U_prime_commit, m1_commit, nonce, tag, proof)
 
         vectors["presentation_context"] = to_hex(self.presentation_context)
@@ -128,7 +128,7 @@ class Client(object):
         m1_enc = m1 * GenG + r1 * GenH
         m2_enc = m2 * GenG + r2 * GenH
 
-        proof = CredentialRequestProof.prove(m1, m2, r1, r2, m1_enc, m2_enc, self.rng)
+        proof = CredentialRequestProof.prove(m1, m2, r1, r2, m1_enc, m2_enc, self.rng, vectors)
         blinded_request = BlindedRequest(m1_enc, m2_enc, proof)
         
         client_secrets = ClientSecrets(m1, m2, r1, r2)
@@ -196,7 +196,7 @@ class Server(object):
         X2_aux = b * public_key.X2
         H_aux = b * GenH
 
-        response_proof = CredentialResponseProof.prove(private_key, public_key, blinded_request, b, U, enc_U_prime, X0_aux, X1_aux, X2_aux, H_aux, rng)
+        response_proof = CredentialResponseProof.prove(private_key, public_key, blinded_request, b, U, enc_U_prime, X0_aux, X1_aux, X2_aux, H_aux, rng, vectors)
         response = BlindedResponse(U, enc_U_prime, X0_aux, X1_aux, X2_aux, H_aux, response_proof)
 
         vectors["b"] = to_hex(G.serialize_scalar(b))
