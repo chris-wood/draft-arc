@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-08-07T00:10:47.372864+00:00",
+  "timestamp": "2025-08-17T00:10:45.086733+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -1493,6 +1493,32 @@
       "mergeCommit": {
         "oid": "da1c77459c99717790b9068e4c5fbdd995076a82"
       },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 34,
+      "id": "PR_kwDONyB6uM6j6J7i",
+      "title": "Add prover random blindings to test vectors.",
+      "url": "https://github.com/chris-wood/draft-arc/pull/34",
+      "state": "OPEN",
+      "author": "armfazh",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Random blindings need to be provided for reproducing the construction of proofs.",
+      "createdAt": "2025-08-16T00:09:13Z",
+      "updatedAt": "2025-08-16T00:13:38Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "da1c77459c99717790b9068e4c5fbdd995076a82",
+      "headRepository": "armfazh/draft-arc",
+      "headRefName": "track_blindings",
+      "headRefOid": "82707c4d987bc348ff3c5b14ec7cdbc3f8a7a11d",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
       "comments": [],
       "reviews": []
     }
