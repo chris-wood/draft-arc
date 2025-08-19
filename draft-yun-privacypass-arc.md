@@ -388,8 +388,9 @@ The resulting Token value is then constructed as follows:
 ~~~
 struct {
     uint16_t token_type = 0xE5AC; /* Type ARC(P-256) */
-    uint8_t issuer_key_id[Nid];
     uint32_t presentation_nonce;
+    uint8_t challenge_digest[32];
+    uint8_t issuer_key_id[Nid];
     uint8_t presentation[Npresentation];
 } Token;
 ~~~
