@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-08-21T00:07:45.700577+00:00",
+  "timestamp": "2025-08-24T00:10:34.953962+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -1534,13 +1534,13 @@
       "labels": [],
       "body": "Currently, the default privacy pass token structure is:\r\n```\r\nstruct {\r\n    uint16_t token_type;\r\n    uint8_t nonce[32];\r\n    uint8_t challenge_digest[32];\r\n    uint8_t token_key_id[Nid];\r\n    uint8_t authenticator[Nk];\r\n} Token;\r\n```\r\n\r\nThe ARC token structure is:\r\n```\r\nstruct {\r\n    uint16_t token_type = 0xE5AC; /* Type ARC(P-256) */\r\n    uint8_t issuer_key_id[Nid];\r\n    uint32_t presentation_nonce;\r\n    uint8_t presentation[Npresentation];\r\n} Token;\r\n```\r\n\r\nWhere we have a parallel between the following fields:\r\n- token_type is the same\r\n- token_key_id is the same as issuer_key_id in function. Different name because there is no longer the concept of the \"token authentication key\", in ARC the issuer key ID is the same thing as the authentication key.\r\n- nonce is sort of the same as the presentation_nonce, in that it's revealed at presentation time and must be unique. But unlike in the base token protocol, one credential can be made with many nonces, so we wanted the field names to be different.\r\n- We don't need to send the challenge_digest, as this is assumed to be already known at the recipient side. This saves us some space.\r\n- The authenticator for PAT was an RSA signature; the presentation is the equivalent of this, which ties the token to all the preceding in formation, in a way that can only be verified by the issuer key.\r\n\r\nHowever, upon further consideration, we still want to have a `challenge_digest` as the recipient may have multiple challenge_digests that are valid, and we don't want to make them try all of them to figure out which to use. So, this PR adds `challenge_digest` back to the struct. It also reorders the fields so that they have the same order as the default privacy pass protocol structure.",
       "createdAt": "2025-08-19T16:35:39Z",
-      "updatedAt": "2025-08-19T16:47:58Z",
+      "updatedAt": "2025-08-21T21:00:41Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "da1c77459c99717790b9068e4c5fbdd995076a82",
       "headRepository": "chris-wood/draft-arc",
       "headRefName": "cathie/challenge_digest",
-      "headRefOid": "4f28f2df3f9ca74847ad3f219db15ed6e3662052",
+      "headRefOid": "8c9778ed7710efe4f261e5e9f2ee67ccd08af12a",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -1558,6 +1558,59 @@
           "body": "LGTM",
           "createdAt": "2025-08-19T16:47:58Z",
           "updatedAt": "2025-08-19T16:47:58Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDONyB6uM67QlTg",
+          "commit": {
+            "abbreviatedOid": "4f28f2d"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "",
+          "createdAt": "2025-08-21T17:30:00Z",
+          "updatedAt": "2025-08-21T17:30:05Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "The structure field definitions below also need to be updated.",
+              "createdAt": "2025-08-21T17:30:00Z",
+              "updatedAt": "2025-08-21T17:30:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM67Q7QO",
+          "commit": {
+            "abbreviatedOid": "4f28f2d"
+          },
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-21T18:04:17Z",
+          "updatedAt": "2025-08-21T18:04:17Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "Sorry I missed that, updated now!",
+              "createdAt": "2025-08-21T18:04:17Z",
+              "updatedAt": "2025-08-21T18:04:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM67Sx2a",
+          "commit": {
+            "abbreviatedOid": "8c9778e"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-08-21T21:00:41Z",
+          "updatedAt": "2025-08-21T21:00:41Z",
           "comments": []
         }
       ]
