@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Standards Track                             Apple, Inc.
-Expires: 7 February 2026                                   6 August 2025
+Expires: 26 February 2026                                 25 August 2025
 
 
  Privacy Pass Issuance Protocol for Anonymous Rate-Limited Credentials
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 7 February 2026.
+   This Internet-Draft will expire on 26 February 2026.
 
 Copyright Notice
 
@@ -451,8 +451,9 @@ newState, nonce, presentation = Present(state)
 
    struct {
        uint16_t token_type = 0xE5AC; /* Type ARC(P-256) */
-       uint8_t issuer_key_id[Nid];
        uint32_t presentation_nonce;
+       uint8_t challenge_digest[32];
+       uint8_t issuer_key_id[Nid];
        uint8_t presentation[Npresentation];
    } Token;
 
@@ -461,11 +462,14 @@ newState, nonce, presentation = Present(state)
    *  "token_type" is a 2-octet integer, in network byte order, equal to
       0xE5AC.
 
-   *  "issuer_key_id" is a Nid-octet identifier for the Issuer Public
-      Key, computed as defined in Section 5.
-
    *  "presentation_nonce" is a 32-bit encoding of the nonce output from
       ARC.
+
+   *  "challenge_digest" is a 32-octet value containing the hash of the
+      original TokenChallenge, SHA-256(TokenChallenge).
+
+   *  "issuer_key_id" is a Nid-octet identifier for the Issuer Public
+      Key, computed as defined in Section 5.
 
    *  "presentation" is a Npresentation-octet presentation, set to the
       serialized presentation value (see Section 4.3.2 of [ARC] for
@@ -552,9 +556,9 @@ valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonc
 
    [ARC]      Yun, C. and C. A. Wood, "Anonymous Rate-Limited
               Credentials", Work in Progress, Internet-Draft, draft-yun-
-              cfrg-arc-00, 5 February 2025,
+              cfrg-arc-01, 6 August 2025,
               <https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-
-              00>.
+              01>.
 
    [ARCHITECTURE]
               Davidson, A., Iyengar, J., and C. A. Wood, "The Privacy
