@@ -388,8 +388,9 @@ The resulting Token value is then constructed as follows:
 ~~~
 struct {
     uint16_t token_type = 0xE5AC; /* Type ARC(P-256) */
-    uint8_t issuer_key_id[Nid];
     uint32_t presentation_nonce;
+    uint8_t challenge_digest[32];
+    uint8_t issuer_key_id[Nid];
     uint8_t presentation[Npresentation];
 } Token;
 ~~~
@@ -398,10 +399,12 @@ The structure fields are defined as follows:
 
 - "token_type" is a 2-octet integer, in network byte order, equal to 0xE5AC.
 
+- "presentation_nonce" is a 32-bit encoding of the nonce output from ARC.
+
+- "challenge_digest" is a 32-octet value containing the hash of the original TokenChallenge, SHA-256(TokenChallenge).
+
 - "issuer_key_id" is a Nid-octet identifier for the Issuer Public Key, computed
 as defined in {{setup}}.
-
-- "presentation_nonce" is a 32-bit encoding of the nonce output from ARC.
 
 - "presentation" is a Npresentation-octet presentation, set to the serialized
 `presentation` value (see {{Section 4.3.2 of ARC}} for serialiation details).
