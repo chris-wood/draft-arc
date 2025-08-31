@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-08-28T00:09:28.592253+00:00",
+  "timestamp": "2025-08-31T00:10:49.998799+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -163,7 +163,7 @@
       "labels": [],
       "body": "You can change the issuance protocol and have half communication on the server side and the client side.\nFor generic credentials, this is a constant vs linear improvement. \n\nReplace \n```\n  m1Enc = m1 * generatorG + r1 * generatorH\n  m2Enc = m2 * generatorG + r2 * generatorH\n```\n\nWith\n```\nmEnc = m1 * X1 + m2 * X2 + r * generatorG\n```\n\nas in {{REVISITING_KVAC}}",
       "createdAt": "2025-02-24T20:25:33Z",
-      "updatedAt": "2025-08-27T06:15:20Z",
+      "updatedAt": "2025-08-29T18:02:25Z",
       "closedAt": null,
       "comments": [
         {
@@ -172,6 +172,13 @@
           "body": "We have considered changing the issuance protocol to the scheme in {{REVISITING_KVAC}}, but were concerned by the recency and lack of academic peer review of the {{REVISITING_KVAC}} paper. Furthermore, ARC only uses two attributes, so it would only save one group element, which is not very considerable in practice.\n\nHowever, the acceptance of the paper into the ACM CCS conference moves the needle toward the constant-size approach. I am happy to revisit this if there is interest from the community. ",
           "createdAt": "2025-08-27T06:15:19Z",
           "updatedAt": "2025-08-27T06:15:19Z"
+        },
+        {
+          "author": "mmaker",
+          "authorAssociation": "NONE",
+          "body": "Thanks for your consideration! I was trying to say that the draft diverges from cryptographic literature, and that's not good.\n\n\nIn particular it introduces a weird security bug where the client will accept malformed credentials from people other than the issuer. In your efficiency count, I think you're forgetting about the proof size.\n\nChanges to the issuance protocol are really delicate, and I made mistakes for similar edge cases in the past too!\nYou don't have to use my paper, you can rely on issuance techniques from [CMZ14] and [PS16].\n",
+          "createdAt": "2025-08-29T18:01:20Z",
+          "updatedAt": "2025-08-29T18:02:25Z"
         }
       ]
     },
@@ -473,9 +480,17 @@
       ],
       "body": "To construct a request context one has to do:\n```\nrequest_context = concat(tokenChallenge.issuer_name,\n  tokenChallenge.origin_info,\n  tokenChallenge.credential_context,\n  issuer_key_id)\n```\n\nThen when one looks at:\n```\nstruct {\n    uint16_t token_type = 0xC7D3; /* Type ARC(P-384) */\n    opaque issuer_name<1..2^16-1>;\n    opaque redemption_context<0..32>;\n    opaque origin_info<0..2^16-1>;\n    opaque credential_context<0..32>;\n} TokenChallenge;\n```\n\nSo let's give a simple example:\nIssuer name is \"issuer.example.net\" & other fields are left empty.\n\nSo now should the `request_context` be\n```\n69 73 73 75 65 72 2e 65 78 61 6d 70 6c 65 2e 6e 65 74 <token_key_id>\n```\nOr should the request context contain all the length prefixes?\n```\n00 12 69 73 73 75 65 72 2e 65 78 61 6d 70 6c 65 2e 6e 65 74 00 00 00 <token_key_id>\n```\nNote we begin with 2 bytes for issuer name length, and end with 3 bytes of zeros, 2 for origin_info length and 1 for credential_context length.\n\nI assume the right interpretation is the second one where each field in the token challenge is prefixed by a length.\nBut when writing an implementation it is easy to make a mistake and forgot to include the length prefix. The spec should clarify it.",
       "createdAt": "2025-03-22T04:07:58Z",
-      "updatedAt": "2025-06-13T20:07:58Z",
+      "updatedAt": "2025-08-29T00:30:26Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Agreed that this should be clarified, to explicitly call out that we are serializing with the length. \nFor the tokenChallenge, this should look like:\n```\n2 byte length + tokenChallenge.issuer_name,\n2 byte length + tokenChallenge.origin_info,\n1 byte length + tokenChallenge.credential_context\n```\nThe same applies for the presentation context:\n```\n2 byte length + tokenChallenge.issuer_name,\n2 byte length + tokenChallenge.origin_info,\n1 byte length + tokenChallenge.redemption_context\n```",
+          "createdAt": "2025-08-29T00:30:26Z",
+          "updatedAt": "2025-08-29T00:30:26Z"
+        }
+      ]
     },
     {
       "number": 28,
