@@ -4,8 +4,8 @@ from util import to_bytes
 
 class CredentialRequestProof(object):
     @classmethod
-    def prove(self, m1, m2, r1, r2, m1_enc, m2_enc, rng):
-        prover = Prover(context_string + "CredentialRequest", rng)
+    def prove(self, m1, m2, r1, r2, m1_enc, m2_enc, rng, vectors):
+        prover = Prover(context_string + "CredentialRequest", rng, vectors)
         m1_var = prover.append_scalar("m1", m1)
         m2_var = prover.append_scalar("m2", m2)
         r1_var = prover.append_scalar("r1", r1)
@@ -41,8 +41,8 @@ class CredentialRequestProof(object):
 
 class CredentialResponseProof(object):
     @classmethod
-    def prove(cls, private_key, public_key, request, b, U, enc_U_prime, X0_aux, X1_aux, X2_aux, H_aux, rng):
-        prover = Prover(context_string + "CredentialResponse", rng)
+    def prove(cls, private_key, public_key, request, b, U, enc_U_prime, X0_aux, X1_aux, X2_aux, H_aux, rng, vectors):
+        prover = Prover(context_string + "CredentialResponse", rng, vectors)
 
         x0_var = prover.append_scalar("x0", private_key.x0)
         x1_var = prover.append_scalar("x1", private_key.x1)
@@ -164,8 +164,8 @@ class CredentialResponseProof(object):
 
 class PresentationProof(object):
     @classmethod
-    def prove(cls, U, U_prime_commit, m1_commit, tag, generator_T, credential, V, r, z, nonce, m1_tag, rng):
-        prover = Prover(context_string + "CredentialPresentation", rng)
+    def prove(cls, U, U_prime_commit, m1_commit, tag, generator_T, credential, V, r, z, nonce, m1_tag, rng, vectors):
+        prover = Prover(context_string + "CredentialPresentation", rng, vectors)
 
         m1_var = prover.append_scalar("m1", credential.m1)
         z_var = prover.append_scalar("z", z)
