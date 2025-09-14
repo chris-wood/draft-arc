@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-08-31T00:10:49.998799+00:00",
+  "timestamp": "2025-09-14T00:09:58.656836+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -350,9 +350,17 @@
       ],
       "body": "It seems there's some confusion about class attributes and instance attributes. For instance, in \n\nhttps://github.com/chris-wood/draft-arc/blob/main/poc/groups.sage#L220\n\nattributes like order, identity, etc can be accessed without instantiating the class (and it shouldn't be instantiated!)\nSame goes for other groups.\n\n",
       "createdAt": "2025-03-11T08:10:03Z",
-      "updatedAt": "2025-06-13T20:07:57Z",
+      "updatedAt": "2025-09-13T20:54:54Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "`groups.sage` is the standard code for EC groups used across many IETF drafts (same goes for many other common sage/py files in the poc). So I believe we are using these files as intended.",
+          "createdAt": "2025-09-13T20:54:54Z",
+          "updatedAt": "2025-09-13T20:54:54Z"
+        }
+      ]
     },
     {
       "number": 22,
@@ -554,6 +562,22 @@
       "createdAt": "2025-04-25T17:59:54Z",
       "updatedAt": "2025-06-23T18:38:44Z",
       "closedAt": "2025-06-23T18:38:44Z",
+      "comments": []
+    },
+    {
+      "number": 36,
+      "id": "I_kwDONyB6uM7LfACG",
+      "title": "Call for adoption feedback",
+      "url": "https://github.com/chris-wood/draft-arc/issues/36",
+      "state": "OPEN",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "RandomScalar() in 3.1 returns a non-zero element, but P-256 desc in 6.1 generates a scalar in [0, G.Order() - 1], i.e. includes zero. A zero for blinding factors or randomization scalars breaks the protocol.\n\nProver in 5.1.1.4 appends blinded_element in a loop over a linear_combination, but Verifier in 5.1.2.2 appends challenge_element once per constraint.\n\nSchnorr mismatches/verification bugs in 5.1: Prover appends multiple blinded_elements per constraint. Verifier appends one, so challenges won't match. Verify() also uses self.elements vs state.elements.\n",
+      "createdAt": "2025-09-13T17:46:30Z",
+      "updatedAt": "2025-09-13T17:46:30Z",
+      "closedAt": null,
       "comments": []
     }
   ],
@@ -1524,25 +1548,42 @@
       "id": "PR_kwDONyB6uM6j6J7i",
       "title": "Add prover random blindings to test vectors.",
       "url": "https://github.com/chris-wood/draft-arc/pull/34",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "armfazh",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Random blindings need to be provided for reproducing the construction of proofs.",
       "createdAt": "2025-08-16T00:09:13Z",
-      "updatedAt": "2025-08-16T00:13:38Z",
+      "updatedAt": "2025-09-13T17:44:46Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "da1c77459c99717790b9068e4c5fbdd995076a82",
       "headRepository": "armfazh/draft-arc",
       "headRefName": "track_blindings",
       "headRefOid": "82707c4d987bc348ff3c5b14ec7cdbc3f8a7a11d",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
-      "comments": [],
+      "closedAt": "2025-09-13T17:44:46Z",
+      "mergedAt": "2025-09-13T17:44:46Z",
+      "mergedBy": "cathieyun",
+      "mergeCommit": {
+        "oid": "24dac6275c1660a973e03a584fbe07733f54a5a8"
+      },
+      "comments": [
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Running the integration workflows. Thanks for your contribution, I will take a look.",
+          "createdAt": "2025-09-13T17:32:49Z",
+          "updatedAt": "2025-09-13T17:32:49Z"
+        },
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "LGTM, thanks for adding those blinding factors!",
+          "createdAt": "2025-09-13T17:44:42Z",
+          "updatedAt": "2025-09-13T17:44:42Z"
+        }
+      ],
       "reviews": []
     },
     {
