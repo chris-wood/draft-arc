@@ -51,6 +51,12 @@ informative:
     author:
       -
         ins: Standards for Efficient Cryptography Group (SECG)
+  SIGMA:
+    title: Interactive Sigma Protocols
+    target: https://datatracker.ietf.org/doc/draft-irtf-cfrg-sigma-protocols/
+  FIAT-SHAMIR:
+    title: Fiat-Shamir Transformation
+    target: https://datatracker.ietf.org/doc/draft-irtf-cfrg-fiat-shamir/
 
 --- abstract
 
@@ -705,246 +711,7 @@ look up the tags corresponding to the associated requestContext and presentation
 
 # Zero-Knowledge Proofs
 
-This section describes a Schnorr proof compiler that is used for the construction of other proofs needed throughout
-the ARC protocol. {{compiler}} describes the compiler, and the remaining sections describe how it is used for
-the purposes of producing ARC proofs.
-
-## Schnorr Compiler {#compiler}
-
-The compiler specified in this section automates the Fiat-Shamir transform that is often used to
-transform interactive zero-knowledge proofs into non-interactive proofs such that they can be used
-to non-interactively prove various statements of importance in higher-level protocols, such as ARC.
-The compiler consists of a prover and verifier role. The prover constructs a transcript for the
-proof and then applies the Fiat-Shamir heuristic to generate the resulting challenge and response
-values. The verifier reconstructs the same transcript to verify the proof.
-
-The prover and verifier roles are specified below in {{prover}} and {{verifier}}, respectively.
-
-### Prover
-
-The prover role consists of four functions:
-
-- AppendScalar: This function adds a scalar representation to the transcript.
-- AppendElement: This function adds an element representation to the transcript.
-- Constrain: This function applies an explicit constraint to the proof, where the constraint is expressed as equality between some element and a linear combination of scalar and element representations. An example constraint might be `Z = aX + bY`, for scalars `a`, `b`, and elements
-`X`, `Y`, `Z`.
-- Prove: This function applies the Fiat-Shamir heuristic to the protocol transcript and set of
-constraints to produce a zero-knowledge proof that can be verified.
-
-These functions are defined in the following sub-sections.
-
-In addition, the prover role consists of the following state:
-
-- label: Data, a value representing the context in which the proof will be used
-- scalars: [Integer], An ordered set of representation of scalar variables to use in the proof. Each scalar has a label associated with it, stored in a list called `scalar_labels`.
-- elements: [Integer], An ordered set of representation of element variables to use in the proof. Each element has a label associated with it, stored in a list called `element_labels`.
-- constraints: a set of constraints, where each constraint consists of a constraint element and a linear combination of variables.
-
-#### AppendScalar
-
-~~~
-AppendScalar(label, assignment)
-
-Inputs:
-- label: Data, Scalar variable label
-- assignment: Scalar variable
-
-Outputs:
-- Integer representation of the new scalar variable
-
-def AppendScalar(label, assignment):
-  state.scalars.append(assignment)
-  state.scalar_labels.append(label)
-  return len(state.scalars) - 1
-~~~
-
-#### AppendElement
-
-~~~
-AppendElement(label, assignment)
-
-Inputs:
-- label: Data, Element variable label
-- assignment: Element variable
-
-Outputs:
-- Integer representation of the new element variable
-
-def AppendElement(label, assignment):
-  state.elements.append(assignment)
-  state.element_labels.append(label)
-  return len(state.elements) - 1
-~~~
-
-#### Constrain
-
-~~~
-Constrain(result, linearCombination)
-
-Inputs:
-- result: Integer, representation of constraint element
-- assignment: linear combination of scalar and element variable (representations)
-
-def Constrain(label, linearCombination):
-  state.constraints.append((result, linearCombination))
-~~~
-
-#### Prove
-
-The Prove function is defined below.
-
-~~~
-Prove()
-
-Outputs:
-- ZKProof, a proof consisting of a challenge Scalar and then fixed number of response Scalar values
-
-Parameters:
-- G: Group
-- generatorG: Element, equivalent to G.GeneratorG()
-- generatorH: Element, equivalent to G.GeneratorH()
-
-Exceptions:
-- InvalidVariableAllocationError, raised when the prover was incorrectly configured
-
-def Prove():
-  blindings = [G.RandomScalar() for i in range(len(state.scalars))]
-
-  blinded_elements = []
-  for (constraint_point, linear_combination) in state.constraints:
-    if constraint_point.index > len(state.elements):
-      raise InvalidVariableAllocationError
-
-    for (scalar_var, element_var) in linear_combination:
-      if scalar_var.index > len(state.scalars):
-        raise InvalidVariableAllocationError
-      if element_var.index > len(state.elements):
-        raise InvalidVariableAllocationError
-
-    scalar_index = linear_combination[0][0]
-    element_index = linear_combination[0][1]
-    blinded_element = blindings[scalar_index] * state.elements[element_index]
-
-    for i, pair in enumerate(linear_combination):
-      if i > 0:
-        scalar_index = pair[0]
-        element_index = pair[1]
-        blinded_element += blindings[scalar_index] * state.elements[element_index]
-
-        blinded_elements.append(blinded_element)
-
-  # Obtain a scalar challenge
-  challenge = ComposeChallenge(state.label, state.elements, blinded_elements)
-
-  # Compute response scalars from the challenge, scalars, and blindings.
-  responses = []
-  for (index, scalar) in enumerate(state.scalars):
-    blinding = blindings[index]
-    responses.append(blinding - challenge * scalar)
-
-  return ZKProof(challenge, responses)
-~~~
-
-The function ComposeChallenge is defined below.
-
-~~~
-ComposeChallenge(label, elements, blinded_elements)
-
-Inputs:
-- label: Data, the proof label
-- elements: [Element], ordered list of elements
-- blinded_elements: [Element], ordered list of blinded elements
-
-Outputs:
-- challenge, Scalar
-
-Parameters:
-- G: Group
-- generatorG: Element, equivalent to G.GeneratorG()
-- generatorH: Element, equivalent to G.GeneratorH()
-
-def ComposeChallenge(label, elements, blinded_elements):
-  challenge_input = Data() # Empty Data
-
-  for element in elements:
-    serialized_element = G.SerializeElement(element)
-    challenge_input += I2OSP(len(serialized_element), 2) + serialized_element
-
-  for blinded_element in blinded_elements:
-    serialized_blinded_element = G.SerializeElement(blinded_element)
-    challenge_input += I2OSP(len(serialized_blinded_element), 2) + serialized_blinded_element
-
-  return G.HashToScalar(challenge_input, label)
-~~~
-
-### Verifier {#verifier}
-
-The verifier role consists of four functions:
-
-- AppendScalar: This function adds a scalar representation to the transcript.
-- AppendElement: This function adds an element representation to the transcript.
-- Constrain: This function applies an explicit constraint to the proof, where the constraint is expressed as equality between some element and a linear combination of scalar and element representations. An example constraint might be `Z = aX + bY`, for scalars `a`, `b`, and elements
-`X`, `Y`, `Z`.
-- Verify: This function applies the Fiat-Shamir heuristic to verify the zero-knowledge proof.
-
-AppendScalar and Verify are defined in the following sub-sections. AppendElement and Constrain matches the functionality used in the prover role.
-
-#### AppendScalar
-
-~~~
-AppendScalar(label)
-
-Inputs:
-- label: Data, Scalar variable label
-
-Outputs:
-- Integer representation of the new scalar variable
-
-def AppendScalar(label):
-  state.scalar_labels.append(label)
-  return len(state.scalar_labels) - 1
-~~~
-
-#### Verify
-
-~~~
-Verify(proof)
-
-Inputs:
-- ZKProof, a proof consisting of a challenge Scalar and then fixed number of response Scalar values
-
-Outputs:
-- Boolean, True if the proof is valid, False otherwise.
-
-Parameters:
-- G: Group
-- generatorG: Element, equivalent to G.GeneratorG()
-- generatorH: Element, equivalent to G.GeneratorH()
-
-Exceptions:
-- InvalidVariableAllocationError, raised when the prover was incorrectly configured
-
-def Verify(proof):
-  if len(state.elements) != len(state.element_labels):
-    raise InvalidVariableAllocationError
-
-  blinded_elements = []
-  for (constraint_element, linear_combination) in state.constraints:
-    if constraint_element > len(state.elements):
-      raise InvalidVariableAllocationError
-    for (_, element_var) in linear_combination:
-      if element_var > len(state.elements):
-        raise InvalidVariableAllocationError
-
-    challenge_element = proof.challenge * state.elements[constraint_element]
-    for i, pair in enumerate(linear_combination):
-      challenge_element += proof.responses[pair[0]] * state.elements[pair[1]]
-
-    blinded_elements.append(challenge_element)
-
-  challenge = ComposeChallenge(state.label, self.elements, blinded_elements)
-  return challenge == proof.challenge
-~~~
+This section uses the Interactive Sigma Protocol [SIGMA] to create zero-knowledge proofs of knowledge for various ARC operations, and the Fiat-Shamir Transform [FIAT-SHAMIR] to make those proofs non-interactive.
 
 ## CredentialRequest Proof {#request-proof}
 
@@ -983,25 +750,22 @@ Parameters:
 - contextString: public input
 
 def MakeCredentialRequestProof(m1, m2, r1, r2, m1Enc, m2Enc):
-  prover = Prover(contextString + "CredentialRequest")
+  statement = LinearRelation(G)
+  [m1Var, m2Var, r1Var, r2Var] = statement.allocate_scalars(4)
+  witness = [m1, m2, r1, r2]
 
-  m1Var = prover.AppendScalar("m1", m1)
-  m2Var = prover.AppendScalar("m2", m2)
-  r1Var = prover.AppendScalar("r1", r1)
-  r2Var = prover.AppendScalar("r2", r2)
-
-  genGVar = prover.AppendElement("genG", generatorG)
-  genHVar = prover.AppendElement("genH", generatorH)
-  m1EncVar = prover.AppendElement("m1Enc", m1Enc)
-  m2EncVar = prover.AppendElement("m2Enc", m2Enc)
+  [genGVar, genHVar, m1EncVar, m2EncVar] = statement.allocate_elements(4)
+  statement.set_elements([(genGVar, generatorG), (genHVar, generatorH), (m1EncVar, m1Enc), (m2EncVar, m2Enc)])
 
   # 1. m1Enc = m1 * generatorG + r1 * generatorH
-  prover.Constrain(m1EncVar, [(m1Var, genGVar), (r1Var, genHVar)])
+  statement.append_equation(m1EncVar, [(m1Var, genGVar), (r1Var, genHVar)])
 
   # 2. m2Enc = m2 * generatorG + r2 * generatorH
-  prover.Constrain(m2EncVar, [(m2Var, genGVar), (r2Var, genHVar)])
+  statement.append_equation(m2EncVar, [(m2Var, genGVar), (r2Var, genHVar)])
 
-  return prover.Prove()
+  iv = contextString + "CredentialRequest"
+  prover = NISigmaProtocol.init(iv: iv, instance: statement)
+  return prover.prove(witness, rng)
 ~~~
 
 ### CredentialRequest Proof Verification
@@ -1030,25 +794,21 @@ Parameters:
 - contextString: public input
 
 def VerifyCredentialRequestProof(request):
-  verifier = Verifier(contextString + "CredentialRequest")
+  statement = LinearRelation(G)
+  [m1Var, m2Var, r1Var, r2Var] = statement.allocate_scalars(4)
 
-  m1Var = verifier.AppendScalar("m1")
-  m2Var = verifier.AppendScalar("m2")
-  r1Var = verifier.AppendScalar("r1")
-  r2Var = verifier.AppendScalar("r2")
-
-  genGVar = verifier.AppendElement("genG", generatorG)
-  genHVar = verifier.AppendElement("genH", generatorH)
-  m1EncVar = verifier.AppendElement("m1Enc", request.m1Enc)
-  m2EncVar = verifier.AppendElement("m2Enc", request.m2Enc)
+  [genGVar, genHVar, m1EncVar, m2EncVar] = statement.allocate_elements(4)
+  statement.set_elements([(genGVar, generatorG), (genHVar, generatorH), (m1EncVar, m1Enc), (m2EncVar, m2Enc)])
 
   # 1. m1Enc = m1 * generatorG + r1 * generatorH
-  verifier.Constrain(m1EncVar, [(m1Var, genGVar), (r1Var, genHVar)])
+  statement.append_equation(m1EncVar, [(m1Var, genGVar), (r1Var, genHVar)])
 
   # 2. m2Enc = m2 * generatorG + r2 * generatorH
-  verifier.Constrain(m2EncVar, [(m2Var, genGVar), (r2Var, genHVar)])
+  statement.append_equation(m2EncVar, [(m2Var, genGVar), (r2Var, genHVar)])
 
-  return verifier.Verify(request.proof)
+  iv = contextString + "CredentialRequest"
+  verifier = NISigmaProtocol.init(iv: iv, instance: statement)
+  return verifier.verify(request.proof)
 ~~~
 
 ## CredentialResponse Proof {#response-proof}
@@ -1115,62 +875,47 @@ Parameters:
 - contextString: public input
 
 def MakeCredentialResponseProof(serverPrivateKey, serverPublicKey, request, b, U, encUPrime, X0Aux, X1Aux, X2Aux, HAux):
-  prover = Prover(contextString + "CredentialResponse")
+  statement = LinearRelation(G)
+  [x0Var, x1Var, x2Var, x0BlindingVar, bVar, t1Var, t2Var] = statement.allocate_scalars(7)
+  witness = [serverPrivateKey.x0, serverPrivateKey.x1, serverPrivateKey.x2, serverPrivateKey.x0Blinding, b, b*serverPrivateKey.x1. b*serverPrivateKey.x2]
 
-  x0Var = prover.AppendScalar("x0", serverPrivateKey.x0)
-  x1Var = prover.AppendScalar("x1", serverPrivateKey.x1)
-  x2Var = prover.AppendScalar("x2", serverPrivateKey.x2)
-  x0BlindingVar = prover.AppendScalar("x0Blinding", serverPrivateKey.x0Blinding)
-  bVar = prover.AppendScalar("b", b)
-  t1Var = prover.AppendScalar("t1", b * serverPrivateKey.x1)
-  t2Var = prover.AppendScalar("t2", b * serverPrivateKey.x2)
-
-  genGVar = prover.AppendElement("genG", generatorG)
-  genHVar = prover.AppendElement("genH", generatorH)
-  m1EncVar = prover.AppendElement("m1Enc", request.m1Enc)
-  m2EncVar = prover.AppendElement("m2Enc", request.m2Enc)
-  UVar = prover.AppendElement("U", U)
-  encUPrimeVar = prover.AppendElement("encUPrime", encUPrime)
-  X0Var = prover.AppendElement("X0", serverPublicKey.X0)
-  X1Var = prover.AppendElement("X1", serverPublicKey.X1)
-  X2Var = prover.AppendElement("X2", serverPublicKey.X2)
-  X0AuxVar = prover.AppendElement("X0Aux", X0Aux)
-  X1AuxVar = prover.AppendElement("X1Aux", X1Aux)
-  X2AuxVar = prover.AppendElement("X2Aux", X2Aux)
-  HAuxVar = prover.AppendElement("HAux", HAux)
+  [genGVar, genHVar, m1EncVar, m2EncVar, UVar, encUPrimeVar, X0Var, X1Var, X2Var, X0AuxVar, X1AuxVar, X2AuxVar, HAuxVar] = statement.allocate_elements(13)
+  statement.set_elements([(genGVar, generatorG), (genHVar, generatorH), (m1EncVar, request.m1Enc), (m2EncVar, request.m2Enc), (UVar, U), (encUPrimeVar, encUPrime), (X0Var, serverPublicKey.X0), (X1Var, serverPublicKey.X1), (X2Var, serverPublicKey.X2), (X0AuxVar, X0Aux), (X1AuxVar, X1Aux), (X2AuxVar, X2Aux), (HAuxVar, HAux)])
 
   # 1. X0 = x0 * generatorG + x0Blinding * generatorH
-  prover.Constrain(X0Var, [(x0Var, genGVar), (x0BlindingVar, genHVar)])
+  statement.append_equation(X0Var, [(x0Var, genGVar), (x0BlindingVar, genHVar)])
   # 2. X1 = x1 * generatorH
-  prover.Constrain(X1Var, [(x1Var, genHVar)])
+  statement.append_equation(X1Var, [(x1Var, genHVar)])
   # 3. X2 = x2 * generatorH
-  prover.Constrain(X2Var, [(x2Var, genHVar)])
+  statement.append_equation(X2Var, [(x2Var, genHVar)])
 
   # 4. X0Aux = b * x0Blinding * generatorH
   # 4a. HAux = b * generatorH
-  prover.Constrain(HAuxVar, [(bVar, genHVar)])
+  statement.append_equation(HAuxVar, [(bVar, genHVar)])
   # 4b: X0Aux = x0Blinding * HAux (= b * x0Blinding * generatorH)
-  prover.Constrain(X0AuxVar, [(x0BlindingVar, HAuxVar)])
+  statement.append_equation(X0AuxVar, [(x0BlindingVar, HAuxVar)])
 
   # 5. X1Aux = b * x1 * generatorH
   # 5a. X1Aux = t1 * generatorH (t1 = b * x1)
-  prover.Constrain(X1AuxVar, [(t1Var, genHVar)])
+  statement.append_equation(X1AuxVar, [(t1Var, genHVar)])
   # 5b. X1Aux = b * X1 (X1 = x1 * generatorH)
-  prover.Constrain(X1AuxVar, [(bVar, X1Var)])
+  statement.append_equation(X1AuxVar, [(bVar, X1Var)])
 
   # 6. X2Aux = b * x2 * generatorH
   # 6a. X2Aux = b * X2 (X2 = x2 * generatorH)
-  prover.Constrain(X2AuxVar, [(bVar, X2Var)])
+  pstatement.append_equation(X2AuxVar, [(bVar, X2Var)])
   # 6b. X2Aux = t2 * H (t2 = b * x2)
-  prover.Constrain(X2AuxVar, [(t2Var, genHVar)])
+  statement.append_equation(X2AuxVar, [(t2Var, genHVar)])
 
   # 7. U = b * generatorG
-  prover.Constrain(UVar, [(bVar, genGVar)])
+  statement.append_equation(UVar, [(bVar, genGVar)])
   # 8. encUPrime = b * (X0 + x1 * Enc(m1) + x2 * Enc(m2))
   # simplified: encUPrime = b * X0 + t1 * m1Enc + t2 * m2Enc, since t1 = b * x1 and t2 = b * x2
-  prover.Constrain(encUPrimeVar, [(bVar, X0Var), (t1Var, m1EncVar), (t2Var, m2EncVar)])
+  statement.append_equation(encUPrimeVar, [(bVar, X0Var), (t1Var, m1EncVar), (t2Var, m2EncVar)])
 
-  return prover.Prove()
+  iv = contextString + "CredentialResponse"
+  prover = NISigmaProtocol.init(iv: iv, instance: statement)
+  return prover.prove(witness, rng)
 ~~~
 
 ### CredentialResponse Proof Verification
@@ -1213,62 +958,46 @@ Parameters:
 - generatorH: Element, equivalent to G.GeneratorH()
 
 def VerifyCredentialResponseProof(serverPublicKey, response, request):
-  verifier = Verifier(contextString + "CredentialResponse")
+  statement = LinearRelation(G)
+  [x0Var, x1Var, x2Var, x0BlindingVar, bVar, t1Var, t2Var] = statement.allocate_scalars(7)
 
-  x0Var = verifier.AppendScalar("x0")
-  x1Var = verifier.AppendScalar("x1")
-  x2Var = verifier.AppendScalar("x2")
-  x0BlindingVar = verifier.AppendScalar("x0Blinding")
-  bVar = verifier.AppendScalar("b", b)
-  t1Var = verifier.AppendScalar("t1")
-  t2Var = verifier.AppendScalar("t2")
-
-  genGVar = verifier.AppendElement("genG", generatorG)
-  genHVar = verifier.AppendElement("genH", generatorH)
-  m1EncVar = verifier.AppendElement("m1Enc", request.m1Enc)
-  m2EncVar = verifier.AppendElement("m2Enc", request.m2Enc)
-  UVar = verifier.AppendElement("U", response.U)
-  encUPrimeVar = verifier.AppendElement("encUPrime", response.encUPrime)
-  X0Var = verifier.AppendElement("X0", serverPublicKey.X0)
-  X1Var = verifier.AppendElement("X1", serverPublicKey.X1)
-  X2Var = verifier.AppendElement("X2", serverPublicKey.X2)
-  X0AuxVar = verifier.AppendElement("X0Aux", response.X0Aux)
-  X1AuxVar = verifier.AppendElement("X1Aux", response.X1Aux)
-  X2AuxVar = verifier.AppendElement("X2Aux", response.X2Aux)
-  HAuxVar = verifier.AppendElement("HAux", response.HAux)
+  [genGVar, genHVar, m1EncVar, m2EncVar, UVar, encUPrimeVar, X0Var, X1Var, X2Var, X0AuxVar, X1AuxVar, X2AuxVar, HAuxVar] = statement.allocate_elements(13)
+  statement.set_elements([(genGVar, generatorG), (genHVar, generatorH), (m1EncVar, request.m1Enc), (m2EncVar, request.m2Enc), (UVar, U), (encUPrimeVar, encUPrime), (X0Var, serverPublicKey.X0), (X1Var, serverPublicKey.X1), (X2Var, serverPublicKey.X2), (X0AuxVar, X0Aux), (X1AuxVar, X1Aux), (X2AuxVar, X2Aux), (HAuxVar, HAux)])
 
   # 1. X0 = x0 * generatorG + x0Blinding * generatorH
-  verifier.Constrain(X0Var, [(x0Var, genGVar), (x0BlindingVar, genHVar)])
+  statement.append_equation(X0Var, [(x0Var, genGVar), (x0BlindingVar, genHVar)])
   # 2. X1 = x1 * generatorH
-  verifier.Constrain(X1Var, [(x1Var, genHVar)])
+  statement.append_equation(X1Var, [(x1Var, genHVar)])
   # 3. X2 = x2 * generatorH
-  verifier.Constrain(X2Var, [(x2Var, genHVar)])
+  statement.append_equation(X2Var, [(x2Var, genHVar)])
 
   # 4. X0Aux = b * x0Blinding * generatorH
   # 4a. HAux = b * generatorH
-  verifier.Constrain(HAuxVar, [(bVar, genHVar)])
+  statement.append_equation(HAuxVar, [(bVar, genHVar)])
   # 4b: X0Aux = x0Blinding * HAux (= b * x0Blinding * generatorH)
-  verifier.Constrain(X0AuxVar, [(x0BlindingVar, HAuxVar)])
+  statement.append_equation(X0AuxVar, [(x0BlindingVar, HAuxVar)])
 
   # 5. X1Aux = b * x1 * generatorH
   # 5a. X1Aux = t1 * generatorH (t1 = b * x1)
-  verifier.Constrain(X1AuxVar, [(t1Var, genHVar)])
+  statement.append_equation(X1AuxVar, [(t1Var, genHVar)])
   # 5b. X1Aux = b * X1 (X1 = x1 * generatorH)
-  verifier.Constrain(X1AuxVar, [(bVar, X1Var)])
+  statement.append_equation(X1AuxVar, [(bVar, X1Var)])
 
   # 6. X2Aux = b * x2 * generatorH
   # 6a. X2Aux = b * X2 (X2 = x2 * generatorH)
-  verifier.Constrain(X2AuxVar, [(bVar, X2Var)])
+  pstatement.append_equation(X2AuxVar, [(bVar, X2Var)])
   # 6b. X2Aux = t2 * H (t2 = b * x2)
-  verifier.Constrain(X2AuxVar, [(t2Var, genHVar)])
+  statement.append_equation(X2AuxVar, [(t2Var, genHVar)])
 
   # 7. U = b * generatorG
-  verifier.Constrain(UVar, [(bVar, genGVar)])
+  statement.append_equation(UVar, [(bVar, genGVar)])
   # 8. encUPrime = b * (X0 + x1 * Enc(m1) + x2 * Enc(m2))
   # simplified: encUPrime = b * X0 + t1 * m1Enc + t2 * m2Enc, since t1 = b * x1 and t2 = b * x2
-  verifier.Constrain(encUPrimeVar, [(bVar, X0Var), (t1Var, m1EncVar), (t2Var, m2EncVar)])
+  statement.append_equation(encUPrimeVar, [(bVar, X0Var), (t1Var, m1EncVar), (t2Var, m2EncVar)])
 
-  return verifier.Verify(response.proof)
+  iv = contextString + "CredentialResponse"
+  verifier = NISigmaProtocol.init(iv: iv, instance: statement)
+  return verifier.verify(request.proof)
 ~~~
 
 ## Presentation Proof {#presentation-proof}
@@ -1321,34 +1050,25 @@ Parameters:
 - contextString: public input
 
 def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, presentationContext, credential, V, r, z, nonce, m1Tag)
-  prover = Prover(contextString + "CredentialPresentation")
+  statement = LinearRelation(G)
+  [m1Var, zVar, rNegVar, nonceVar] = statement.allocate_scalars(4)
+  witness = [credential.m1, z, -r, nonce]
 
-  m1Var = prover.AppendScalar("m1", credential.m1)
-  zVar = prover.AppendScalar("z", z)
-  rNegVar = prover.AppendScalar("-r", -r)
-  nonceVar = prover.AppendScalar("nonce", nonce)
-
-  genGVar = prover.AppendElement("genG", generatorG)
-  genHVar = prover.AppendElement("genH", generatorH)
-  UVar = prover.AppendElement("U", U)
-  _ = prover.AppendElement("UPrimeCommit", UPrimeCommit)
-  m1CommitVar = prover.AppendElement("m1Commit", m1Commit)
-  VVar = prover.AppendElement("V", V)
-  X1Var = prover.AppendElement("X1", credential.X1)
-  tagVar = prover.AppendElement("tag", tag)
-  genTVar = prover.AppendElement("genT", generatorT)
-  m1TagVar = prover.AppendElement("m1Tag", m1Tag)
+  [genGVar, genHVar, UVar, UPrimeCommitVar, m1CommitVar, VVar, X1Var, tagVar, genTVar, m1TagVar] = statement.allocate_elements(10)
+  statement.set_elements([(genGVar, generatorG), (genHVar, generatorH), (UVar, U), (UPrimeCommitVar, UPrimeCommit), (m1CommitVar, m1Commit), (VVar, V), (X1Var, credential.X1), (tagVar, tag), (genTVar, generatorT), (m1TagVar, m1Tag)])
 
   # 1. m1Commit = m1 * U + z * generatorH
-  prover.Constrain(m1CommitVar, [(m1Var, UVar), (zVar, genHVar)])
+  statement.append_equation(m1CommitVar, [(m1Var, UVar), (zVar, genHVar)])
   # 2. V = z * X1 - r * generatorG
-  prover.Constrain(VVar, [(zVar, X1Var), (rNegVar, genGVar)])
+  statement.append_equation(VVar, [(zVar, X1Var), (rNegVar, genGVar)])
   # 3. G.HashToGroup(presentationContext, "Tag") = m1 * tag + nonce * tag
-  prover.Constrain(genTVar, [(m1Var, tagVar), (nonceVar, tagVar)])
+  statement.append_equation(genTVar, [(m1Var, tagVar), (nonceVar, tagVar)])
   # 4. m1Tag = m1 * tag
-  prover.Constrain(m1TagVar, [(m1Var, tagVar)])
+  statement.append_equation(m1TagVar, [(m1Var, tagVar)])
 
-  return prover.Prove()
+  iv = contextString + "CredentialPresentation"
+  prover = NISigmaProtocol.init(iv: iv, instance: statement)
+  return prover.prove(witness, rng)
 ~~~
 
 ### Presentation Proof Verification
@@ -1391,38 +1111,25 @@ Parameters:
 - contextString: public input
 
 def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, presentationContext, presentation, m1Tag):
-  m2 = G.HashToScalar(requestContext, "requestContext")
-  V = serverPrivateKey.x0 * presentation.U + serverPrivateKey.x1 * presentation.m1Commit + serverPrivateKey.x2 * m2 * presentation.U - presentation.UPrimeCommit
-  generatorT = G.HashToGroup(presentationContext, "Tag")
+  statement = LinearRelation(G)
+  [m1Var, zVar, rNegVar, nonceVar] = statement.allocate_scalars(4)
+  witness = [credential.m1, z, -r, nonce]
 
-  verifier = Verifier(contextString + "CredentialPresentation")
-
-  m1Var = verifier.AppendScalar("m1")
-  zVar = verifier.AppendScalar("z")
-  rNegVar = verifier.AppendScalar("-r")
-  nonceVar = verifier.AppendScalar("nonce")
-
-  genGVar = verifier.AppendElement("genG", generatorG)
-  genHVar = verifier.AppendElement("genH", generatorH)
-  UVar = verifier.AppendElement("U", presentation.U)
-  _ = verifier.AppendElement("UPrimeCommit", presentation.UPrimeCommit)
-  m1CommitVar = verifier.AppendElement("m1Commit", presentation.m1Commit)
-  VVar = verifier.AppendElement("V", presentation.V)
-  X1Var = verifier.AppendElement("X1", serverPublicKey.X1)
-  tagVar = prover.AppendElement("tag", presentation.tag)
-  genTVar = verifier.AppendElement("genT", generatorT)
-  m1TagVar = prover.AppendElement("m1Tag", m1Tag)
+  [genGVar, genHVar, UVar, UPrimeCommitVar, m1CommitVar, VVar, X1Var, tagVar, genTVar, m1TagVar] = statement.allocate_elements(10)
+  statement.set_elements([(genGVar, generatorG), (genHVar, generatorH), (UVar, U), (UPrimeCommitVar, UPrimeCommit), (m1CommitVar, m1Commit), (VVar, V), (X1Var, credential.X1), (tagVar, tag), (genTVar, generatorT), (m1TagVar, m1Tag)])
 
   # 1. m1Commit = m1 * U + z * generatorH
-  verifier.Constrain(m1CommitVar, [(m1Var, UVar), (zVar, genHVar)])
+  statement.append_equation(m1CommitVar, [(m1Var, UVar), (zVar, genHVar)])
   # 2. V = z * X1 - r * generatorG
-  verifier.Constrain(VVar, [(zVar, X1Var), (rNegVar, genGVar)])
-  # 3. G.HashToGroup(presentationContext, "Tag") = m1 * tag + nonceVar * tag
-  verifier.Constrain(genTVar, [(m1Var, tagVar), (nonceVar, tagVar)])
+  statement.append_equation(VVar, [(zVar, X1Var), (rNegVar, genGVar)])
+  # 3. G.HashToGroup(presentationContext, "Tag") = m1 * tag + nonce * tag
+  statement.append_equation(genTVar, [(m1Var, tagVar), (nonceVar, tagVar)])
   # 4. m1Tag = m1 * tag
-  prover.Constrain(m1TagVar, [(m1Var, tagVar)])
+  statement.append_equation(m1TagVar, [(m1Var, tagVar)])
 
-  return verifier.Verify(presentation.proof)
+  iv = contextString + "CredentialPresentation"
+  verifier = NISigmaProtocol.init(iv: iv, instance: statement)
+  return verifier.verify(request.proof)
 ~~~
 
 # Ciphersuites {#ciphersuites}
