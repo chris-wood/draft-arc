@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Informational                               Apple, Inc.
-Expires: 18 March 2026                                 14 September 2025
+Expires: 20 March 2026                                 16 September 2025
 
 
                    Anonymous Rate-Limited Credentials
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 18 March 2026.
+   This Internet-Draft will expire on 20 March 2026.
 
 Copyright Notice
 
@@ -845,7 +845,7 @@ def MakeCredentialRequestProof(m1, m2, r1, r2, m1Enc, m2Enc):
   statement.append_equation(m2EncVar, [(m2Var, genGVar), (r2Var, genHVar)])
 
   iv = contextString + "CredentialRequest"
-  prover = NISigmaProtocol.init(iv: iv, instance: statement)
+  prover = NISigmaProtocol(iv, statement)
   return prover.prove(witness, rng)
 
 5.1.2.  CredentialRequest Proof Verification
@@ -886,7 +886,7 @@ def VerifyCredentialRequestProof(request):
   statement.append_equation(m2EncVar, [(m2Var, genGVar), (r2Var, genHVar)])
 
   iv = contextString + "CredentialRequest"
-  verifier = NISigmaProtocol.init(iv: iv, instance: statement)
+  verifier = NISigmaProtocol(iv, statement)
   return verifier.verify(request.proof)
 
 5.2.  CredentialResponse Proof
@@ -991,7 +991,7 @@ def MakeCredentialResponseProof(serverPrivateKey, serverPublicKey, request, b, U
   statement.append_equation(encUPrimeVar, [(bVar, X0Var), (t1Var, m1EncVar), (t2Var, m2EncVar)])
 
   iv = contextString + "CredentialResponse"
-  prover = NISigmaProtocol.init(iv: iv, instance: statement)
+  prover = NISigmaProtocol(iv, statement)
   return prover.prove(witness, rng)
 
 5.2.2.  CredentialResponse Proof Verification
@@ -1071,7 +1071,7 @@ def VerifyCredentialResponseProof(serverPublicKey, response, request):
   statement.append_equation(encUPrimeVar, [(bVar, X0Var), (t1Var, m1EncVar), (t2Var, m2EncVar)])
 
   iv = contextString + "CredentialResponse"
-  verifier = NISigmaProtocol.init(iv: iv, instance: statement)
+  verifier = NISigmaProtocol(iv, statement)
   return verifier.verify(request.proof)
 
 5.3.  Presentation Proof
@@ -1140,7 +1140,7 @@ def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, presentati
   statement.append_equation(m1TagVar, [(m1Var, tagVar)])
 
   iv = contextString + "CredentialPresentation"
-  prover = NISigmaProtocol.init(iv: iv, instance: statement)
+  prover = NISigmaProtocol(iv, statement)
   return prover.prove(witness, rng)
 
 5.3.2.  Presentation Proof Verification
@@ -1199,7 +1199,7 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
   statement.append_equation(m1TagVar, [(m1Var, tagVar)])
 
   iv = contextString + "CredentialPresentation"
-  verifier = NISigmaProtocol.init(iv: iv, instance: statement)
+  verifier = NISigmaProtocol(iv, statement)
   return verifier.verify(request.proof)
 
 6.  Ciphersuites
@@ -1593,6 +1593,12 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
 
 12.1.  Normative References
 
+   [FIAT-SHAMIR]
+              Orrù, M., "Fiat-Shamir Transformation", Work in Progress,
+              Internet-Draft, draft-irtf-cfrg-fiat-shamir-00, 8 August
+              2025, <https://datatracker.ietf.org/doc/html/draft-irtf-
+              cfrg-fiat-shamir-00>.
+
    [I-D.irtf-cfrg-hash-to-curve]
               Faz-Hernandez, A. F., Scott, S., Sullivan, N., Wahby, R.
               S., and C. A. Wood, "Hashing to Elliptic Curves", Work in
@@ -1613,6 +1619,11 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
               RFC 8017, DOI 10.17487/RFC8017, November 2016,
               <https://www.rfc-editor.org/rfc/rfc8017>.
 
+   [SIGMA]    Orrù, M. and C. Yun, "Interactive Sigma Proofs", Work in
+              Progress, Internet-Draft, draft-irtf-cfrg-sigma-protocols-
+              00, 8 August 2025, <https://datatracker.ietf.org/doc/html/
+              draft-irtf-cfrg-sigma-protocols-00>.
+
 12.2.  Informative References
 
    [BBDT17]   "Improved Algebraic MACs and Practical Keyed-Verification
@@ -1626,11 +1637,6 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
               Denis, F., Jacobs, F., and C. A. Wood, "RSA Blind
               Signatures", RFC 9474, DOI 10.17487/RFC9474, October 2023,
               <https://www.rfc-editor.org/rfc/rfc9474>.
-
-   [FIAT-SHAMIR]
-              "Fiat-Shamir Transformation", n.d.,
-              <https://datatracker.ietf.org/doc/draft-irtf-cfrg-fiat-
-              shamir/>.
 
    [KVAC]     "Keyed-Verification Anonymous Credentials from Algebraic
               MACs", n.d., <https://eprint.iacr.org/2013/516>.
@@ -1653,10 +1659,6 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
    [SEC1]     Standards for Efficient Cryptography Group (SECG), "SEC 1:
               Elliptic Curve Cryptography",
               <https://www.secg.org/sec1-v2.pdf>.
-
-   [SIGMA]    "Interactive Sigma Protocols", n.d.,
-              <https://datatracker.ietf.org/doc/draft-irtf-cfrg-sigma-
-              protocols/>.
 
 Authors' Addresses
 
