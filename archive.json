@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-09-14T00:09:58.656836+00:00",
+  "timestamp": "2025-09-16T00:08:47.100262+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -67,7 +67,7 @@
       "labels": [],
       "body": "Currently, ARC defines and uses its own ZKP Schnorr compiler.\nTo reuse redundancy and reuse tooling across projects, it would be better to use the ZKProof spec defined here:\nhttps://mmaker.github.io/spfs/draft-orru-zkproof-sigma.html#name-ciphersuites\n\nHowever, adopting the ZKProof spec is blocking on it having a reference implementation and test vectors, which I filed an issue for here:\nhttps://github.com/mmaker/spfs/issues/1",
       "createdAt": "2025-02-22T00:36:06Z",
-      "updatedAt": "2025-02-25T11:01:28Z",
+      "updatedAt": "2025-09-14T05:22:59Z",
       "closedAt": null,
       "comments": [
         {
@@ -104,6 +104,13 @@
           "body": "@mmaker understood, and no worries. You can (and should) submit to the datatracker frequently and often! This is just the place where IETF specifications live. IETF working groups and research groups require a draft to exist on the datatracker before it can be presented and considered for adoption. So, concretely, here's what I recommend you do:\n\n1. Update the co-authors to include whomever you like. (I think it's fine if you include me and Cathie -- our affiliation is included below).\n2. Submit to the datatracker.\n3. Share with CFRG and ask for time to present in Bangkok. \n\nThe reference implementation and test vectors can definitely come later, and that's OK. All that matters for now is that the draft be published so we can start \"the process.\" \n\nDoes that all make sense?\n\n------\n\nHere's the affiliation:\n\n```\nauthor:\n -\n    ins: C. Yun\n    name: Cathie Yun\n    organization: Apple, Inc.\n    email: cathieyun@gmail.com\n -\n    ins: C. A. Wood\n    name: Christopher A. Wood\n    org: Apple, Inc.\n    email: caw@heapingbits.net\n```",
           "createdAt": "2025-02-25T11:01:25Z",
           "updatedAt": "2025-02-25T11:01:25Z"
+        },
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Now that the sigma and fiat-shamir specs have been adopted by CFRG, I am working on moving ARC to use those specs. Preliminary PR (with some open action items) here: https://github.com/chris-wood/draft-arc/pull/37",
+          "createdAt": "2025-09-14T05:22:59Z",
+          "updatedAt": "2025-09-14T05:22:59Z"
         }
       ]
     },
@@ -1678,6 +1685,237 @@
           "createdAt": "2025-08-21T21:00:41Z",
           "updatedAt": "2025-08-21T21:00:41Z",
           "comments": []
+        }
+      ]
+    },
+    {
+      "number": 37,
+      "id": "PR_kwDONyB6uM6odk5m",
+      "title": "Move ARC spec to use Sigma and Fiat-Shamir specs for proofs",
+      "url": "https://github.com/chris-wood/draft-arc/pull/37",
+      "state": "OPEN",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Removes the Schnorr proof compiler section from the ARC spec, and replaces it with the Sigma and Fiat-Shamir specs instead. Updates the proof creation and verification to use the APIs from the Sigma and Fiat-Shamir specs.\r\n\r\nTo-dos:\r\n- Pass in an rng for the prover, since `NISigmaProtocol` needs it an rng to generate a proof. This is currently missing.\r\n- Check if we need to define a codec for `NISigmaProtocol`? It seems like `NISigmaProtocol` needs a codec defined, but there is nowhere to define it (see section 5 in https://datatracker.ietf.org/doc/draft-irtf-cfrg-fiat-shamir/). Maybe it is set to `LinearMapCodec` by default, but I don't see that specified in the spec. Following up with Michele on this.\r\n- Update the poc to also use the sigma protocol / fiat-shamir poc for generating proofs, and update the test vectors accordingly. \r\n  - This may involve some difficulty, as the sigma/f-s poc uses its own definition of groups that is not the same, and possibly is not compatible with, the current ARC definition of groups (which is the IETF \"boilerplate\" group definition). See this issue for more discussion on the topic: https://github.com/mmaker/draft-irtf-cfrg-sigma-protocols/issues/71#issuecomment-3288847813\r\n  - Due to the difficulties caused by the group incompatibilities, I may tackle this in a future PR once the group incompatibilities have been addressed.",
+      "createdAt": "2025-09-14T05:18:21Z",
+      "updatedAt": "2025-09-15T23:15:46Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "24dac6275c1660a973e03a584fbe07733f54a5a8",
+      "headRepository": "chris-wood/draft-arc",
+      "headRefName": "cathie/sigma",
+      "headRefOid": "376a5fadb697c5f01f065e770712b189acc6f7c2",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDONyB6uM7AOjuj",
+          "commit": {
+            "abbreviatedOid": "376a5fa"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "Nice work! This looks correct to me, just some minor comments in line.\r\n\r\nOne high level one: Generally speaking, \"artwork\" in drafts (i.e., pseudocode contained in `~~~`) should only be 70 columns wide. Otherwise, the artwork doesn't render very well in PDF or TXT. I think a lot of drafts ignore this, and I'm not aware of an instance of the RFC editor complaining about it.",
+          "createdAt": "2025-09-15T14:48:44Z",
+          "updatedAt": "2025-09-15T15:02:44Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "These should be normative references, not informative ones.\r\n\r\nIn any case, there is a more convenient/conventional way to reference drafts than adding them manually to references. The first time you write `{{SIGMA}}`, write `{{!SIGMA=I-D.draft-irtf-cfrg-sigma-protocols-00}}` instead.  Then `make` will confirm this draft exists and add it as a normative reference automatically.",
+              "createdAt": "2025-09-15T14:48:44Z",
+              "updatedAt": "2025-09-15T19:16:04Z"
+            },
+            {
+              "originalPosition": 257,
+              "body": "This syntax enables automatic references for drafts as in my previous comment.\r\n\r\n```suggestion\r\nThis section uses the Interactive Sigma Protocol {{SIGMA}} to create zero-knowledge proofs of knowledge for various ARC operations, and the Fiat-Shamir Transform {{FIAT-SHAMIR}} to make those proofs non-interactive.\r\n```",
+              "createdAt": "2025-09-15T14:49:48Z",
+              "updatedAt": "2025-09-15T15:02:44Z"
+            },
+            {
+              "originalPosition": 292,
+              "body": "This doesn't appear to be valid Python syntax? How about:\r\n```suggestion\r\n  prover = NISigmaProtocol.init(iv, statement)\r\n```",
+              "createdAt": "2025-09-15T14:52:40Z",
+              "updatedAt": "2025-09-15T15:02:44Z"
+            },
+            {
+              "originalPosition": 292,
+              "body": "Likewise below.",
+              "createdAt": "2025-09-15T14:53:18Z",
+              "updatedAt": "2025-09-15T15:02:44Z"
+            },
+            {
+              "originalPosition": 364,
+              "body": "It might be a good idea to set a convenience function that allocates the variables and sets them in one call, similar to what you had before?",
+              "createdAt": "2025-09-15T14:57:08Z",
+              "updatedAt": "2025-09-15T15:02:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM7ASv29",
+          "commit": {
+            "abbreviatedOid": "376a5fa"
+          },
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-15T20:18:00Z",
+          "updatedAt": "2025-09-15T20:18:00Z",
+          "comments": [
+            {
+              "originalPosition": 292,
+              "body": "Sorry, context switching from writing Swift :P",
+              "createdAt": "2025-09-15T20:18:00Z",
+              "updatedAt": "2025-09-15T20:18:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM7ASxCD",
+          "commit": {
+            "abbreviatedOid": "376a5fa"
+          },
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-15T20:18:54Z",
+          "updatedAt": "2025-09-15T20:18:54Z",
+          "comments": [
+            {
+              "originalPosition": 364,
+              "body": "I don't think I had a convenience function before, but happy to add the convenience function here.\r\n",
+              "createdAt": "2025-09-15T20:18:54Z",
+              "updatedAt": "2025-09-15T20:18:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM7ASx-f",
+          "commit": {
+            "abbreviatedOid": "376a5fa"
+          },
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-15T20:19:35Z",
+          "updatedAt": "2025-09-15T20:19:35Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "Ok, thanks - will give that a shot!",
+              "createdAt": "2025-09-15T20:19:35Z",
+              "updatedAt": "2025-09-15T20:19:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM7AS5HS",
+          "commit": {
+            "abbreviatedOid": "376a5fa"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-15T20:24:57Z",
+          "updatedAt": "2025-09-15T20:24:57Z",
+          "comments": [
+            {
+              "originalPosition": 364,
+              "body": "I was thinking of `AppendElement`, which appears to \"allocate\" a variable for an element and \"set\" its value in one call. That is, if I'm reading correctly, the following are (morally) equivalent:\r\n\r\n```\r\n# Current ARC draft\r\nXVar = prover.AppendElement(\"X\", X)\r\n\r\n# Sigma draft\r\n[XVar] = statement.allocate_elements(1)\r\nstatement.set_elements([(XVar, X)])\r\n```",
+              "createdAt": "2025-09-15T20:24:57Z",
+              "updatedAt": "2025-09-15T20:57:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM7AT4dv",
+          "commit": {
+            "abbreviatedOid": "376a5fa"
+          },
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-15T21:51:02Z",
+          "updatedAt": "2025-09-15T21:51:02Z",
+          "comments": [
+            {
+              "originalPosition": 364,
+              "body": "Oh I see, the current ARC `AppendElement` API is only there because we define the \"schnorr compiler\" ourselves, so that's our defined API.\r\n\r\nIn this PR, I'm trying to follow the Sigma draft spec as closely as possible, hence the two-step `allocate_elements` and then `set_elements`. I can make an `append_element` convenience function here too, but it seems to go against the spirit of using the sigma spec as directly as possible (or in other words, if we think an `append_element` convenience function is needed, maybe we should add that to the sigma spec itself, instead of at an outer layer?)",
+              "createdAt": "2025-09-15T21:51:02Z",
+              "updatedAt": "2025-09-15T21:51:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM7AT5CQ",
+          "commit": {
+            "abbreviatedOid": "376a5fa"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-15T21:52:19Z",
+          "updatedAt": "2025-09-15T21:52:19Z",
+          "comments": [
+            {
+              "originalPosition": 364,
+              "body": "No need, it's sensible to keep things simple.",
+              "createdAt": "2025-09-15T21:52:19Z",
+              "updatedAt": "2025-09-15T21:52:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM7AT5jy",
+          "commit": {
+            "abbreviatedOid": "376a5fa"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-15T21:53:34Z",
+          "updatedAt": "2025-09-15T21:53:35Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "Btw, use `?` instead of `!` if you want an informative reference.",
+              "createdAt": "2025-09-15T21:53:35Z",
+              "updatedAt": "2025-09-15T21:53:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM7AUbBo",
+          "commit": {
+            "abbreviatedOid": "376a5fa"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-15T23:15:46Z",
+          "updatedAt": "2025-09-15T23:15:46Z",
+          "comments": [
+            {
+              "originalPosition": 292,
+              "body": "Oh, also: I believe we want `NISigmaProtocol(iv, statement)` rather than `NISigmaProtocol.init(iv, statement)`. Perhaps another swift thing?",
+              "createdAt": "2025-09-15T23:15:46Z",
+              "updatedAt": "2025-09-15T23:15:46Z"
+            }
+          ]
         }
       ]
     }
