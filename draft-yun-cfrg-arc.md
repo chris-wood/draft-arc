@@ -51,12 +51,6 @@ informative:
     author:
       -
         ins: Standards for Efficient Cryptography Group (SECG)
-  SIGMA:
-    title: Interactive Sigma Protocols
-    target: https://datatracker.ietf.org/doc/draft-irtf-cfrg-sigma-protocols/
-  FIAT-SHAMIR:
-    title: Fiat-Shamir Transformation
-    target: https://datatracker.ietf.org/doc/draft-irtf-cfrg-fiat-shamir/
 
 --- abstract
 
@@ -711,7 +705,7 @@ look up the tags corresponding to the associated requestContext and presentation
 
 # Zero-Knowledge Proofs
 
-This section uses the Interactive Sigma Protocol [SIGMA] to create zero-knowledge proofs of knowledge for various ARC operations, and the Fiat-Shamir Transform [FIAT-SHAMIR] to make those proofs non-interactive.
+This section uses the Interactive Sigma Protocol {{!SIGMA=I-D.draft-irtf-cfrg-sigma-protocols-00}} to create zero-knowledge proofs of knowledge for various ARC operations, and the Fiat-Shamir Transform {{!FIAT-SHAMIR=I-D.draft-irtf-cfrg-fiat-shamir-00}} to make those proofs non-interactive.
 
 ## CredentialRequest Proof {#request-proof}
 
@@ -764,7 +758,7 @@ def MakeCredentialRequestProof(m1, m2, r1, r2, m1Enc, m2Enc):
   statement.append_equation(m2EncVar, [(m2Var, genGVar), (r2Var, genHVar)])
 
   iv = contextString + "CredentialRequest"
-  prover = NISigmaProtocol.init(iv: iv, instance: statement)
+  prover = NISigmaProtocol(iv, statement)
   return prover.prove(witness, rng)
 ~~~
 
@@ -807,7 +801,7 @@ def VerifyCredentialRequestProof(request):
   statement.append_equation(m2EncVar, [(m2Var, genGVar), (r2Var, genHVar)])
 
   iv = contextString + "CredentialRequest"
-  verifier = NISigmaProtocol.init(iv: iv, instance: statement)
+  verifier = NISigmaProtocol(iv, statement)
   return verifier.verify(request.proof)
 ~~~
 
@@ -914,7 +908,7 @@ def MakeCredentialResponseProof(serverPrivateKey, serverPublicKey, request, b, U
   statement.append_equation(encUPrimeVar, [(bVar, X0Var), (t1Var, m1EncVar), (t2Var, m2EncVar)])
 
   iv = contextString + "CredentialResponse"
-  prover = NISigmaProtocol.init(iv: iv, instance: statement)
+  prover = NISigmaProtocol(iv, statement)
   return prover.prove(witness, rng)
 ~~~
 
@@ -996,7 +990,7 @@ def VerifyCredentialResponseProof(serverPublicKey, response, request):
   statement.append_equation(encUPrimeVar, [(bVar, X0Var), (t1Var, m1EncVar), (t2Var, m2EncVar)])
 
   iv = contextString + "CredentialResponse"
-  verifier = NISigmaProtocol.init(iv: iv, instance: statement)
+  verifier = NISigmaProtocol(iv, statement)
   return verifier.verify(request.proof)
 ~~~
 
@@ -1067,7 +1061,7 @@ def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, presentati
   statement.append_equation(m1TagVar, [(m1Var, tagVar)])
 
   iv = contextString + "CredentialPresentation"
-  prover = NISigmaProtocol.init(iv: iv, instance: statement)
+  prover = NISigmaProtocol(iv, statement)
   return prover.prove(witness, rng)
 ~~~
 
@@ -1128,7 +1122,7 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
   statement.append_equation(m1TagVar, [(m1Var, tagVar)])
 
   iv = contextString + "CredentialPresentation"
-  verifier = NISigmaProtocol.init(iv: iv, instance: statement)
+  verifier = NISigmaProtocol(iv, statement)
   return verifier.verify(request.proof)
 ~~~
 
