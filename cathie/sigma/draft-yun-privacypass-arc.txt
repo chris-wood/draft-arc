@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Standards Track                             Apple, Inc.
-Expires: 20 March 2026                                 16 September 2025
+Expires: 21 March 2026                                 17 September 2025
 
 
  Privacy Pass Issuance Protocol for Anonymous Rate-Limited Credentials
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 20 March 2026.
+   This Internet-Draft will expire on 21 March 2026.
 
 Copyright Notice
 
@@ -436,12 +436,14 @@ Table of Contents
    challenge, denoted credential, Clients compute a credential
    presentation value as follows:
 
-presentation_context = concat(tokenChallenge.issuer_name,
-  tokenChallenge.origin_info,
-  tokenChallenge.redemption_context,
-  issuer_key_id)
-state = MakePresentationState(credential, presentation_context, presentationLimit)
-newState, nonce, presentation = Present(state)
+   presentation_context = concat(tokenChallenge.issuer_name,
+     tokenChallenge.origin_info,
+     tokenChallenge.redemption_context,
+     issuer_key_id)
+   state = MakePresentationState(credential,
+     presentation_context,
+     presentationLimit)
+   newState, nonce, presentation = Present(state)
 
    Subsequent presentations MUST use the updated state, denoted
    newState.  Reusing the original state will break the presentation
@@ -485,15 +487,17 @@ newState, nonce, presentation = Present(state)
    verifying a Token requires invoking the VerifyPresentation function
    from Section 4.3.3 of [ARC] in the following ways:
 
-request_context = concat(tokenChallenge.issuer_name,
-  tokenChallenge.origin_info,
-  tokenChallenge.credential_context,
-  issuer_key_id)
-presentation_context = concat(tokenChallenge.issuer_name,
-  tokenChallenge.origin_info,
-  tokenChallenge.redemption_context,
-  issuer_key_id)
-valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonce, presentation, presentation_limit)
+   request_context = concat(tokenChallenge.issuer_name,
+     tokenChallenge.origin_info,
+     tokenChallenge.credential_context,
+     issuer_key_id)
+   presentation_context = concat(tokenChallenge.issuer_name,
+     tokenChallenge.origin_info,
+     tokenChallenge.redemption_context,
+     issuer_key_id)
+   valid = VerifyPresentation(skI, pkI,
+     request_context, presentation_context,
+     nonce, presentation, presentation_limit)
 
    This function returns True if the CredentialToken is valid, and False
    otherwise.
