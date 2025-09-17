@@ -1425,6 +1425,165 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
   return verifier.Verify(presentation.proof)
 ~~~
 
+## Range Proof for Arbitrary Values
+
+This section specifies a range proof in the framework of
+{{!SIGMA=I-D.draft-irtf-cfrg-sigma-protocols-00}} to prove a secret value `v` lies
+in an arbitrary interval `[0,upper_bound)`. Before specifying the proof system, we first
+give a brief overview of how it works. For simplicity, assume that `upper_bound` is a
+power of two, that is, `upper_bound == 2^k` for some `k`.
+
+To prove a value lies in `[0,(2^k)-1)`, we prove it has a valid `k`-bit representation.
+This is proven by committing to the full value `v`, then all bits of the bit decomposition
+`b` of the value `v`, and then proving each coefficient of the bit decomposition is
+actually `0` or `1` and that the sum of the bits amounts to the full value `v`.  This involves the following steps:
+
+1. Commit to the bits of `v`. That is, for each bit `b[i]` of the bit decomposition of `v`, let
+`D[i] = b[i] * generatorG + s[i] * generatorH`, where `s[i]` is a blinding scalar.
+2. Prove that `b[i]` is in `{0,1}` by computing proving the algebraic relation `b[i] *
+(b[i]-1) == 0` holds. This quadratic relation can be linearized by
+adding an auxilary witness `s2[i]` and adding the linear relation
+`D[i] == b[i] * D[i] + s2[i] * generatorH` to the equation system. A valid witness `s2[i]` can only
+be computed by the prover if `b[i]` is in `{0,1}`. Successfully computing a witness for
+any other value requires the prover to break the discrete logarithm problem.
+3. Having verified the proof the above relation, the verifier checks the sum by computing
+
+~~~
+C == D[0] * 2^0 + D[1] * 2^1 + D[2] * 2^2 + ... + D[k-1] * 2^{k-1}
+~~~
+
+The third step is verified outside of the proof by adding the commitments
+homomorphically.
+
+To support the general case, where `upper_bound` is not necessarily a power of two,
+we extend the range proof for arbitrary ranges by decomposing the range
+up to the second highest power of two and adding an additional, non-binary range that
+covers the remaining range. This is detailed in `ComputeBases` below.
+
+~~~
+def ComputeBases(upper_bound):
+
+Inputs:
+
+- upper_bound: the maximum value of the range (exclusive), as integer.
+
+Outputs:
+
+- bases: an array of Scalar bases to represent elements, sorted in descending order. A base is
+  either a power of two or a unique remainder that can be used to represent any integer
+  in [0, upper_bound).
+
+# compute bases to express the commitment as a linear combination of the bit decomposition
+remainder=upper_bound
+bases=[]
+# Generate all but the last power-of-two base.
+for i in range(ceil(log2(upper_bound)) - 1):
+    base = 2 ** i
+    remainder -= base
+    bases.append((G.Scalar(base))
+
+if remainder != 0:
+        bases.append(remainder - 1)
+
+# call sorted on array to ensure the additional base is in correct order
+return sorted(bases, reverse=True)
+~~~
+
+Using the bases from `ComputeBases`, the function `ComputeStatementAndWitnesses`
+represents the secret value `v` as a linear combination of the bases, using the resulting
+bit representation to generate the cryptographic commitments and witness values for the
+range proof.
+
+~~~
+def ComputeStatementAndWitnesses(v, upper_bound):
+
+Inputs:
+
+- v: the scalar we want to prove is in range [0, upper_bound)
+- r: randomness for commitment to v
+- upper_bound: the maximum integer value of the range
+
+Outputs:
+
+- statement: proof statement for the relation
+- [s,s2]: the witness for the equations appended to the statement (the bit
+  decomposition, the secret shares of r, and the auxiliary witness s2. Each s2[i] is either zero when
+b[i] is set) or s[i] when b[i] is zero.
+- C: the commitment to v
+- D: the commitments to the bit decomposition of v
+
+Parameters:
+- G: group
+- generatorG: Element, equivalent to G.GeneratorG()
+- generatorH: Element, equivalent to G.GeneratorH()
+
+Exceptions:
+- NumberTooBigError, raised when v is out of range
+
+if G.ScalarToInt(v) >= upper_bound:
+    raise NumberTooBigError
+
+bases = ComputeBases(upper_bound)
+
+# Compute bit decomposition of v.
+b = []
+v_remainder = G.ScalarToInt(v)
+for base in bases:
+    # Implementation note: In order to avoid leaking v via a timing channel, this code should be written to be constant time.
+    if v_remainder >= base:
+        v_remainder -= G.ScalarToInt(base)
+        b.append(G.Scalar(1))
+    else:
+        b.append(G.Scalar(0))
+
+# array of group elements where the i-th element corresponds to b[i] * generatorG + s * generatorH
+D = []
+# blinding elements for Pedersen commitment, secret shares of r
+s = []
+# complementing blinders for proof of bit-ness
+s2 = []
+partial_sum = G.Scalar(0)
+for i in range(len(bases) - 1):
+    s.append(G.random_scalar())
+    partial_sum += s[i]
+    s2.append((G.Scalar(1) - b[i]) * s[i])
+    D.append(b[i] * generatorG + s[i] * generatorH)
+idx = len(bases) - 1
+s[idx] = r - partial_sum
+s2.append((G.Scalar(1) - b[idx]) * s[idx])
+D.append(b[idx] * generatorG + s[idx] * generatorH)
+
+# Compute the Pedersen commitment to the full value of v, using the provided r.
+C = v * generatorG + r * generatorH
+
+# start computing the linear relation
+statement = LinearRelation(G)
+
+[var_G, var_H, var_C] = statement.allocate_elements(3)
+
+# allocate variables for decomposed statements
+vars_b = statement.allocate_scalars(len(b))
+# allocate blinding elements for Pedersen commitment
+vars_s = statement.allocateScalars(len(b))
+# allocate complementing blinders for proof of bit-ness
+vars_s2 = statement.allocateScalars(len(b))
+# allocate bit commitment values
+vars_D = statement.allocateElements(len(b))
+
+# Add equations proving each b[i] is in {0,1}
+# For each base, we prove:
+#   D[i] = b[i] * generatorG + s[i] * generatorH      (b[i] is committed in D[i])
+#   b[i] * (b[i] - 1) = 0       (b[i] is 0 or 1)
+for i in range(len(b)):
+        statement.set_elements([(vars_D[i], D[i])])
+        # add Pedersen commitment to the ith bit.
+        statement.append_equation(vars_D[i], [(vars_b[i], var_G), (vars_s[i], var_H)])
+        # add statement that b[i] is in {0,1}
+        statement.append_equation(vars_D[i], [(vars_b[i], vars_D[i]), (vars_s2[i], var_H)])
+
+return (statement, [r, v, b, s, s2], [C,D])
+~~~
+
 # Ciphersuites {#ciphersuites}
 
 A ciphersuite (also referred to as 'suite' in this document) for the protocol
