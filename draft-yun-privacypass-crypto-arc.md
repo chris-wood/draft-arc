@@ -797,8 +797,8 @@ def MakeCredentialRequestProof(m1, m2, r1, r2, m1Enc, m2Enc):
   statement.append_equation(m2EncVar,
     [(m2Var, genGVar), (r2Var, genHVar)])
 
-  iv = contextString + "CredentialRequest"
-  prover = NISigmaProtocol(iv, statement)
+  session_id = contextString + "CredentialRequest"
+  prover = NISchnorrProofShake128P256(session_id, statement)
   return prover.prove(witness, rng)
 ~~~
 
@@ -846,8 +846,8 @@ def VerifyCredentialRequestProof(request):
   statement.append_equation(m2EncVar,
     [(m2Var, genGVar), (r2Var, genHVar)])
 
-  iv = contextString + "CredentialRequest"
-  verifier = NISigmaProtocol(iv, statement)
+  session_id = contextString + "CredentialRequest"
+  verifier = NISchnorrProofShake128P256(session_id, statement)
   return verifier.verify(request.proof)
 ~~~
 
@@ -971,8 +971,8 @@ def MakeCredentialResponseProof(serverPrivateKey, serverPublicKey,
   statement.append_equation(encUPrimeVar, [(bVar, X0Var),
     (t1Var, m1EncVar), (t2Var, m2EncVar)])
 
-  iv = contextString + "CredentialResponse"
-  prover = NISigmaProtocol(iv, statement)
+  session_id = contextString + "CredentialResponse"
+  prover = NISchnorrProofShake128P256(session_id, statement)
   return prover.prove(witness, rng)
 ~~~
 
@@ -1069,8 +1069,8 @@ def VerifyCredentialResponseProof(serverPublicKey, response, request):
   statement.append_equation(encUPrimeVar, [(bVar, X0Var),
     (t1Var, m1EncVar), (t2Var, m2EncVar)])
 
-  iv = contextString + "CredentialResponse"
-  verifier = NISigmaProtocol(iv, statement)
+  session_id = contextString + "CredentialResponse"
+  verifier = NISchnorrProofShake128P256(session_id, statement)
   return verifier.verify(request.proof)
 ~~~
 
@@ -1155,8 +1155,8 @@ def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT,presentatio
   # 4. m1Tag = m1 * tag
   statement.append_equation(m1TagVar, [(m1Var, tagVar)])
 
-  iv = contextString + "CredentialPresentation"
-  prover = NISigmaProtocol(iv, statement)
+  session_id = contextString + "CredentialPresentation"
+  prover = NISchnorrProofShake128P256(session_id, statement)
   return prover.prove(witness, rng)
 ~~~
 
@@ -1231,8 +1231,8 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey,
   # 4. m1Tag = m1 * tag
   statement.append_equation(m1TagVar, [(m1Var, tagVar)])
 
-  iv = contextString + "CredentialPresentation"
-  verifier = NISigmaProtocol(iv, statement)
+  session_id = contextString + "CredentialPresentation"
+  verifier = NISchnorrProofShake128P256(session_id, statement)
   return verifier.verify(request.proof)
 ~~~
 
