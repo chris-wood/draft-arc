@@ -3,7 +3,7 @@ title: "Anonymous Rate-Limited Credentials"
 abbrev: "ARC"
 category: info
 
-docname: draft-yun-cfrg-arc-latest
+docname: draft-yun-privacypass-crypto-arc-latest
 submissiontype: IRTF
 number:
 date:
@@ -14,7 +14,7 @@ venue:
   mail: "cfrg@ietf.org"
   arch: "https://mailarchive.ietf.org/arch/browse/cfrg"
   github: "chris-wood/draft-arc"
-  latest: "https://chris-wood.github.io/draft-arc/draft-yun-cfrg-arc.html"
+  latest: "https://chris-wood.github.io/draft-arc/draft-yun-privacypass-crypto-arc.html"
 
 author:
  -
