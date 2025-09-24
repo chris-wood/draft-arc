@@ -5,11 +5,11 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Informational                               Apple, Inc.
-Expires: 21 March 2026                                 17 September 2025
+Expires: 28 March 2026                                 24 September 2025
 
 
                    Anonymous Rate-Limited Credentials
-                       draft-yun-cfrg-arc-latest
+                draft-yun-privacypass-crypto-arc-latest
 
 Abstract
 
@@ -28,9 +28,9 @@ About This Document
    This note is to be removed before publishing as an RFC.
 
    The latest revision of this draft can be found at https://chris-
-   wood.github.io/draft-arc/draft-yun-cfrg-arc.html.  Status information
-   for this document may be found at https://datatracker.ietf.org/doc/
-   draft-yun-cfrg-arc/.
+   wood.github.io/draft-arc/draft-yun-privacypass-crypto-arc.html.
+   Status information for this document may be found at
+   https://datatracker.ietf.org/doc/draft-yun-privacypass-crypto-arc/.
 
    Discussion of this document takes place on the Crypto Forum mailing
    list (mailto:cfrg@ietf.org), which is archived at
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 21 March 2026.
+   This Internet-Draft will expire on 28 March 2026.
 
 Copyright Notice
 
@@ -884,8 +884,8 @@ def VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presen
      statement.append_equation(m2EncVar,
        [(m2Var, genGVar), (r2Var, genHVar)])
 
-     iv = contextString + "CredentialRequest"
-     prover = NISigmaProtocol(iv, statement)
+     session_id = contextString + "CredentialRequest"
+     prover = NISchnorrProofShake128P256(session_id, statement)
      return prover.prove(witness, rng)
 
 5.1.2.  CredentialRequest Proof Verification
@@ -931,8 +931,8 @@ def VerifyCredentialRequestProof(request):
   statement.append_equation(m2EncVar,
     [(m2Var, genGVar), (r2Var, genHVar)])
 
-  iv = contextString + "CredentialRequest"
-  verifier = NISigmaProtocol(iv, statement)
+  session_id = contextString + "CredentialRequest"
+  verifier = NISchnorrProofShake128P256(session_id, statement)
   return verifier.verify(request.proof)
 
 5.2.  CredentialResponse Proof
@@ -1054,8 +1054,8 @@ def VerifyCredentialRequestProof(request):
      statement.append_equation(encUPrimeVar, [(bVar, X0Var),
        (t1Var, m1EncVar), (t2Var, m2EncVar)])
 
-     iv = contextString + "CredentialResponse"
-     prover = NISigmaProtocol(iv, statement)
+     session_id = contextString + "CredentialResponse"
+     prover = NISchnorrProofShake128P256(session_id, statement)
      return prover.prove(witness, rng)
 
 5.2.2.  CredentialResponse Proof Verification
@@ -1150,8 +1150,8 @@ def VerifyCredentialRequestProof(request):
     statement.append_equation(encUPrimeVar, [(bVar, X0Var),
       (t1Var, m1EncVar), (t2Var, m2EncVar)])
 
-    iv = contextString + "CredentialResponse"
-    verifier = NISigmaProtocol(iv, statement)
+    session_id = contextString + "CredentialResponse"
+    verifier = NISchnorrProofShake128P256(session_id, statement)
     return verifier.verify(request.proof)
 
 5.3.  Presentation Proof
@@ -1234,8 +1234,8 @@ def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT,presentatio
   # 4. m1Tag = m1 * tag
   statement.append_equation(m1TagVar, [(m1Var, tagVar)])
 
-  iv = contextString + "CredentialPresentation"
-  prover = NISigmaProtocol(iv, statement)
+  session_id = contextString + "CredentialPresentation"
+  prover = NISchnorrProofShake128P256(session_id, statement)
   return prover.prove(witness, rng)
 
 5.3.2.  Presentation Proof Verification
@@ -1308,8 +1308,8 @@ def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT,presentatio
      # 4. m1Tag = m1 * tag
      statement.append_equation(m1TagVar, [(m1Var, tagVar)])
 
-     iv = contextString + "CredentialPresentation"
-     verifier = NISigmaProtocol(iv, statement)
+     session_id = contextString + "CredentialPresentation"
+     verifier = NISchnorrProofShake128P256(session_id, statement)
      return verifier.verify(request.proof)
 
 6.  Ciphersuites
