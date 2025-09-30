@@ -1481,9 +1481,7 @@ for i in range(ceil(log2(upper_bound)) - 1):
     base = 2 ** i
     remainder -= base
     bases.append((G.Scalar(base))
-
-if remainder != 0:
-        bases.append(remainder - 1)
+bases.append(remainder - 1)
 
 # call sorted on array to ensure the additional base is in correct order
 return sorted(bases, reverse=True)
@@ -1545,7 +1543,7 @@ s2 = []
 partial_sum = G.Scalar(0)
 for i in range(len(bases) - 1):
     s.append(G.random_scalar())
-    partial_sum += s[i]
+    partial_sum += bases[i] * s[i]
     s2.append((G.Scalar(1) - b[i]) * s[i])
     D.append(b[i] * generatorG + s[i] * generatorH)
 idx = len(bases) - 1
