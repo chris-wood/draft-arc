@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-09-28T00:10:16.190760+00:00",
+  "timestamp": "2025-09-30T00:09:17.230210+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -2094,7 +2094,7 @@
       "labels": [],
       "body": "Add range proofs for ranges within [0,max), where max is an arbitrary number.",
       "createdAt": "2025-09-17T11:34:57Z",
-      "updatedAt": "2025-09-25T19:08:10Z",
+      "updatedAt": "2025-09-29T17:25:27Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "24dac6275c1660a973e03a584fbe07733f54a5a8",
@@ -2116,9 +2116,9 @@
         {
           "author": "cathieyun",
           "authorAssociation": "COLLABORATOR",
-          "body": "We should also double check that this work with the new/changed NISigmaProtocol API. At a glance, it seems like yes because it only touches the constraint statements, but need to look more carefully.\r\nhttps://github.com/mmaker/draft-irtf-cfrg-sigma-protocols/pull/79",
+          "body": "We should also double check that this works with the new/changed NISigmaProtocol API. At a glance, it seems like yes because it only touches the constraint statements, but need to look more carefully.\r\nhttps://github.com/mmaker/draft-irtf-cfrg-sigma-protocols/pull/79",
           "createdAt": "2025-09-24T22:57:10Z",
-          "updatedAt": "2025-09-24T22:57:10Z"
+          "updatedAt": "2025-09-28T22:03:13Z"
         },
         {
           "author": "cathieyun",
@@ -2135,7 +2135,148 @@
           "updatedAt": "2025-09-25T19:08:10Z"
         }
       ],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDONyB6uM7DgcM9",
+          "commit": {
+            "abbreviatedOid": "8c0c0da"
+          },
+          "author": "jkatz2",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-29T14:08:32Z",
+          "updatedAt": "2025-09-29T14:08:33Z",
+          "comments": [
+            {
+              "originalPosition": 61,
+              "body": "I don't think this is necessary -- the remainder can never be 0",
+              "createdAt": "2025-09-29T14:08:33Z",
+              "updatedAt": "2025-09-29T14:08:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM7DiVTH",
+          "commit": {
+            "abbreviatedOid": "8c0c0da"
+          },
+          "author": "jkatz2",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-29T15:44:12Z",
+          "updatedAt": "2025-09-29T15:44:12Z",
+          "comments": [
+            {
+              "originalPosition": 128,
+              "body": "Don't you need r = \\sum_i s[i] * bases[i]? (Right now you have r = \\sum_i s[i].)",
+              "createdAt": "2025-09-29T15:44:12Z",
+              "updatedAt": "2025-09-29T15:44:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM7DipqF",
+          "commit": {
+            "abbreviatedOid": "8c0c0da"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-29T16:04:50Z",
+          "updatedAt": "2025-09-29T16:04:55Z",
+          "comments": [
+            {
+              "originalPosition": 61,
+              "body": "I believe the remainder will be non-zero if `upper_bound` is not a power of two?",
+              "createdAt": "2025-09-29T16:04:50Z",
+              "updatedAt": "2025-09-29T16:04:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM7Di18c",
+          "commit": {
+            "abbreviatedOid": "8c0c0da"
+          },
+          "author": "jkatz2",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-29T16:16:30Z",
+          "updatedAt": "2025-09-29T16:16:31Z",
+          "comments": [
+            {
+              "originalPosition": 61,
+              "body": "Yes, and also when it is a power of two.",
+              "createdAt": "2025-09-29T16:16:31Z",
+              "updatedAt": "2025-09-29T16:16:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM7Di3ez",
+          "commit": {
+            "abbreviatedOid": "8c0c0da"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-29T16:18:04Z",
+          "updatedAt": "2025-09-29T16:18:04Z",
+          "comments": [
+            {
+              "originalPosition": 61,
+              "body": "ah, so your point is that we don't need the `if` statement because we will always execute it?",
+              "createdAt": "2025-09-29T16:18:04Z",
+              "updatedAt": "2025-09-29T16:18:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM7DjtUG",
+          "commit": {
+            "abbreviatedOid": "8c0c0da"
+          },
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-29T17:22:38Z",
+          "updatedAt": "2025-09-29T17:22:38Z",
+          "comments": [
+            {
+              "originalPosition": 61,
+              "body": "Right, IIUC if `upper_bound` is a power of two, then `remainder` will simply be the next power of two. Eg if `upper_bound` = 16, bases without remainder = [1, 2, 4] and the remainder will be [8].",
+              "createdAt": "2025-09-29T17:22:38Z",
+              "updatedAt": "2025-09-29T17:22:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM7DjvXl",
+          "commit": {
+            "abbreviatedOid": "8c0c0da"
+          },
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-29T17:25:27Z",
+          "updatedAt": "2025-09-29T17:25:27Z",
+          "comments": [
+            {
+              "originalPosition": 128,
+              "body": "Yes, exactly - good catch. That's what is implemented in the rust library:\r\nhttps://github.com/sigma-rs/sigma-proofs/blob/main/src/tests/test_relations.rs#L279\r\n```\r\n    let partial_sum = (1..bases.len())\r\n        .map(|i| G::Scalar::from(bases[i]) * s[i])\r\n        .sum::<G::Scalar>();\r\n    s[0] = r - partial_sum;\r\n```",
+              "createdAt": "2025-09-29T17:25:27Z",
+              "updatedAt": "2025-09-29T17:25:27Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
