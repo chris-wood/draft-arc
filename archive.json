@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-09-30T00:09:17.230210+00:00",
+  "timestamp": "2025-10-02T00:08:29.842807+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -2094,13 +2094,13 @@
       "labels": [],
       "body": "Add range proofs for ranges within [0,max), where max is an arbitrary number.",
       "createdAt": "2025-09-17T11:34:57Z",
-      "updatedAt": "2025-09-29T17:25:27Z",
+      "updatedAt": "2025-09-30T11:24:18Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "24dac6275c1660a973e03a584fbe07733f54a5a8",
       "headRepository": "meyira/draft-arc",
       "headRefName": "main",
-      "headRefOid": "8c0c0dadb10aed0d24c3f7d21e83783c4fc54a50",
+      "headRefOid": "8a90767dc9177d4825ac05ba4bba213212881b5a",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -2273,6 +2273,46 @@
               "body": "Yes, exactly - good catch. That's what is implemented in the rust library:\r\nhttps://github.com/sigma-rs/sigma-proofs/blob/main/src/tests/test_relations.rs#L279\r\n```\r\n    let partial_sum = (1..bases.len())\r\n        .map(|i| G::Scalar::from(bases[i]) * s[i])\r\n        .sum::<G::Scalar>();\r\n    s[0] = r - partial_sum;\r\n```",
               "createdAt": "2025-09-29T17:25:27Z",
               "updatedAt": "2025-09-29T17:25:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM7DwCmt",
+          "commit": {
+            "abbreviatedOid": "8c0c0da"
+          },
+          "author": "meyira",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-30T11:24:05Z",
+          "updatedAt": "2025-09-30T11:24:05Z",
+          "comments": [
+            {
+              "originalPosition": 61,
+              "body": "changed to remove if statement in 8a90767",
+              "createdAt": "2025-09-30T11:24:05Z",
+              "updatedAt": "2025-09-30T11:24:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM7DwCz-",
+          "commit": {
+            "abbreviatedOid": "8c0c0da"
+          },
+          "author": "meyira",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-30T11:24:18Z",
+          "updatedAt": "2025-09-30T11:24:18Z",
+          "comments": [
+            {
+              "originalPosition": 128,
+              "body": "added base multiplication in 8a90767",
+              "createdAt": "2025-09-30T11:24:18Z",
+              "updatedAt": "2025-09-30T11:24:18Z"
             }
           ]
         }
