@@ -326,8 +326,8 @@ Outputs:
 - request:
   - m1Enc: Element, first encrypted secret.
   - m2Enc: Element, second encrypted secret.
-  - requestProof: ZKProof, a proof of correct generation of m1Enc
-    and m2Enc.
+  - requestProof: String (ZKProof), a proof of correct generation of
+    m1Enc and m2Enc.
 - clientSecrets:
   - m1: Scalar, first secret.
   - m2: Scalar, second secret.
@@ -361,11 +361,7 @@ The resulting request can be serialized as follows.
 struct {
   uint8 m1Enc[Ne];
   uint8 m2Enc[Ne];
-  uint8 challenge[Ns];
-  uint8 response0[Ns];
-  uint8 response1[Ns];
-  uint8 response2[Ns];
-  uint8 response3[Ns];
+  uint8 requestProof[5*Ns];
 } CredentialRequest;
 ~~~
 
@@ -393,8 +389,8 @@ Inputs:
 - request:
   - m1Enc: Element, first encrypted secret.
   - m2Enc: Element, second encrypted secret.
-  - requestProof: ZKProof, a proof of correct generation of m1Enc
-    and m2Enc.
+  - requestProof: String (ZKProof), a proof of correct generation
+    of m1Enc and m2Enc.
 
 Outputs:
 - U: Element, a randomized generator for the response, `b*G`.
@@ -403,7 +399,7 @@ Outputs:
 - X1Aux: Element, auxiliary point for X1.
 - X2Aux: Element, auxiliary point for X2.
 - HAux: Element, auxiliary point for generatorH.
-- responseProof: ZKProof, a proof of correct generation of
+- responseProof: String (ZKProof), a proof of correct generation of
   U, encUPrime, server public keys, and auxiliary points.
 
 Parameters:
@@ -444,14 +440,7 @@ struct {
   uint8 X1Aux[Ne];
   uint8 X2Aux[Ne];
   uint8 HAux[Ne];
-  uint8 challenge[Ns];
-  uint8 response0[Ns];
-  uint8 response1[Ns];
-  uint8 response2[Ns];
-  uint8 response3[Ns];
-  uint8 response4[Ns];
-  uint8 response5[Ns];
-  uint8 response6[Ns];
+  uint8 responseProof[7*Ns];
 } CredentialResponse
 ~~~
 
@@ -477,8 +466,8 @@ Inputs:
 - request:
   - m1Enc: Element, first encrypted secret.
   - m2Enc: Element, second encrypted secret.
-  - requestProof: ZKProof, a proof of correct generation of m1Enc
-    and m2Enc.
+  - requestProof: String (ZKProof), a proof of correct generation
+    of m1Enc and m2Enc.
 - response:
   - U: Element, a randomized generator for the response. `b*G`.
   - encUPrime: Element, encrypted UPrime.
@@ -486,8 +475,8 @@ Inputs:
   - X1Aux: Element, auxiliary point for X1.
   - X2Aux: Element, auxiliary point for X2.
   - HAux: Element, auxiliary point for generatorH.
-  - responseProof: ZKProof, a proof of correct generation of U,
-    encUPrime, server public keys, and auxiliary points.
+  - responseProof: String (ZKProof), a proof of correct generation of
+    U, encUPrime, server public keys, and auxiliary points.
 
 Outputs:
 - credential:
@@ -606,8 +595,8 @@ Outputs:
   - m1Commit: Element, a public key to the client secret (m1).
   - tag: Element, the tag element used for enforcing the presentation
     limit.
-  - presentationProof: ZKProof, a proof of correct generation of the
-    presentation.
+  - presentationProof: String (ZKProof), a proof of correct generation of
+    the presentation.
 
 Parameters:
 - G: Group
@@ -661,11 +650,7 @@ struct {
   uint8 UPrimeCommit[Ne];
   uint8 m1Commit[Ne];
   uint8 tag[Ne];
-  uint8 challenge[Ns];
-  uint8 response0[Ns];
-  uint8 response1[Ns];
-  uint8 response2[Ns];
-  uint8 response3[Ns];
+  uint8 presentationProof[5*Ns];
 } Presentation
 ~~~
 
@@ -701,8 +686,8 @@ Inputs:
   - m1Commit: Element, a public key to the client secret (m1).
   - tag: Element, the tag element used for enforcing the presentation
     limit.
-  - presentationProof: ZKProof, a proof of correct generation of the
-    presentation.
+  - presentationProof: String (ZKProof), a proof of correct generation of
+    the presentation.
 - presentationLimit: Integer, the fixed presentation limit.
 
 Outputs:
@@ -765,13 +750,7 @@ Inputs:
 - m2Enc: Element, second encrypted secret.
 
 Outputs:
-- proof: ZKProof
-  - challenge: Scalar, the challenge used in the proof of valid
-    encryption.
-  - response0: Scalar, the response corresponding to m1.
-  - response1: Scalar, the response corresponding to m2.
-  - response2: Scalar, the response corresponding to r1.
-  - response3: Scalar, the response corresponding to r2.
+- proof: String (ZKProof)
 
 Parameters:
 - G: Group
@@ -802,6 +781,17 @@ def MakeCredentialRequestProof(m1, m2, r1, r2, m1Enc, m2Enc):
   return prover.prove(witness, rng)
 ~~~
 
+Where the request proof returned is a serialization of the following:
+~~~
+- challenge: Scalar, the challenge used in the proof of valid
+  encryption.
+- response0: Scalar, the response corresponding to m1.
+- response1: Scalar, the response corresponding to m2.
+- response2: Scalar, the response corresponding to r1.
+- response3: Scalar, the response corresponding to r2.
+~~~
+
+
 ### CredentialRequest Proof Verification
 
 ~~~
@@ -811,14 +801,8 @@ Inputs:
 - request:
   - m1Enc: Element, first encrypted secret.
   - m2Enc: Element, second encrypted secret.
-  - requestProof: ZKProof, a proof of correct generation of m1Enc
-    and m2Enc.
-    - challenge: Scalar, the challenge used in the proof of valid
-      encryption.
-    - response0: Scalar, the response corresponding to m1.
-    - response1: Scalar, the response corresponding to m2.
-    - response2: Scalar, the response corresponding to r1.
-    - response3: Scalar, the response corresponding to r2.
+  - requestProof: String (ZKProof), a proof of correct generation
+    of m1Enc and m2Enc.
 
 Outputs:
 - validity: Boolean, True if the proof verifies correctly, False otherwise.
@@ -892,8 +876,8 @@ Inputs:
 - request:
   - m1Enc: Element, first encrypted secret.
   - m2Enc: Element, second encrypted secret.
-  - requestProof: ZKProof, a proof of correct generation of m1Enc
-    and m2Enc.
+  - requestProof: String (ZKProof), a proof of correct generation
+    of m1Enc and m2Enc.
 - encUPrime: Element, encrypted UPrime.
 - X0Aux: Element, auxiliary point for X0.
 - X1Aux: Element, auxiliary point for X1.
@@ -901,16 +885,7 @@ Inputs:
 - HAux: Element, auxiliary point for generatorH.
 
 Outputs:
-- proof: ZKProof
-  - challenge: Scalar, the challenge used in the proof of valid
-    response.
-  - response0: Scalar, the response corresponding to x0.
-  - response1: Scalar, the response corresponding to x1.
-  - response2: Scalar, the response corresponding to x2.
-  - response3: Scalar, the response corresponding to x0Blinding.
-  - response4: Scalar, the response corresponding to b.
-  - response5: Scalar, the response corresponding to t1.
-  - response6: Scalar, the response corresponding to t2.
+- proof: String (ZKProof)
 
 Parameters:
 - G: Group
@@ -976,6 +951,19 @@ def MakeCredentialResponseProof(serverPrivateKey, serverPublicKey,
   return prover.prove(witness, rng)
 ~~~
 
+Where the response proof returned is a serialization of the following:
+~~~
+- challenge: Scalar, the challenge used in the proof of valid
+  response.
+- response0: Scalar, the response corresponding to x0.
+- response1: Scalar, the response corresponding to x1.
+- response2: Scalar, the response corresponding to x2.
+- response3: Scalar, the response corresponding to x0Blinding.
+- response4: Scalar, the response corresponding to b.
+- response5: Scalar, the response corresponding to t1.
+- response6: Scalar, the response corresponding to t2.
+~~~
+
 ### CredentialResponse Proof Verification
 
 ~~~
@@ -994,22 +982,13 @@ Inputs:
   - X1Aux: Element, auxiliary point for X1.
   - X2Aux: Element, auxiliary point for X2.
   - HAux: Element, auxiliary point for generatorH.
-  - responseProof: ZKProof, a proof of correct generation of U,
-    encUPrime, server public keys, and auxiliary points.
-    - challenge: Scalar, the challenge used in the proof of valid
-      response.
-    - response0: Scalar, the response corresponding to x0.
-    - response1: Scalar, the response corresponding to x1.
-    - response2: Scalar, the response corresponding to x2.
-    - response3: Scalar, the response corresponding to x0Blinding.
-    - response4: Scalar, the response corresponding to b.
-    - response5: Scalar, the response corresponding to t1.
-    - response6: Scalar, the response corresponding to t2.
+  - responseProof: String (ZKProof), a proof of correct generation of
+    U, encUPrime, server public keys, and auxiliary points.
 - request:
   - m1Enc: Element, first encrypted secret.
   - m2Enc: Element, second encrypted secret.
-  - requestProof: ZKProof, a proof of correct generation of m1Enc and
-    m2Enc.
+  - requestProof: String (ZKProof), a proof of correct generation of
+    m1Enc and m2Enc.
 
 Outputs:
 - validity: Boolean, True if the proof verifies correctly,
@@ -1115,13 +1094,7 @@ Inputs:
 - m1Tag: Element, helper element for the proof.
 
 Outputs:
-- proof: ZKProof
-  - challenge: Scalar, the challenge used in the proof of valid
-    presentation.
-  - response0: Scalar, the response corresponding to m1.
-  - response1: Scalar, the response corresponding to z.
-  - response2: Scalar, the response corresponding to -r.
-  - response3: Scalar, the response corresponding to nonce.
+- proof: String (ZKProof)
 
 Parameters:
 - G: Group
@@ -1160,6 +1133,16 @@ def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT,presentatio
   return prover.prove(witness, rng)
 ~~~
 
+Where the presentation proof returned is a serialization of the following:
+~~~
+- challenge: Scalar, the challenge used in the proof of valid
+  presentation.
+- response0: Scalar, the response corresponding to m1.
+- response1: Scalar, the response corresponding to z.
+- response2: Scalar, the response corresponding to -r.
+- response3: Scalar, the response corresponding to nonce.
+~~~
+
 ### Presentation Proof Verification
 
 ~~~
@@ -1185,14 +1168,8 @@ Inputs:
   - m1Commit: Element, a public key to the client secret (m1).
   - tag: Element, the tag element used for enforcing the presentation
     limit.
-  - presentationProof: ZKProof, a proof of correct generation of the
-    presentation.
-    - challenge: Scalar, the challenge used in the proof of valid
-      presentation.
-    - response0: Scalar, the response corresponding to m1.
-    - response1: Scalar, the response corresponding to z.
-    - response2: Scalar, the response corresponding to -r.
-    - response3: Scalar, the response corresponding to nonce.
+  - presentationProof: String (ZKProof), a proof of correct generation of
+    the presentation.
 - m1Tag: Element, helper to validate the presentation proof.
 
 Outputs:
