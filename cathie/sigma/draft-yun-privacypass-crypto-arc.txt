@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Informational                               Apple, Inc.
-Expires: 28 March 2026                                 24 September 2025
+Expires: 10 April 2026                                    7 October 2025
 
 
                    Anonymous Rate-Limited Credentials
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 28 March 2026.
+   This Internet-Draft will expire on 10 April 2026.
 
 Copyright Notice
 
@@ -409,8 +409,8 @@ Table of Contents
    - request:
      - m1Enc: Element, first encrypted secret.
      - m2Enc: Element, second encrypted secret.
-     - requestProof: ZKProof, a proof of correct generation of m1Enc
-       and m2Enc.
+     - requestProof: String (ZKProof), a proof of correct generation of
+       m1Enc and m2Enc.
    - clientSecrets:
      - m1: Scalar, first secret.
      - m2: Scalar, second secret.
@@ -443,11 +443,7 @@ Table of Contents
    struct {
      uint8 m1Enc[Ne];
      uint8 m2Enc[Ne];
-     uint8 challenge[Ns];
-     uint8 response0[Ns];
-     uint8 response1[Ns];
-     uint8 response2[Ns];
-     uint8 response3[Ns];
+     uint8 requestProof[5*Ns];
    } CredentialRequest;
 
    The length of this encoded request structure is Nrequest = 2*Ne +
@@ -474,8 +470,8 @@ Table of Contents
    - request:
      - m1Enc: Element, first encrypted secret.
      - m2Enc: Element, second encrypted secret.
-     - requestProof: ZKProof, a proof of correct generation of m1Enc
-       and m2Enc.
+     - requestProof: String (ZKProof), a proof of correct generation
+       of m1Enc and m2Enc.
 
    Outputs:
    - U: Element, a randomized generator for the response, `b*G`.
@@ -484,7 +480,7 @@ Table of Contents
    - X1Aux: Element, auxiliary point for X1.
    - X2Aux: Element, auxiliary point for X2.
    - HAux: Element, auxiliary point for generatorH.
-   - responseProof: ZKProof, a proof of correct generation of
+   - responseProof: String (ZKProof), a proof of correct generation of
      U, encUPrime, server public keys, and auxiliary points.
 
    Parameters:
@@ -524,14 +520,7 @@ Table of Contents
      uint8 X1Aux[Ne];
      uint8 X2Aux[Ne];
      uint8 HAux[Ne];
-     uint8 challenge[Ns];
-     uint8 response0[Ns];
-     uint8 response1[Ns];
-     uint8 response2[Ns];
-     uint8 response3[Ns];
-     uint8 response4[Ns];
-     uint8 response5[Ns];
-     uint8 response6[Ns];
+     uint8 responseProof[7*Ns];
    } CredentialResponse
 
    The length of this encoded response structure is Nresponse = 6*Ne +
@@ -557,8 +546,8 @@ Table of Contents
   - request:
     - m1Enc: Element, first encrypted secret.
     - m2Enc: Element, second encrypted secret.
-    - requestProof: ZKProof, a proof of correct generation of m1Enc
-      and m2Enc.
+    - requestProof: String (ZKProof), a proof of correct generation
+      of m1Enc and m2Enc.
   - response:
     - U: Element, a randomized generator for the response. `b*G`.
     - encUPrime: Element, encrypted UPrime.
@@ -566,8 +555,8 @@ Table of Contents
     - X1Aux: Element, auxiliary point for X1.
     - X2Aux: Element, auxiliary point for X2.
     - HAux: Element, auxiliary point for generatorH.
-    - responseProof: ZKProof, a proof of correct generation of U,
-      encUPrime, server public keys, and auxiliary points.
+    - responseProof: String (ZKProof), a proof of correct generation of
+      U, encUPrime, server public keys, and auxiliary points.
 
   Outputs:
   - credential:
@@ -673,68 +662,68 @@ Table of Contents
    as input a presentation state and then outputs an updated
    presentation state.
 
-   newState, nonce, presentation = Present(state)
+newState, nonce, presentation = Present(state)
 
-   Inputs:
-   state: input PresentationState
-     - credential
-     - presentationContext: Data (public), used for presentation tag
-       computation.
-     - presentationNonceSet: {Integer}, the set of nonces that have been
-       used for this presentation
-     - presentationLimit: Integer, the fixed presentation limit.
+Inputs:
+state: input PresentationState
+  - credential
+  - presentationContext: Data (public), used for presentation tag
+    computation.
+  - presentationNonceSet: {Integer}, the set of nonces that have been
+    used for this presentation
+  - presentationLimit: Integer, the fixed presentation limit.
 
-   Outputs:
-   - newState: updated PresentationState
-   - nonce: Integer, the nonce associated with this presentation.
-   - presentation:
-     - U: Element, re-randomized from the U in the response.
-     - UPrimeCommit: Element, a public key to the issued UPrime.
-     - m1Commit: Element, a public key to the client secret (m1).
-     - tag: Element, the tag element used for enforcing the presentation
-       limit.
-     - presentationProof: ZKProof, a proof of correct generation of the
-       presentation.
+Outputs:
+- newState: updated PresentationState
+- nonce: Integer, the nonce associated with this presentation.
+- presentation:
+  - U: Element, re-randomized from the U in the response.
+  - UPrimeCommit: Element, a public key to the issued UPrime.
+  - m1Commit: Element, a public key to the client secret (m1).
+  - tag: Element, the tag element used for enforcing the presentation
+    limit.
+  - presentationProof: String (ZKProof), a proof of correct generation of
+    the presentation.
 
-   Parameters:
-   - G: Group
-   - generatorG: Element, equivalent to G.GeneratorG()
-   - generatorH: Element, equivalent to G.GeneratorH()
+Parameters:
+- G: Group
+- generatorG: Element, equivalent to G.GeneratorG()
+- generatorH: Element, equivalent to G.GeneratorH()
 
-   Exceptions:
-   - LimitExceededError, raised when the presentation count meets or
-     exceeds the presentation limit for the given presentation context
+Exceptions:
+- LimitExceededError, raised when the presentation count meets or
+  exceeds the presentation limit for the given presentation context
 
-   def Present(state):
-     if len(state.presentationNonceSet) >= state.presentationLimit:
-       raise LimitExceededError
+def Present(state):
+  if len(state.presentationNonceSet) >= state.presentationLimit:
+    raise LimitExceededError
 
-     a = G.RandomScalar()
-     r = G.RandomScalar()
-     z = G.RandomScalar()
+  a = G.RandomScalar()
+  r = G.RandomScalar()
+  z = G.RandomScalar()
 
-     U = a * state.credential.U
-     UPrime = a * state.credential.UPrime
-     UPrimeCommit = UPrime + r * generatorG
-     m1Commit = state.credential.m1 * U + z * generatorH
+  U = a * state.credential.U
+  UPrime = a * state.credential.UPrime
+  UPrimeCommit = UPrime + r * generatorG
+  m1Commit = state.credential.m1 * U + z * generatorH
 
-     # This step mutates the state by keeping track of
-     # what nonces have already been spent.
-     nonce = random_integer_uniform_excluding_set(0,
-       state.presentationLimit, state.presentationNonceSet)
-     state.presentationNonceSet.add(nonce)
+  # This step mutates the state by keeping track of
+  # what nonces have already been spent.
+  nonce = random_integer_uniform_excluding_set(0,
+    state.presentationLimit, state.presentationNonceSet)
+  state.presentationNonceSet.add(nonce)
 
-     generatorT = G.HashToGroup(presentationContext, "Tag")
-     tag = (credential.m1 + nonce)^(-1) * generatorT
-     V = z * credential.X1 - r * generatorG
-     m1Tag = state.credential.m1 * tag
+  generatorT = G.HashToGroup(presentationContext, "Tag")
+  tag = (credential.m1 + nonce)^(-1) * generatorT
+  V = z * credential.X1 - r * generatorG
+  m1Tag = state.credential.m1 * tag
 
-     presentationProof = MakePresentationProof(U, UPrimeCommit,
-       m1Commit, tag, generatorT, credential, V, r, z, nonce, m1Tag)
+  presentationProof = MakePresentationProof(U, UPrimeCommit,
+    m1Commit, tag, generatorT, credential, V, r, z, nonce, m1Tag)
 
-     presentation = (U, UPrimeCommit, m1Commit, tag, presentationProof)
+  presentation = (U, UPrimeCommit, m1Commit, tag, presentationProof)
 
-     return state, nonce, presentation
+  return state, nonce, presentation
 
    OPEN ISSUE: should the tag also fold in the presentation limit?
 
@@ -747,11 +736,7 @@ Table of Contents
      uint8 UPrimeCommit[Ne];
      uint8 m1Commit[Ne];
      uint8 tag[Ne];
-     uint8 challenge[Ns];
-     uint8 response0[Ns];
-     uint8 response1[Ns];
-     uint8 response2[Ns];
-     uint8 response3[Ns];
+     uint8 presentationProof[5*Ns];
    } Presentation
 
    The length of this structure is Npresentation = 4*Ne + 5*Ns.
@@ -786,8 +771,8 @@ Inputs:
   - m1Commit: Element, a public key to the client secret (m1).
   - tag: Element, the tag element used for enforcing the presentation
     limit.
-  - presentationProof: ZKProof, a proof of correct generation of the
-    presentation.
+  - presentationProof: String (ZKProof), a proof of correct generation of
+    the presentation.
 - presentationLimit: Integer, the fixed presentation limit.
 
 Outputs:
@@ -852,13 +837,7 @@ def VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presen
    - m2Enc: Element, second encrypted secret.
 
    Outputs:
-   - proof: ZKProof
-     - challenge: Scalar, the challenge used in the proof of valid
-       encryption.
-     - response0: Scalar, the response corresponding to m1.
-     - response1: Scalar, the response corresponding to m2.
-     - response2: Scalar, the response corresponding to r1.
-     - response3: Scalar, the response corresponding to r2.
+   - proof: String (ZKProof)
 
    Parameters:
    - G: Group
@@ -888,6 +867,13 @@ def VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presen
      prover = NISchnorrProofShake128P256(session_id, statement)
      return prover.prove(witness, rng)
 
+   Where the request proof returned is a serialization of the following:
+   ~~~ - challenge: Scalar, the challenge used in the proof of valid
+   encryption. - response0: Scalar, the response corresponding to m1. -
+   response1: Scalar, the response corresponding to m2. - response2:
+   Scalar, the response corresponding to r1. - response3: Scalar, the
+   response corresponding to r2. ~~~
+
 5.1.2.  CredentialRequest Proof Verification
 
 validity = VerifyCredentialRequestProof(request)
@@ -896,14 +882,8 @@ Inputs:
 - request:
   - m1Enc: Element, first encrypted secret.
   - m2Enc: Element, second encrypted secret.
-  - requestProof: ZKProof, a proof of correct generation of m1Enc
-    and m2Enc.
-    - challenge: Scalar, the challenge used in the proof of valid
-      encryption.
-    - response0: Scalar, the response corresponding to m1.
-    - response1: Scalar, the response corresponding to m2.
-    - response2: Scalar, the response corresponding to r1.
-    - response3: Scalar, the response corresponding to r2.
+  - requestProof: String (ZKProof), a proof of correct generation
+    of m1Enc and m2Enc.
 
 Outputs:
 - validity: Boolean, True if the proof verifies correctly, False otherwise.
@@ -975,8 +955,8 @@ def VerifyCredentialRequestProof(request):
    - request:
      - m1Enc: Element, first encrypted secret.
      - m2Enc: Element, second encrypted secret.
-     - requestProof: ZKProof, a proof of correct generation of m1Enc
-       and m2Enc.
+     - requestProof: String (ZKProof), a proof of correct generation
+       of m1Enc and m2Enc.
    - encUPrime: Element, encrypted UPrime.
    - X0Aux: Element, auxiliary point for X0.
    - X1Aux: Element, auxiliary point for X1.
@@ -984,16 +964,7 @@ def VerifyCredentialRequestProof(request):
    - HAux: Element, auxiliary point for generatorH.
 
    Outputs:
-   - proof: ZKProof
-     - challenge: Scalar, the challenge used in the proof of valid
-       response.
-     - response0: Scalar, the response corresponding to x0.
-     - response1: Scalar, the response corresponding to x1.
-     - response2: Scalar, the response corresponding to x2.
-     - response3: Scalar, the response corresponding to x0Blinding.
-     - response4: Scalar, the response corresponding to b.
-     - response5: Scalar, the response corresponding to t1.
-     - response6: Scalar, the response corresponding to t2.
+   - proof: String (ZKProof)
 
    Parameters:
    - G: Group
@@ -1058,6 +1029,16 @@ def VerifyCredentialRequestProof(request):
      prover = NISchnorrProofShake128P256(session_id, statement)
      return prover.prove(witness, rng)
 
+   Where the response proof returned is a serialization of the
+   following: ~~~ - challenge: Scalar, the challenge used in the proof
+   of valid response. - response0: Scalar, the response corresponding to
+   x0. - response1: Scalar, the response corresponding to x1. -
+   response2: Scalar, the response corresponding to x2. - response3:
+   Scalar, the response corresponding to x0Blinding. - response4:
+   Scalar, the response corresponding to b. - response5: Scalar, the
+   response corresponding to t1. - response6: Scalar, the response
+   corresponding to t2. ~~~
+
 5.2.2.  CredentialResponse Proof Verification
 
   validity = VerifyCredentialResponseProof(serverPublicKey, response,
@@ -1075,22 +1056,13 @@ def VerifyCredentialRequestProof(request):
     - X1Aux: Element, auxiliary point for X1.
     - X2Aux: Element, auxiliary point for X2.
     - HAux: Element, auxiliary point for generatorH.
-    - responseProof: ZKProof, a proof of correct generation of U,
-      encUPrime, server public keys, and auxiliary points.
-      - challenge: Scalar, the challenge used in the proof of valid
-        response.
-      - response0: Scalar, the response corresponding to x0.
-      - response1: Scalar, the response corresponding to x1.
-      - response2: Scalar, the response corresponding to x2.
-      - response3: Scalar, the response corresponding to x0Blinding.
-      - response4: Scalar, the response corresponding to b.
-      - response5: Scalar, the response corresponding to t1.
-      - response6: Scalar, the response corresponding to t2.
+    - responseProof: String (ZKProof), a proof of correct generation of
+      U, encUPrime, server public keys, and auxiliary points.
   - request:
     - m1Enc: Element, first encrypted secret.
     - m2Enc: Element, second encrypted secret.
-    - requestProof: ZKProof, a proof of correct generation of m1Enc and
-      m2Enc.
+    - requestProof: String (ZKProof), a proof of correct generation of
+      m1Enc and m2Enc.
 
   Outputs:
   - validity: Boolean, True if the proof verifies correctly,
@@ -1194,13 +1166,7 @@ Inputs:
 - m1Tag: Element, helper element for the proof.
 
 Outputs:
-- proof: ZKProof
-  - challenge: Scalar, the challenge used in the proof of valid
-    presentation.
-  - response0: Scalar, the response corresponding to m1.
-  - response1: Scalar, the response corresponding to z.
-  - response2: Scalar, the response corresponding to -r.
-  - response3: Scalar, the response corresponding to nonce.
+- proof: String (ZKProof)
 
 Parameters:
 - G: Group
@@ -1238,79 +1204,80 @@ def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT,presentatio
   prover = NISchnorrProofShake128P256(session_id, statement)
   return prover.prove(witness, rng)
 
+   Where the presentation proof returned is a serialization of the
+   following: ~~~ - challenge: Scalar, the challenge used in the proof
+   of valid presentation. - response0: Scalar, the response
+   corresponding to m1. - response1: Scalar, the response corresponding
+   to z. - response2: Scalar, the response corresponding to -r. -
+   response3: Scalar, the response corresponding to nonce. ~~~
+
 5.3.2.  Presentation Proof Verification
 
-   validity = VerifyPresentationProof(serverPrivateKey, serverPublicKey,
-     requestContext, presentationContext, presentation, m1Tag)
+validity = VerifyPresentationProof(serverPrivateKey, serverPublicKey,
+  requestContext, presentationContext, presentation, m1Tag)
 
-   Inputs:
-   - serverPrivateKey:
-     - x0: Scalar (private), server private key 0.
-     - x1: Scalar (private), server private key 1.
-     - x2: Scalar (private), server private key 2.
-     - x0Blinding: Scalar (private), blinding value for x0.
-   - serverPublicKey:
-     - X0: Element, server public key 0.
-     - X1: Element, server public key 1.
-     - X2: Element, server public key 2.
-   - requestContext: Data, context for the credential request.
-   - presentationContext: Data (public), used for presentation tag
-     computation.
-   - presentation:
-     - U: Element, re-randomized from the U in the response.
-     - UPrimeCommit: Element, a public key to the issued UPrime.
-     - m1Commit: Element, a public key to the client secret (m1).
-     - tag: Element, the tag element used for enforcing the presentation
-       limit.
-     - presentationProof: ZKProof, a proof of correct generation of the
-       presentation.
-       - challenge: Scalar, the challenge used in the proof of valid
-         presentation.
-       - response0: Scalar, the response corresponding to m1.
-       - response1: Scalar, the response corresponding to z.
-       - response2: Scalar, the response corresponding to -r.
-       - response3: Scalar, the response corresponding to nonce.
-   - m1Tag: Element, helper to validate the presentation proof.
+Inputs:
+- serverPrivateKey:
+  - x0: Scalar (private), server private key 0.
+  - x1: Scalar (private), server private key 1.
+  - x2: Scalar (private), server private key 2.
+  - x0Blinding: Scalar (private), blinding value for x0.
+- serverPublicKey:
+  - X0: Element, server public key 0.
+  - X1: Element, server public key 1.
+  - X2: Element, server public key 2.
+- requestContext: Data, context for the credential request.
+- presentationContext: Data (public), used for presentation tag
+  computation.
+- presentation:
+  - U: Element, re-randomized from the U in the response.
+  - UPrimeCommit: Element, a public key to the issued UPrime.
+  - m1Commit: Element, a public key to the client secret (m1).
+  - tag: Element, the tag element used for enforcing the presentation
+    limit.
+  - presentationProof: String (ZKProof), a proof of correct generation of
+    the presentation.
+- m1Tag: Element, helper to validate the presentation proof.
 
-   Outputs:
-   - validity: Boolean, True if the proof verifies correctly,
-     False otherwise.
+Outputs:
+- validity: Boolean, True if the proof verifies correctly,
+  False otherwise.
 
-   Parameters:
-   - G: Group
-   - generatorG: Element, equivalent to G.GeneratorG()
-   - generatorH: Element, equivalent to G.GeneratorH()
-   - contextString: public input
+Parameters:
+- G: Group
+- generatorG: Element, equivalent to G.GeneratorG()
+- generatorH: Element, equivalent to G.GeneratorH()
+- contextString: public input
 
-   def VerifyPresentationProof(serverPrivateKey, serverPublicKey,
-     requestContext, presentationContext, presentation, m1Tag):
-     statement = LinearRelation(G)
-     [m1Var, zVar, rNegVar, nonceVar] = statement.allocate_scalars(4)
+def VerifyPresentationProof(serverPrivateKey, serverPublicKey,
+  requestContext, presentationContext, presentation, m1Tag):
+  statement = LinearRelation(G)
+  [m1Var, zVar, rNegVar, nonceVar] = statement.allocate_scalars(4)
 
-     [genGVar, genHVar, UVar, UPrimeCommitVar, m1CommitVar, VVar, X1Var,
-       tagVar, genTVar, m1TagVar] = statement.allocate_elements(10)
-     statement.set_elements([(genGVar, generatorG),
-       (genHVar, generatorH), (UVar, U),
-       (UPrimeCommitVar, UPrimeCommit), (m1CommitVar, m1Commit),
-       (VVar, V), (X1Var, credential.X1), (tagVar, tag),
-       (genTVar, generatorT), (m1TagVar, m1Tag)])
+  [genGVar, genHVar, UVar, UPrimeCommitVar, m1CommitVar, VVar, X1Var,
+    tagVar, genTVar, m1TagVar] = statement.allocate_elements(10)
+  statement.set_elements([(genGVar, generatorG),
+    (genHVar, generatorH), (UVar, U),
+    (UPrimeCommitVar, UPrimeCommit), (m1CommitVar, m1Commit),
+    (VVar, V), (X1Var, credential.X1), (tagVar, tag),
+    (genTVar, generatorT), (m1TagVar, m1Tag)])
 
-     # 1. m1Commit = m1 * U + z * generatorH
-     statement.append_equation(m1CommitVar,
-       [(m1Var, UVar),(zVar, genHVar)])
-     # 2. V = z * X1 - r * generatorG
-     statement.append_equation(VVar,
-       [(zVar, X1Var), (rNegVar, genGVar)])
-     # 3. G.HashToGroup(presentationContext, "Tag")
-     #    = m1 * tag + nonce * tag
-     statement.append_equation(genTVar,
-       [(m1Var, tagVar), (nonceVar, tagVar)])
-     # 4. m1Tag = m1 * tag
-     statement.append_equation(m1TagVar, [(m1Var, tagVar)])
+  # 1. m1Commit = m1 * U + z * generatorH
+  statement.append_equation(m1CommitVar,
+    [(m1Var, UVar),(zVar, genHVar)])
+  # 2. V = z * X1 - r * generatorG
+  statement.append_equation(VVar,
+    [(zVar, X1Var), (rNegVar, genGVar)])
+  # 3. G.HashToGroup(presentationContext, "Tag")
+  #    = m1 * tag + nonce * tag
+  statement.append_equation(genTVar,
+    [(m1Var, tagVar), (nonceVar, tagVar)])
+  # 4. m1Tag = m1 * tag
+  statement.append_equation(m1TagVar, [(m1Var, tagVar)])
 
-     session_id = contextString + "CredentialPresentation"
-     verifier = NISchnorrProofShake128P256(session_id, statement)
-     return verifier.verify(request.proof)
+  session_id = contextString + "CredentialPresentation"
+  verifier = NISchnorrProofShake128P256(session_id, statement)
+  return verifier.verify(request.proof)
 
 6.  Ciphersuites
 
