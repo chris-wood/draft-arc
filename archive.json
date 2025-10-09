@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-02T00:08:29.842807+00:00",
+  "timestamp": "2025-10-09T00:09:00.570859+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -1708,13 +1708,13 @@
       "labels": [],
       "body": "Removes the Schnorr proof compiler section from the ARC spec, and replaces it with the Sigma and Fiat-Shamir specs instead. Updates the proof creation and verification to use the APIs from the Sigma and Fiat-Shamir specs.\r\n\r\nTo-dos:\r\n- Pass in an rng for the prover, since `NISigmaProtocol` needs it an rng to generate a proof. This is currently missing.\r\n- Check if we need to define a codec for `NISigmaProtocol`? It seems like `NISigmaProtocol` needs a codec defined, but there is nowhere to define it (see section 5 in https://datatracker.ietf.org/doc/draft-irtf-cfrg-fiat-shamir/). Maybe it is set to `LinearMapCodec` by default, but I don't see that specified in the spec. Following up with Michele on this.\r\n- Update the poc to also use the sigma protocol / fiat-shamir poc for generating proofs, and update the test vectors accordingly. \r\n  - This may involve some difficulty, as the sigma/f-s poc uses its own definition of groups that is not the same, and possibly is not compatible with, the current ARC definition of groups (which is the IETF \"boilerplate\" group definition). See this issue for more discussion on the topic: https://github.com/mmaker/draft-irtf-cfrg-sigma-protocols/issues/71#issuecomment-3288847813\r\n  - Due to the difficulties caused by the group incompatibilities, I may tackle this in a future PR once the group incompatibilities have been addressed.",
       "createdAt": "2025-09-14T05:18:21Z",
-      "updatedAt": "2025-09-27T03:50:06Z",
+      "updatedAt": "2025-10-07T22:43:32Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "24dac6275c1660a973e03a584fbe07733f54a5a8",
       "headRepository": "chris-wood/draft-arc",
       "headRefName": "cathie/sigma",
-      "headRefOid": "95d7df00a739fc762119e9b48411701deddd2d1a",
+      "headRefOid": "d9a485c3f33ec092dca1476b73bae78d2f455149",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -1740,6 +1740,13 @@
           "body": "Looks like we did indeed have more changes in the Sigma/F-S API since I put together this PR.\r\nI will park this PR for now, as we wait for those changes to get resolved / settle, so I don't repeatedly update it.",
           "createdAt": "2025-09-27T03:50:05Z",
           "updatedAt": "2025-09-27T03:50:05Z"
+        },
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As the Sigma/F-S PR is nearing finalization, I have updated this PR to be in line with that:\r\nhttps://github.com/mmaker/draft-irtf-cfrg-sigma-protocols/pull/79/files\r\n\r\nSo this should now be in sync, and ready to merge in once that PR is merged ^.\r\nWill share this with the ACT folks so they can use it as reference (and potentially in the process, double check that this spec's usage of sigma/f-s looks reasonable :) )",
+          "createdAt": "2025-10-07T22:43:32Z",
+          "updatedAt": "2025-10-07T22:43:32Z"
         }
       ],
       "reviews": [
@@ -2094,7 +2101,7 @@
       "labels": [],
       "body": "Add range proofs for ranges within [0,max), where max is an arbitrary number.",
       "createdAt": "2025-09-17T11:34:57Z",
-      "updatedAt": "2025-09-30T11:24:18Z",
+      "updatedAt": "2025-10-07T22:08:19Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "24dac6275c1660a973e03a584fbe07733f54a5a8",
@@ -2133,6 +2140,13 @@
           "body": "I discussed this with @chris-wood  to get him up to speed, and will copy some notes here in case it is helpful for others to understand the range proof construction. This has overlap with Lena's existing explanation in the spec documentation.\r\n\r\nA power-of-two bit-decomposition range proof works as follows:\r\nYou want to prove that v is in [0, 2^n) where you are given V = Commit(v) = v*G + r*H\r\n1. \"we can bit decompose v into n bits\": v = sum_(i=0^(2^n)) (b_i * 2^i). The easiest way to do this is by making the commitments to b_i be an \"additive secret share\" (so to speak) of V. In other words, choose the blinding factors `s_i` of D_i = Commit(b_i) = b_i * G + s_i * H such that sum_i(s_i) = r. Then, V = sum_i(D_i * 2^i) because commitments are additively homomorphic. This can be checked by the verifier outside the circuit.\r\n2. \"each bit is actually a bit: b_i in {0, 1}\": you can do this multiple ways: \r\n2a. through multiplication: (b_i) * (b_i - 1) = 0\r\n2b. through \"additive linear constraints\":\r\n       first commit to b_i : b_i: D_i = b_i * G + s_i * H\r\n       then constrain b_i to be 0 or 1: b_i: D_i = b_i * D_i + s2_i * H\r\n       how this works: if b_i = 0, set s2_i to equal s_i and the constraint holds\r\n                                  if b_i = 1, set s2_i to 0 and the constraint holds\r\n                                  if b_i is any other value, you have to break DL for the constraint to hold\r\nWatson explained this briefly on the cfrg list: https://mailarchive.ietf.org/arch/msg/cfrg/LKV8qVYnpMUwnfeWwGz90tzTcS8/\r\nAnd Ian expanded on it here: https://mailarchive.ietf.org/arch/msg/cfrg/J1M45Kqr5JsbH7IBa0Q_WvEmdM0/\r\nFor this approach, we choose the 2b route because then we can avoid OR statements in the proof system (which add complexity).\r\n\r\nThe last step is expanding this to non-power-of-two ranges, which requires a strategic choice of bases.\r\nIn short, the first n-1 bases will be powers of to (2^i), and the last base will be the \"remainder\" between what can be represented by the first n-1 bases, and the final range we want to prove.\r\nI'm being a bit hand-wavy here, I think Jonathan Katz explained this somewhere in the CFRG mailing list but I'm having trouble finding that message. Will link it if I find it.\r\n\r\nI summarize this approach in the cfrg mailing list here:\r\nhttps://mailarchive.ietf.org/arch/msg/cfrg/nor_Mx8PsBeiyUcQDR6Ax_ozqN0/",
           "createdAt": "2025-09-25T19:08:10Z",
           "updatedAt": "2025-09-25T19:08:10Z"
+        },
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thanks for the feedback, jkatz! This looks good, with the exception that the Sigma / F-S API has changed in the meantime and now the `allocate_scalar` functions (and a few others) have changed in how they need to be called.\r\n\r\nI can take a pass on updating this PR to be in line with those changes. \r\nIn the meantime @chris-wood can you review this?",
+          "createdAt": "2025-10-07T22:08:19Z",
+          "updatedAt": "2025-10-07T22:08:19Z"
         }
       ],
       "reviews": [
