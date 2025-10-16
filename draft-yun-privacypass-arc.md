@@ -245,9 +245,9 @@ this protocol to produce a credential are described below.
 
 ## Client-to-Issuer Request
 
-Given Origin-provided input `tokenChallenge` and the fixed-length
-Issuer Public Key ID `issuer_key_id`, the Client first creates a credential
-request message using the `CredentialRequest` function from {{ARC}} as follows:
+Given Origin-provided input `tokenChallenge` and the fixed-length Issuer Public Key ID `issuer_key_id`,
+the Client first creates a credential request message using the `CreateCredentialRequest`
+function from {{ARC}} as follows:
 
 ~~~
 request_context = concat(
@@ -258,17 +258,17 @@ request_context = concat(
   encode(2, len(tokenChallenge.credential_context)),
   tokenChallenge.credential_context,
   issuer_key_id)
-(clientSecrets, request) = CredentialRequest(request_context)
+(clientSecrets, request) = CreateCredentialRequest(request_context)
 ~~~
 
-The Client then creates a TokenRequest structure as follows:
+The Client then creates a CredentialRequest structure as follows:
 
 ~~~
 struct {
   uint16_t token_type = 0xE5AC; /* Type ARC(P-256) */
   uint8_t truncated_issuer_key_id;
   uint8_t encoded_request[Nrequest];
-} TokenRequest;
+} CredentialRequest;
 ~~~
 
 The structure fields are defined as follows:
@@ -285,7 +285,7 @@ The structure fields are defined as follows:
   of the `request` value as defined in {{Section 4.2.1 of ARC}}.
 
 The Client then generates an HTTP POST request to send to the Issuer Request URL,
-with the TokenRequest as the content. The media type for this request is
+with the CredentialRequest as the content. The media type for this request is
 "application/private-credential-request". An example request for the Issuer Request URL
 "https://issuer.example.net/request" is shown below.
 
@@ -294,41 +294,41 @@ POST /request HTTP/1.1
 Host: issuer.example.net
 Accept: application/private-credential-response
 Content-Type: application/private-credential-request
-Content-Length: <Length of TokenRequest>
+Content-Length: <Length of CredentialRequest>
 
-<Bytes containing the TokenRequest>
+<Bytes containing the CredentialRequest>
 ~~~
 
 ## Issuer-to-Client Response
 
 Upon receipt of the request, the Issuer validates the following conditions:
 
-- The TokenRequest contains a supported token_type equal to value 0xE5AC.
-- The TokenRequest.truncated_token_key_id corresponds to the truncated key ID
+- The CredentialRequest contains a supported token_type equal to value 0xE5AC.
+- The CredentialRequest.truncated_token_key_id corresponds to the truncated key ID
   of an Issuer Public Key, with corresponding secret key `skI`, owned by
   the Issuer.
-- The TokenRequest.encoded_request is of the correct size (`Nrequest`).
+- The CredentialRequest.encoded_request is of the correct size (`Nrequest`).
 
 If any of these conditions is not met, the Issuer MUST return an HTTP 422
 (Unprocessable Content) error to the client.
 
 If these conditions are met, the Issuer then tries to deserialize
-TokenRequest.encoded_request according to {{Section 4.2.1 of ARC}}, yielding `request`.
+CredentialRequest.encoded_request according to {{Section 4.2.1 of ARC}}, yielding `request`.
 If this fails, the Issuer MUST return an HTTP 422 (Unprocessable Content)
 error to the client. Otherwise, if the Issuer is willing to produce a credential
 for the Client, the Issuer completes the issuance flow by an issuance response
 as follows:
 
 ~~~
-response = CredentialResponse(skI, pkI, request)
+response = CreateCredentialResponse(skI, pkI, request)
 ~~~
 
-The Issuer then creates a TokenResponse structured as follows:
+The Issuer then creates a CredentialResponse structured as follows:
 
 ~~~
 struct {
    uint8_t encoded_response[Nresponse];
-} TokenResponse;
+} CredentialResponse;
 ~~~
 
 The structure fields are defined as follows:
@@ -337,21 +337,21 @@ The structure fields are defined as follows:
   as the serialization of `response` as specified in {{Section 4.2.2 of ARC}}.
 
 The Issuer generates an HTTP response with status code 200 whose content
-consists of TokenResponse, with the content type set as
+consists of CredentialResponse, with the content type set as
 "application/private-credential-response".
 
 ~~~
 HTTP/1.1 200 OK
 Content-Type: application/private-credential-response
-Content-Length: <Length of TokenResponse>
+Content-Length: <Length of CredentialResponse>
 
-<Bytes containing the TokenResponse>
+<Bytes containing the CredentialResponse>
 ~~~
 
 ## Credential Finalization
 
 Upon receipt, the Client handles the response and, if successful, deserializes
-the content values `TokenResponse.encoded_response` according to {{Section 4.2.2 of ARC}}
+the content values `CredentialResponse.encoded_response` according to {{Section 4.2.2 of ARC}}
 yielding `response`. If deserialization fails, the Client aborts the protocol.
 Otherwise, the Client processes the response as follows:
 
@@ -482,6 +482,10 @@ nonce collisions, as detailed in {{Section 7.2 of ARC}}.
 
 # IANA Considerations
 
+This section documents IANA registry updates.
+
+## Privacy Pass Token Types Registry Updates
+
 This document updates the "Privacy Pass Token Type" Registry with the
 following entries.
 
@@ -497,6 +501,163 @@ following entries.
 * Nid: 32
 * Reference: This document
 * Notes: None
+
+## Media Types
+
+The following entries should be added to the IANA "media types"
+registry:
+
+- "application/private-credential-request"
+- "application/private-credential-response"
+
+The templates for these entries are listed below and the
+reference should be this RFC.
+
+### "application/private-credential-request" media type
+
+Type name:
+
+: application
+
+Subtype name:
+
+: private-credential-request
+
+Required parameters:
+
+: N/A
+
+Optional parameters:
+
+: N/A
+
+Encoding considerations:
+
+: "binary"
+
+Security considerations:
+
+: see {{security}}
+
+Interoperability considerations:
+
+: N/A
+
+Published specification:
+
+: this specification
+
+Applications that use this media type:
+
+: Applications that want to issue or facilitate issuance of Privacy Pass tokens,
+  including Privacy Pass issuer applications themselves.
+
+Fragment identifier considerations:
+
+: N/A
+
+Additional information:
+
+: <dl spacing="compact">
+  <dt>Magic number(s):</dt><dd>N/A</dd>
+  <dt>Deprecated alias names for this type:</dt><dd>N/A</dd>
+  <dt>File extension(s):</dt><dd>N/A</dd>
+  <dt>Macintosh file type code(s):</dt><dd>N/A</dd>
+  </dl>
+
+Person and email address to contact for further information:
+
+: see Authors' Addresses section
+
+Intended usage:
+
+: COMMON
+
+Restrictions on usage:
+
+: N/A
+
+Author:
+
+: see Authors' Addresses section
+
+Change controller:
+
+: IETF
+{: spacing="compact"}
+
+### "application/private-credential-response" media type
+
+Type name:
+
+: application
+
+Subtype name:
+
+: private-credential-response
+
+Required parameters:
+
+: N/A
+
+Optional parameters:
+
+: N/A
+
+Encoding considerations:
+
+: "binary"
+
+Security considerations:
+
+: see {{security}}
+
+Interoperability considerations:
+
+: N/A
+
+Published specification:
+
+: this specification
+
+Applications that use this media type:
+
+: Applications that want to issue or facilitate issuance of Privacy Pass tokens,
+  including Privacy Pass issuer applications themselves.
+
+Fragment identifier considerations:
+
+: N/A
+
+Additional information:
+
+: <dl spacing="compact">
+  <dt>Magic number(s):</dt><dd>N/A</dd>
+  <dt>Deprecated alias names for this type:</dt><dd>N/A</dd>
+  <dt>File extension(s):</dt><dd>N/A</dd>
+  <dt>Macintosh file type code(s):</dt><dd>N/A</dd>
+  </dl>
+
+Person and email address to contact for further information:
+
+: see Authors' Addresses section
+
+Intended usage:
+
+: COMMON
+
+Restrictions on usage:
+
+: N/A
+
+Author:
+
+: see Authors' Addresses section
+
+Change controller:
+
+: IETF
+{: spacing="compact"}
 
 
 --- back

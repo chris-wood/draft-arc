@@ -316,7 +316,7 @@ Each of these steps are described in the following subsections.
 Given a request context, the process for creating a credential request is as follows:
 
 ~~~
-(clientSecrets, request) = CredentialRequest(requestContext)
+(clientSecrets, request) = CreateCredentialRequest(requestContext)
 
 Inputs:
 - requestContext: Data, context for the credential request
@@ -337,7 +337,7 @@ Parameters:
 - generatorG: Element, equivalent to G.GeneratorG()
 - generatorH: Element, equivalent to G.GeneratorH()
 
-def CredentialRequest(requestContext):
+def CreateCredentialRequest(requestContext):
   m1 = G.RandomScalar()
   m2 = G.HashToScalar(requestContext, "requestContext")
   r1 = G.RandomScalar()
@@ -374,7 +374,7 @@ Given a credential request and server public and private keys, the process
 for creating a credential response is as follows.
 
 ~~~ pseudocode
-response = CredentialResponse(serverPrivateKey, serverPublicKey, request)
+response = CreateCredentialResponse(serverPrivateKey, serverPublicKey, request)
 
 Inputs:
 - serverPrivateKey:
@@ -409,7 +409,7 @@ Parameters:
 Exceptions:
 - VerifyError, raised when response verification fails
 
-def CredentialResponse(serverPrivateKeys, serverPublicKey, request):
+def CreateCredentialResponse(serverPrivateKeys, serverPublicKey, request):
   if VerifyCredentialRequestProof(request) == false:
     raise VerifyError
 
