@@ -112,6 +112,10 @@ Unless otherwise specified, this document encodes protocol messages in TLS
 notation from {{Section 3 of !TLS13=RFC8446}}. Moreover, all constants are in
 network byte order.
 
+Encoding an integer to a sequence of bytes in network byte order is described
+using the function encode(n, v), where n is the number of bytes and v is the
+integer value. The function len(x) returns the length in bytes of the byte string x.
+
 # Protocol Overview {#overview}
 
 The issuance and redemption protocols defined in this document are built on
@@ -241,13 +245,17 @@ this protocol to produce a credential are described below.
 
 ## Client-to-Issuer Request
 
-Given Origin-provided input `tokenChallenge` and the Issuer Public Key ID `issuer_key_id`,
-the Client first creates a credential request message using the `CredentialRequest`
-function from {{ARC}} as follows:
+Given Origin-provided input `tokenChallenge` and the fixed-length
+Issuer Public Key ID `issuer_key_id`, the Client first creates a credential
+request message using the `CredentialRequest` function from {{ARC}} as follows:
 
 ~~~
-request_context = concat(tokenChallenge.issuer_name,
+request_context = concat(
+  encode(2, len(tokenChallenge.issuer_name)),
+  tokenChallenge.issuer_name,
+  encode(2, len(tokenChallenge.origin_info)),
   tokenChallenge.origin_info,
+  encode(2, len(tokenChallenge.credential_context)),
   tokenChallenge.credential_context,
   issuer_key_id)
 (clientSecrets, request) = CredentialRequest(request_context)
@@ -366,16 +374,20 @@ way, as well as verifying a resulting token, is described in the following secti
 ## Token Creation
 
 Given a TokenChallenge value as input, denoted `challenge`, a presentation limit,
-denoted `presentationLimit`, and a previously computed credential that is valid
+denoted `presentation_limit`, and a previously computed credential that is valid
 for the Issuer identifier in the challenge, denoted `credential`, Clients compute
 a credential presentation value as follows:
 
 ~~~
-presentation_context = concat(tokenChallenge.issuer_name,
-  tokenChallenge.origin_info,
-  tokenChallenge.redemption_context,
+presentation_context = concat(
+  encode(2, len(challenge.issuer_name)),
+  challenge.issuer_name,
+  encode(2, len(challenge.origin_info)),
+  challenge.origin_info,
+  encode(2, len(challenge.redemption_context)),
+  challenge.redemption_context,
   issuer_key_id)
-state = MakePresentationState(credential, presentation_context, presentationLimit)
+state = MakePresentationState(credential, presentation_context, presentation_limit)
 newState, nonce, presentation = Present(state)
 ~~~
 
@@ -413,22 +425,33 @@ as defined in {{setup}}.
 
 Given a deserialized presentation from the token, denoted `presentation` and
 obtained by deserializing a presentation according to {{Section 4.3.2 of ARC}},
-a presentation limit, denoted `presentation_limit`, a presentation nonce
-from a token, denoted `nonce`, and the digest of a token challenge, denoted
-`challenge_digest`, verifying a Token requires invoking the VerifyPresentation
-function from {{Section 4.3.3 of ARC}} in the following ways:
+a presentation limit, denoted `presentation_limit`, a fixed-length Issuer Public Key
+ID, denoted `issuer_key_id`, a presentation nonce from a token, denoted `nonce`, and
+the digest of a token challenge, denoted `challenge_digest`, verifying a Token
+requires invoking the VerifyPresentation function from {{Section 4.3.3 of ARC}} in
+the following ways:
 
 ~~~
-request_context = concat(tokenChallenge.issuer_name,
+request_context = concat(
+  encode(2, len(tokenChallenge.issuer_name)),
+  tokenChallenge.issuer_name,
+  encode(2, len(tokenChallenge.origin_info)),
   tokenChallenge.origin_info,
+  encode(2, len(tokenChallenge.credential_context)),
   tokenChallenge.credential_context,
   issuer_key_id)
-presentation_context = concat(tokenChallenge.issuer_name,
+
+presentation_context = concat(
+  encode(2, len(tokenChallenge.issuer_name)),
+  tokenChallenge.issuer_name,
+  encode(2, len(tokenChallenge.origin_info)),
   tokenChallenge.origin_info,
+  encode(2, len(tokenChallenge.redemption_context)),
   tokenChallenge.redemption_context,
   issuer_key_id)
 
-valid, tag = VerifyPresentation(skI,
+valid = VerifyPresentation(
+  skI,
   pkI,
   request_context,
   presentation_context,
