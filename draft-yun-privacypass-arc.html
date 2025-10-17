@@ -1698,7 +1698,7 @@ struct {
             <p id="section-8.1-7.1.1">"token_type" is a 2-octet integer, in network byte order, equal to 0xE5AC.<a href="#section-8.1-7.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-8.1-7.2">
-            <p id="section-8.1-7.2.1">"presentation_nonce" is a 32-bit encoding of the nonce output from ARC.<a href="#section-8.1-7.2.1" class="pilcrow">¶</a></p>
+            <p id="section-8.1-7.2.1">"presentation_nonce" is a 4-octet integer, in network byte order, equal to the nonce output from ARC.<a href="#section-8.1-7.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-8.1-7.3">
             <p id="section-8.1-7.3.1">"challenge_digest" is a 32-octet value containing the hash of the original TokenChallenge, SHA-256(TokenChallenge).<a href="#section-8.1-7.3.1" class="pilcrow">¶</a></p>
