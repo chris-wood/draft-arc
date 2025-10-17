@@ -651,7 +651,14 @@ The server processes the presentation by verifying the presentation proof agains
 values, and performing a check that the presentation conforms to the presentation limit.
 
 ~~~
-validity = VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presentationContext, nonce, presentation, presentationLimit)
+validity, tag = VerifyPresentation(
+  serverPrivateKey,
+  serverPublicKey,
+  requestContext,
+  presentationContext,
+  nonce,
+  presentation,
+  presentationLimit)
 
 Inputs:
 - serverPrivateKey:
@@ -676,6 +683,7 @@ Inputs:
 
 Outputs:
 - validity: Boolean, True if the presentation is valid, False otherwise.
+- tag: Bytes, the value of the presentation tag used for rate limiting.
 
 Parameters:
 - G: Group
@@ -685,17 +693,30 @@ Parameters:
 Exceptions:
 - InvalidNonceError, raised when the nonce associated with the presentation is invalid
 
-def VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presentationContext, nonce, presentation, presentationLimit):
+def VerifyPresentation(
+  serverPrivateKey,
+  serverPublicKey,
+  requestContext,
+  presentationContext,
+  nonce,
+  presentation,
+  presentationLimit):
+
   if nonce < 0 or nonce > presentationLimit:
     raise InvalidNonceError
 
   generatorT = G.HashToGroup(presentationContext, "Tag")
   m1Tag = generatorT - (nonce * presentation.tag)
 
-  validity = VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, presentationContext, presentation, m1Tag)
-  # Implementation-specific step: perform double-spending check on tag.
-  # Implementation-specific step: store tag for future double-spending check.
-  return validity
+  validity = VerifyPresentationProof(
+    serverPrivateKey,
+    serverPublicKey,
+    requestContext,
+    presentationContext,
+    presentation,
+    m1Tag)
+
+  return validity, presentation.tag
 ~~~
 
 Implementation-specific steps: the server must perform a check that the tag (presentation.tag) has
@@ -1354,7 +1375,13 @@ def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, presentati
 ### Presentation Proof Verification
 
 ~~~
-validity = VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, presentationContext, presentation, m1Tag)
+validity = VerifyPresentationProof(
+  serverPrivateKey,
+  serverPublicKey,
+  requestContext,
+  presentationContext,
+  presentation,
+  m1Tag)
 
 Inputs:
 - serverPrivateKey:
@@ -1390,7 +1417,14 @@ Parameters:
 - generatorH: Element, equivalent to G.GeneratorH()
 - contextString: public input
 
-def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, presentationContext, presentation, m1Tag):
+def VerifyPresentationProof(
+  serverPrivateKey,
+  serverPublicKey,
+  requestContext,
+  presentationContext,
+  presentation,
+  m1Tag):
+
   m2 = G.HashToScalar(requestContext, "requestContext")
   V = serverPrivateKey.x0 * presentation.U + serverPrivateKey.x1 * presentation.m1Commit + serverPrivateKey.x2 * m2 * presentation.U - presentation.UPrimeCommit
   generatorT = G.HashToGroup(presentationContext, "Tag")

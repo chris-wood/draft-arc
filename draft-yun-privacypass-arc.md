@@ -427,15 +427,23 @@ presentation_context = concat(tokenChallenge.issuer_name,
   tokenChallenge.origin_info,
   tokenChallenge.redemption_context,
   issuer_key_id)
-valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonce, presentation, presentation_limit)
+
+valid, tag = VerifyPresentation(skI,
+  pkI,
+  request_context,
+  presentation_context,
+  nonce,
+  presentation,
+  presentation_limit)
 ~~~
 
 This function returns True if the CredentialToken is valid, and False otherwise.
 
-Implementation-specific steps: to prevent double spending, the Origin should perform a check that the
-tag (presentation.tag) has not previously been seen. It then stores the tag for use in future double
-spending checks. To reduce the overhead of performing double spend checks, the Origin can store and
-look up the tags corresponding to the associated request_context and presentation_context values.
+To prevent double spending, the Origin SHOULD perform a check that the tag output
+from VerifyPresentation has not previously been seen. It can do this by checking
+the tag against previously seen tags. To improve double spend performance, the Origin
+can store and look up tags corresponding to the associated request_context and
+presentation_context values.
 
 # Security Considerations {#security}
 
