@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Standards Track                             Apple, Inc.
-Expires: 19 April 2026                                   16 October 2025
+Expires: 20 April 2026                                   17 October 2025
 
 
  Privacy Pass Issuance Protocol for Anonymous Rate-Limited Credentials
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 19 April 2026.
+   This Internet-Draft will expire on 20 April 2026.
 
 Copyright Notice
 
@@ -166,6 +166,11 @@ Table of Contents
    Unless otherwise specified, this document encodes protocol messages
    in TLS notation from Section 3 of [TLS13].  Moreover, all constants
    are in network byte order.
+
+   Encoding an integer to a sequence of bytes in network byte order is
+   described using the function encode(n, v), where n is the number of
+   bytes and v is the integer value.  The function len(x) returns the
+   length in bytes of the byte string x.
 
 4.  Protocol Overview
 
@@ -311,13 +316,17 @@ Table of Contents
 
 7.1.  Client-to-Issuer Request
 
-   Given Origin-provided input tokenChallenge and the Issuer Public Key
-   ID issuer_key_id, the Client first creates a credential request
-   message using the CreateCredentialRequest function from [ARC] as
-   follows:
+   Given Origin-provided input tokenChallenge and the fixed-length
+   Issuer Public Key ID issuer_key_id, the Client first creates a
+   credential request message using the CreateCredentialRequest function
+   from [ARC] as follows:
 
-   request_context = concat(tokenChallenge.issuer_name,
+   request_context = concat(
+     encode(2, len(tokenChallenge.issuer_name)),
+     tokenChallenge.issuer_name,
+     encode(2, len(tokenChallenge.origin_info)),
      tokenChallenge.origin_info,
+     encode(2, len(tokenChallenge.credential_context)),
      tokenChallenge.credential_context,
      issuer_key_id)
    (clientSecrets, request) = CreateCredentialRequest(request_context)
@@ -437,16 +446,20 @@ Table of Contents
 8.1.  Token Creation
 
    Given a TokenChallenge value as input, denoted challenge, a
-   presentation limit, denoted presentationLimit, and a previously
+   presentation limit, denoted presentation_limit, and a previously
    computed credential that is valid for the Issuer identifier in the
    challenge, denoted credential, Clients compute a credential
    presentation value as follows:
 
-presentation_context = concat(tokenChallenge.issuer_name,
-  tokenChallenge.origin_info,
-  tokenChallenge.redemption_context,
+presentation_context = concat(
+  encode(2, len(challenge.issuer_name)),
+  challenge.issuer_name,
+  encode(2, len(challenge.origin_info)),
+  challenge.origin_info,
+  encode(2, len(challenge.redemption_context)),
+  challenge.redemption_context,
   issuer_key_id)
-state = MakePresentationState(credential, presentation_context, presentationLimit)
+state = MakePresentationState(credential, presentation_context, presentation_limit)
 newState, nonce, presentation = Present(state)
 
    Subsequent presentations MUST use the updated state, denoted
@@ -468,8 +481,8 @@ newState, nonce, presentation = Present(state)
    *  "token_type" is a 2-octet integer, in network byte order, equal to
       0xE5AC.
 
-   *  "presentation_nonce" is a 32-bit encoding of the nonce output from
-      ARC.
+   *  "presentation_nonce" is a 4-octet integer, in network byte order,
+      equal to the nonce output from ARC.
 
    *  "challenge_digest" is a 32-octet value containing the hash of the
       original TokenChallenge, SHA-256(TokenChallenge).
@@ -486,30 +499,48 @@ newState, nonce, presentation = Present(state)
    Given a deserialized presentation from the token, denoted
    presentation and obtained by deserializing a presentation according
    to Section 4.3.2 of [ARC], a presentation limit, denoted
-   presentation_limit, a presentation nonce from a token, denoted nonce,
-   and the digest of a token challenge, denoted challenge_digest,
-   verifying a Token requires invoking the VerifyPresentation function
-   from Section 4.3.3 of [ARC] in the following ways:
+   presentation_limit, a fixed-length Issuer Public Key ID, denoted
+   issuer_key_id, a presentation nonce from a token, denoted nonce, and
+   the digest of a token challenge, denoted challenge_digest, verifying
+   a Token requires invoking the VerifyPresentation function from
+   Section 4.3.3 of [ARC] in the following ways:
 
-request_context = concat(tokenChallenge.issuer_name,
-  tokenChallenge.origin_info,
-  tokenChallenge.credential_context,
-  issuer_key_id)
-presentation_context = concat(tokenChallenge.issuer_name,
-  tokenChallenge.origin_info,
-  tokenChallenge.redemption_context,
-  issuer_key_id)
-valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonce, presentation, presentation_limit)
+   request_context = concat(
+     encode(2, len(tokenChallenge.issuer_name)),
+     tokenChallenge.issuer_name,
+     encode(2, len(tokenChallenge.origin_info)),
+     tokenChallenge.origin_info,
+     encode(2, len(tokenChallenge.credential_context)),
+     tokenChallenge.credential_context,
+     issuer_key_id)
+
+   presentation_context = concat(
+     encode(2, len(tokenChallenge.issuer_name)),
+     tokenChallenge.issuer_name,
+     encode(2, len(tokenChallenge.origin_info)),
+     tokenChallenge.origin_info,
+     encode(2, len(tokenChallenge.redemption_context)),
+     tokenChallenge.redemption_context,
+     issuer_key_id)
+
+   valid = VerifyPresentation(
+     skI,
+     pkI,
+     request_context,
+     presentation_context,
+     nonce,
+     presentation,
+     presentation_limit)
 
    This function returns True if the CredentialToken is valid, and False
    otherwise.
 
-   Implementation-specific steps: to prevent double spending, the Origin
-   should perform a check that the tag (presentation.tag) has not
-   previously been seen.  It then stores the tag for use in future
-   double spending checks.  To reduce the overhead of performing double
-   spend checks, the Origin can store and look up the tags corresponding
-   to the associated request_context and presentation_context values.
+   To prevent double spending, the Origin SHOULD perform a check that
+   the tag output from VerifyPresentation has not previously been seen.
+   It can do this by checking the tag against previously seen tags.  To
+   improve double spend performance, the Origin can store and look up
+   tags corresponding to the associated request_context and
+   presentation_context values.
 
 9.  Security Considerations
 
