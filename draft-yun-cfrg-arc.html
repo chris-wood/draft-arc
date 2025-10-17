@@ -1649,7 +1649,7 @@ details about this step.<a href="#section-4.2-3.3.1" class="pilcrow">¶</a></p>
 <p id="section-4.2.1-1">Given a request context, the process for creating a credential request is as follows:<a href="#section-4.2.1-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-4.2.1-2">
 <pre>
-(clientSecrets, request) = CredentialRequest(requestContext)
+(clientSecrets, request) = CreateCredentialRequest(requestContext)
 
 Inputs:
 - requestContext: Data, context for the credential request
@@ -1670,7 +1670,7 @@ Parameters:
 - generatorG: Element, equivalent to G.GeneratorG()
 - generatorH: Element, equivalent to G.GeneratorH()
 
-def CredentialRequest(requestContext):
+def CreateCredentialRequest(requestContext):
   m1 = G.RandomScalar()
   m2 = G.HashToScalar(requestContext, "requestContext")
   r1 = G.RandomScalar()
@@ -1710,7 +1710,7 @@ struct {
 for creating a credential response is as follows.<a href="#section-4.2.2-1" class="pilcrow">¶</a></p>
 <div class="breakable lang-pseudocode sourcecode" id="section-4.2.2-2">
 <pre>
-response = CredentialResponse(serverPrivateKey, serverPublicKey, request)
+response = CreateCredentialResponse(serverPrivateKey, serverPublicKey, request)
 
 Inputs:
 - serverPrivateKey:
@@ -1745,7 +1745,7 @@ Parameters:
 Exceptions:
 - VerifyError, raised when response verification fails
 
-def CredentialResponse(serverPrivateKeys, serverPublicKey, request):
+def CreateCredentialResponse(serverPrivateKeys, serverPublicKey, request):
   if VerifyCredentialRequestProof(request) == false:
     raise VerifyError
 
