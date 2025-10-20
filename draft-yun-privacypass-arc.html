@@ -1442,7 +1442,7 @@ skI, pkI = SetupServer()
 </div>
 <p id="section-5-3">The Issuer Public Key ID, denoted <code>issuer_key_id</code>, is computed as the
 SHA-256 hash of the Issuer Public Key, i.e., <code>issuer_key_id = SHA-256(pkI_serialized)</code>,
-where <code>pkI_serialized</code> is the serialized version of <code>pkI</code> as described in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01#section-4.1" class="relref">Section 4.1</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-5-3" class="pilcrow">¶</a></p>
+where <code>pkI_serialized</code> is the serialized version of <code>pkI</code> as described in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#section-4.1" class="relref">Section 4.1</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-5-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="token-challenge-requirements">
@@ -1569,7 +1569,7 @@ and referenced information for more details.<a href="#section-7.1-6.2.1" class="
 </li>
           <li class="normal" id="section-7.1-6.3">
             <p id="section-7.1-6.3.1">"encoded_request" is the Nrequest-octet request, computed as the serialization
-of the <code>request</code> value as defined in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-7.1-6.3.1" class="pilcrow">¶</a></p>
+of the <code>request</code> value as defined in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-7.1-6.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-7.1-7">The Client then generates an HTTP POST request to send to the Issuer Request URL,
@@ -1611,7 +1611,7 @@ the Issuer.<a href="#section-7.2-2.2.1" class="pilcrow">¶</a></p>
 <p id="section-7.2-3">If any of these conditions is not met, the Issuer <span class="bcp14">MUST</span> return an HTTP 422
 (Unprocessable Content) error to the client.<a href="#section-7.2-3" class="pilcrow">¶</a></p>
 <p id="section-7.2-4">If these conditions are met, the Issuer then tries to deserialize
-CredentialRequest.encoded_request according to <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>, yielding <code>request</code>.
+CredentialRequest.encoded_request according to <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>, yielding <code>request</code>.
 If this fails, the Issuer <span class="bcp14">MUST</span> return an HTTP 422 (Unprocessable Content)
 error to the client. Otherwise, if the Issuer is willing to produce a credential
 for the Client, the Issuer completes the issuance flow by an issuance response
@@ -1633,7 +1633,7 @@ struct {
 <ul class="normal">
 <li class="normal" id="section-7.2-9.1">
             <p id="section-7.2-9.1.1">"encoded_response" is the Nresponse-octet encoded issuance response message, computed
-as the serialization of <code>response</code> as specified in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01#section-4.2.2" class="relref">Section 4.2.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-7.2-9.1.1" class="pilcrow">¶</a></p>
+as the serialization of <code>response</code> as specified in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#section-4.2.2" class="relref">Section 4.2.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-7.2-9.1.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-7.2-10">The Issuer generates an HTTP response with status code 200 whose content
@@ -1656,7 +1656,7 @@ Content-Length: &lt;Length of CredentialResponse&gt;
 <a href="#section-7.3" class="section-number selfRef">7.3. </a><a href="#name-credential-finalization" class="section-name selfRef">Credential Finalization</a>
         </h3>
 <p id="section-7.3-1">Upon receipt, the Client handles the response and, if successful, deserializes
-the content values <code>CredentialResponse.encoded_response</code> according to <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01#section-4.2.2" class="relref">Section 4.2.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>
+the content values <code>CredentialResponse.encoded_response</code> according to <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#section-4.2.2" class="relref">Section 4.2.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>
 yielding <code>response</code>. If deserialization fails, the Client aborts the protocol.
 Otherwise, the Client processes the response as follows:<a href="#section-7.3-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-7.3-2">
@@ -1736,7 +1736,7 @@ as defined in <a href="#setup" class="auto internal xref">Section 5</a>.<a href=
 </li>
           <li class="normal" id="section-8.1-7.5">
             <p id="section-8.1-7.5.1">"presentation" is a Npresentation-octet presentation, set to the serialized
-<code>presentation</code> value (see <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01#section-4.3.2" class="relref">Section 4.3.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span> for serialiation details).<a href="#section-8.1-7.5.1" class="pilcrow">¶</a></p>
+<code>presentation</code> value (see <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#section-4.3.2" class="relref">Section 4.3.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span> for serialiation details).<a href="#section-8.1-7.5.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -1747,11 +1747,11 @@ as defined in <a href="#setup" class="auto internal xref">Section 5</a>.<a href=
 <a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-token-verification" class="section-name selfRef">Token Verification</a>
         </h3>
 <p id="section-8.2-1">Given a deserialized presentation from the token, denoted <code>presentation</code> and
-obtained by deserializing a presentation according to <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01#section-4.3.2" class="relref">Section 4.3.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>,
+obtained by deserializing a presentation according to <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#section-4.3.2" class="relref">Section 4.3.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>,
 a presentation limit, denoted <code>presentation_limit</code>, a fixed-length Issuer Public Key
 ID, denoted <code>issuer_key_id</code>, a presentation nonce from a token, denoted <code>nonce</code>, and
 the digest of a token challenge, denoted <code>challenge_digest</code>, verifying a Token
-requires invoking the VerifyPresentation function from <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01#section-4.3.3" class="relref">Section 4.3.3</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span> in
+requires invoking the VerifyPresentation function from <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#section-4.3.3" class="relref">Section 4.3.3</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span> in
 the following ways:<a href="#section-8.2-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-8.2-2">
 <pre>
@@ -1805,7 +1805,7 @@ requires a joint Origin and Issuer configuration given that it is privately veri
 unlinkability, as described in <span><a href="https://rfc-editor.org/rfc/rfc9576#section-3.3" class="relref">Section 3.3</a> of [<a href="#ARCHITECTURE" class="cite xref">ARCHITECTURE</a>]</span>, with one exception.
 While redemption context unlinkability is achieved by re-randomizing credentials every time
 they are presented as tokens, there is a reduction in the anonymity set in the case of presentation
-nonce collisions, as detailed in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01#section-7.2" class="relref">Section 7.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-9-2" class="pilcrow">¶</a></p>
+nonce collisions, as detailed in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#section-7.2" class="relref">Section 7.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-9-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
@@ -2109,7 +2109,7 @@ including Privacy Pass issuer applications themselves.<a href="#section-10.2.2-1
 <dl class="references">
 <dt id="ARC">[ARC]</dt>
         <dd>
-<span class="refAuthor">Yun, C.</span> and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Anonymous Rate-Limited Credentials"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-yun-cfrg-arc-01</span>, <time datetime="2025-08-06" class="refDate">6 August 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01">https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01</a>&gt;</span>. </dd>
+<span class="refAuthor">Yun, C.</span> and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Anonymous Rate-Limited Credentials"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-yun-privacypass-crypto-arc-00</span>, <time datetime="2025-10-20" class="refDate">20 October 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00">https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="ARCHITECTURE">[ARCHITECTURE]</dt>
         <dd>

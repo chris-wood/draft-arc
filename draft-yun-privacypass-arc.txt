@@ -660,9 +660,9 @@ newState, nonce, presentation = Present(state)
 
    [ARC]      Yun, C. and C. A. Wood, "Anonymous Rate-Limited
               Credentials", Work in Progress, Internet-Draft, draft-yun-
-              cfrg-arc-01, 6 August 2025,
-              <https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-
-              01>.
+              privacypass-crypto-arc-00, 20 October 2025,
+              <https://datatracker.ietf.org/doc/html/draft-yun-
+              privacypass-crypto-arc-00>.
 
    [ARCHITECTURE]
               Davidson, A., Iyengar, J., and C. A. Wood, "The Privacy
