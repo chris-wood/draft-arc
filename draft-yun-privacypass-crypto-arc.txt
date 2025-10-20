@@ -5,11 +5,11 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Informational                               Apple, Inc.
-Expires: 20 April 2026                                   17 October 2025
+Expires: 23 April 2026                                   20 October 2025
 
 
                    Anonymous Rate-Limited Credentials
-                       draft-yun-cfrg-arc-latest
+                draft-yun-privacypass-crypto-arc-latest
 
 Abstract
 
@@ -28,14 +28,14 @@ About This Document
    This note is to be removed before publishing as an RFC.
 
    The latest revision of this draft can be found at https://chris-
-   wood.github.io/draft-arc/draft-yun-cfrg-arc.html.  Status information
-   for this document may be found at https://datatracker.ietf.org/doc/
-   draft-yun-cfrg-arc/.
+   wood.github.io/draft-arc/draft-yun-privacypass-crypto-arc.html.
+   Status information for this document may be found at
+   https://datatracker.ietf.org/doc/draft-yun-privacypass-crypto-arc/.
 
-   Discussion of this document takes place on the Crypto Forum mailing
-   list (mailto:cfrg@ietf.org), which is archived at
-   https://mailarchive.ietf.org/arch/browse/cfrg.  Subscribe at
-   https://www.ietf.org/mailman/listinfo/cfrg/.
+   Discussion of this document takes place on the PRIVACYPASS Privacy
+   Pass mailing list (mailto:privacy-pass@ietf.org), which is archived
+   at https://mailarchive.ietf.org/arch/browse/privacy-pass.  Subscribe
+   at https://www.ietf.org/mailman/listinfo/privacy-pass/.
 
    Source for this draft and an issue tracker can be found at
    https://github.com/chris-wood/draft-arc.
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 20 April 2026.
+   This Internet-Draft will expire on 23 April 2026.
 
 Copyright Notice
 
@@ -66,7 +66,10 @@ Copyright Notice
    Provisions Relating to IETF Documents (https://trustee.ietf.org/
    license-info) in effect on the date of publication of this document.
    Please review these documents carefully, as they describe your rights
-   and restrictions with respect to this document.
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
 
 Table of Contents
 
@@ -1596,7 +1599,7 @@ def VerifyPresentationProof(
       -  Generator(): As defined in [NISTCurves].
 
       -  RandomScalar(): Implemented by returning a uniformly random
-         Scalar in the range [0, G.Order() - 1].  Refer to Section 6.2
+         Scalar in the range [1, G.Order() - 1].  Refer to Section 6.2
          for implementation guidance.
 
       -  HashToGroup(x, info): Use hash_to_curve with suite
@@ -1640,14 +1643,14 @@ def VerifyPresentationProof(
 6.2.  Random Scalar Generation
 
    Two popular algorithms for generating a random integer uniformly
-   distributed in the range [0, G.Order() -1] are as follows:
+   distributed in the range [1, G.Order() -1] are as follows:
 
 6.2.1.  Rejection Sampling
 
    Generate a random byte array with Ns bytes, and attempt to map to a
-   Scalar by calling DeserializeScalar in constant time.  If it
-   succeeds, return the result.  If it fails, try again with another
-   random byte array, until the procedure succeeds.  Failure to
+   Scalar by calling DeserializeScalar in constant time.  If it succeeds
+   and is non-zero, return the result.  Otherwise, try again with
+   another random byte array, until the procedure succeeds.  Failure to
    implement DeserializeScalar in constant time can leak information
    about the underlying corresponding Scalar.
 
