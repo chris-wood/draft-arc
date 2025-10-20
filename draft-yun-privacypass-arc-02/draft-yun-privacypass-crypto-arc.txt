@@ -9,7 +9,7 @@ Expires: 23 April 2026                                   20 October 2025
 
 
                    Anonymous Rate-Limited Credentials
-                       draft-yun-cfrg-arc-latest
+                draft-yun-privacypass-crypto-arc-latest
 
 Abstract
 
@@ -28,14 +28,14 @@ About This Document
    This note is to be removed before publishing as an RFC.
 
    The latest revision of this draft can be found at https://chris-
-   wood.github.io/draft-arc/draft-yun-cfrg-arc.html.  Status information
-   for this document may be found at https://datatracker.ietf.org/doc/
-   draft-yun-cfrg-arc/.
+   wood.github.io/draft-arc/draft-yun-privacypass-crypto-arc.html.
+   Status information for this document may be found at
+   https://datatracker.ietf.org/doc/draft-yun-privacypass-crypto-arc/.
 
-   Discussion of this document takes place on the Crypto Forum mailing
-   list (mailto:cfrg@ietf.org), which is archived at
-   https://mailarchive.ietf.org/arch/browse/cfrg.  Subscribe at
-   https://www.ietf.org/mailman/listinfo/cfrg/.
+   Discussion of this document takes place on the PRIVACYPASS Privacy
+   Pass mailing list (mailto:privacy-pass@ietf.org), which is archived
+   at https://mailarchive.ietf.org/arch/browse/privacy-pass.  Subscribe
+   at https://www.ietf.org/mailman/listinfo/privacy-pass/.
 
    Source for this draft and an issue tracker can be found at
    https://github.com/chris-wood/draft-arc.
@@ -66,7 +66,10 @@ Copyright Notice
    Provisions Relating to IETF Documents (https://trustee.ietf.org/
    license-info) in effect on the date of publication of this document.
    Please review these documents carefully, as they describe your rights
-   and restrictions with respect to this document.
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
 
 Table of Contents
 
@@ -402,7 +405,7 @@ def SetupServer():
    Given a request context, the process for creating a credential
    request is as follows:
 
-(clientSecrets, request) = CredentialRequest(requestContext)
+(clientSecrets, request) = CreateCredentialRequest(requestContext)
 
 Inputs:
 - requestContext: Data, context for the credential request
@@ -423,7 +426,7 @@ Parameters:
 - generatorG: Element, equivalent to G.GeneratorG()
 - generatorH: Element, equivalent to G.GeneratorH()
 
-def CredentialRequest(requestContext):
+def CreateCredentialRequest(requestContext):
   m1 = G.RandomScalar()
   m2 = G.HashToScalar(requestContext, "requestContext")
   r1 = G.RandomScalar()
@@ -458,7 +461,7 @@ def CredentialRequest(requestContext):
    Given a credential request and server public and private keys, the
    process for creating a credential response is as follows.
 
-   response = CredentialResponse(serverPrivateKey, serverPublicKey, request)
+   response = CreateCredentialResponse(serverPrivateKey, serverPublicKey, request)
 
    Inputs:
    - serverPrivateKey:
@@ -493,7 +496,7 @@ def CredentialRequest(requestContext):
    Exceptions:
    - VerifyError, raised when response verification fails
 
-   def CredentialResponse(serverPrivateKeys, serverPublicKey, request):
+   def CreateCredentialResponse(serverPrivateKeys, serverPublicKey, request):
      if VerifyCredentialRequestProof(request) == false:
        raise VerifyError
 
@@ -739,7 +742,14 @@ def Present(state):
    proof against server-computed values, and performing a check that the
    presentation conforms to the presentation limit.
 
-validity = VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presentationContext, nonce, presentation, presentationLimit)
+validity, tag = VerifyPresentation(
+  serverPrivateKey,
+  serverPublicKey,
+  requestContext,
+  presentationContext,
+  nonce,
+  presentation,
+  presentationLimit)
 
 Inputs:
 - serverPrivateKey:
@@ -764,6 +774,7 @@ Inputs:
 
 Outputs:
 - validity: Boolean, True if the presentation is valid, False otherwise.
+- tag: Bytes, the value of the presentation tag used for rate limiting.
 
 Parameters:
 - G: Group
@@ -773,17 +784,30 @@ Parameters:
 Exceptions:
 - InvalidNonceError, raised when the nonce associated with the presentation is invalid
 
-def VerifyPresentation(serverPrivateKey, serverPublicKey, requestContext, presentationContext, nonce, presentation, presentationLimit):
+def VerifyPresentation(
+  serverPrivateKey,
+  serverPublicKey,
+  requestContext,
+  presentationContext,
+  nonce,
+  presentation,
+  presentationLimit):
+
   if nonce < 0 or nonce > presentationLimit:
     raise InvalidNonceError
 
   generatorT = G.HashToGroup(presentationContext, "Tag")
   m1Tag = generatorT - (nonce * presentation.tag)
 
-  validity = VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, presentationContext, presentation, m1Tag)
-  # Implementation-specific step: perform double-spending check on tag.
-  # Implementation-specific step: store tag for future double-spending check.
-  return validity
+  validity = VerifyPresentationProof(
+    serverPrivateKey,
+    serverPublicKey,
+    requestContext,
+    presentationContext,
+    presentation,
+    m1Tag)
+
+  return validity, presentation.tag
 
    Implementation-specific steps: the server must perform a check that
    the tag (presentation.tag) has not previously been seen, to prevent
@@ -1451,7 +1475,13 @@ def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, presentati
 
 5.4.2.  Presentation Proof Verification
 
-validity = VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, presentationContext, presentation, m1Tag)
+validity = VerifyPresentationProof(
+  serverPrivateKey,
+  serverPublicKey,
+  requestContext,
+  presentationContext,
+  presentation,
+  m1Tag)
 
 Inputs:
 - serverPrivateKey:
@@ -1487,7 +1517,14 @@ Parameters:
 - generatorH: Element, equivalent to G.GeneratorH()
 - contextString: public input
 
-def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, presentationContext, presentation, m1Tag):
+def VerifyPresentationProof(
+  serverPrivateKey,
+  serverPublicKey,
+  requestContext,
+  presentationContext,
+  presentation,
+  m1Tag):
+
   m2 = G.HashToScalar(requestContext, "requestContext")
   V = serverPrivateKey.x0 * presentation.U + serverPrivateKey.x1 * presentation.m1Commit + serverPrivateKey.x2 * m2 * presentation.U - presentation.UPrimeCommit
   generatorT = G.HashToGroup(presentationContext, "Tag")
@@ -1562,7 +1599,7 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
       -  Generator(): As defined in [NISTCurves].
 
       -  RandomScalar(): Implemented by returning a uniformly random
-         Scalar in the range [0, G.Order() - 1].  Refer to Section 6.2
+         Scalar in the range [1, G.Order() - 1].  Refer to Section 6.2
          for implementation guidance.
 
       -  HashToGroup(x, info): Use hash_to_curve with suite
@@ -1606,14 +1643,14 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
 6.2.  Random Scalar Generation
 
    Two popular algorithms for generating a random integer uniformly
-   distributed in the range [0, G.Order() -1] are as follows:
+   distributed in the range [1, G.Order() -1] are as follows:
 
 6.2.1.  Rejection Sampling
 
    Generate a random byte array with Ns bytes, and attempt to map to a
-   Scalar by calling DeserializeScalar in constant time.  If it
-   succeeds, return the result.  If it fails, try again with another
-   random byte array, until the procedure succeeds.  Failure to
+   Scalar by calling DeserializeScalar in constant time.  If it succeeds
+   and is non-zero, return the result.  Otherwise, try again with
+   another random byte array, until the procedure succeeds.  Failure to
    implement DeserializeScalar in constant time can leak information
    about the underlying corresponding Scalar.
 
@@ -1771,6 +1808,14 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
    a55
 
    // CredentialRequest
+   Blinding_0 = 0000000000000000000000000000000000000000000000000000000
+   000000001
+   Blinding_1 = 0000000000000000000000000000000000000000000000000000000
+   000000002
+   Blinding_2 = 0000000000000000000000000000000000000000000000000000000
+   000000003
+   Blinding_3 = 0000000000000000000000000000000000000000000000000000000
+   000000004
    request_context = 74657374207265717565737420636f6e74657874
    m1 = eedfe7939e2382934ab5b0f76aae44124955d2c5ebf9b41d88786259c34692d
    2
@@ -1791,6 +1836,20 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
    0c129d274ccf5386cb90e839916d5dff7eade18e3eabec415f613911
 
    // CredentialResponse
+   Blinding_0 = 0000000000000000000000000000000000000000000000000000000
+   000000001
+   Blinding_1 = 0000000000000000000000000000000000000000000000000000000
+   000000002
+   Blinding_2 = 0000000000000000000000000000000000000000000000000000000
+   000000003
+   Blinding_3 = 0000000000000000000000000000000000000000000000000000000
+   000000004
+   Blinding_4 = 0000000000000000000000000000000000000000000000000000000
+   000000005
+   Blinding_5 = 0000000000000000000000000000000000000000000000000000000
+   000000006
+   Blinding_6 = 0000000000000000000000000000000000000000000000000000000
+   000000007
    b = e699140babbe599f7dd8f6e3e8f615e5f201d1c2b0bc2f821f19e80a0a0e1e7b
    U = 033ee1ebbcff622bc26b10932ed1eb147226d832048fb2337dc0ad7722cb0748
    3d
@@ -1824,6 +1883,14 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
    1dc
 
    // Presentation1
+   Blinding_0 = 0000000000000000000000000000000000000000000000000000000
+   000000001
+   Blinding_1 = 0000000000000000000000000000000000000000000000000000000
+   000000002
+   Blinding_2 = 0000000000000000000000000000000000000000000000000000000
+   000000003
+   Blinding_3 = 0000000000000000000000000000000000000000000000000000000
+   000000004
    presentation_context = 746573742070726573656e746174696f6e20636f6e746
    57874
    a = b78e57df8f0a95d102ff12bbb97e15ed35c23e54f9b4483d30b76772ee60d886
@@ -1845,6 +1912,14 @@ def VerifyPresentationProof(serverPrivateKey, serverPublicKey, requestContext, p
    00000000000000000000000000000000000000000000000000000004
 
    // Presentation2
+   Blinding_0 = 0000000000000000000000000000000000000000000000000000000
+   000000001
+   Blinding_1 = 0000000000000000000000000000000000000000000000000000000
+   000000002
+   Blinding_2 = 0000000000000000000000000000000000000000000000000000000
+   000000003
+   Blinding_3 = 0000000000000000000000000000000000000000000000000000000
+   000000004
    presentation_context = 746573742070726573656e746174696f6e20636f6e746
    57874
    a = 95bcf45150a61f5c44a6cfbf343cd9e0f593f127b6f49bec0f9b20f0550504a2

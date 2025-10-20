@@ -1092,14 +1092,15 @@ tokens based on the Anonymous Rate-Limited Credential (ARC) protocol.<a href="#s
       </h2>
 <p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
 <p id="section-note.1-2">
-        The latest revision of this draft can be found at <span><a href="https://example.com/LATEST">https://example.com/LATEST</a></span>.
+        The latest revision of this draft can be found at <span><a href="https://chris-wood.github.io/draft-arc/draft-yun-privacypass-arc.html">https://chris-wood.github.io/draft-arc/draft-yun-privacypass-arc.html</a></span>.
         Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-yun-privacypass-arc/">https://datatracker.ietf.org/doc/draft-yun-privacypass-arc/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
 <p id="section-note.1-3">
         Discussion of this document takes place on the
-        PRIVACYPASS Privacy Pass mailing list (<span><a href="mailto:WG@example.com">mailto:WG@example.com</a></span>),
-        which is archived at <span><a href="https://example.com/WG">https://example.com/WG</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+        PRIVACYPASS Privacy Pass mailing list (<span><a href="mailto:privacy-pass@ietf.org">mailto:privacy-pass@ietf.org</a></span>),
+        which is archived at <span><a href="https://mailarchive.ietf.org/arch/browse/privacy-pass">https://mailarchive.ietf.org/arch/browse/privacy-pass</a></span>.
+        Subscribe at <span><a href="https://www.ietf.org/mailman/listinfo/privacy-pass/">https://www.ietf.org/mailman/listinfo/privacy-pass/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
 <p id="section-note.1-4">Source for this draft and an issue tracker can be found at
-        <span><a href="https://github.com/USER/REPO">https://github.com/USER/REPO</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
+        <span><a href="https://github.com/chris-wood/draft-arc">https://github.com/chris-wood/draft-arc</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -1197,6 +1198,22 @@ tokens based on the Anonymous Rate-Limited Credential (ARC) protocol.<a href="#s
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
             <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.1">
+                <p id="section-toc.1-1.10.2.1.1"><a href="#section-10.1" class="auto internal xref">10.1</a>.  <a href="#name-privacy-pass-token-types-re" class="internal xref">Privacy Pass Token Types Registry Updates</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2">
+                <p id="section-toc.1-1.10.2.2.1"><a href="#section-10.2" class="auto internal xref">10.2</a>.  <a href="#name-media-types" class="internal xref">Media Types</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2.2.1">
+                    <p id="section-toc.1-1.10.2.2.2.1.1"><a href="#section-10.2.1" class="auto internal xref">10.2.1</a>.  <a href="#name-application-private-credent" class="internal xref">"application/private-credential-request" media type</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2.2.2">
+                    <p id="section-toc.1-1.10.2.2.2.2.1"><a href="#section-10.2.2" class="auto internal xref">10.2.2</a>.  <a href="#name-application-private-credenti" class="internal xref">"application/private-credential-response" media type</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
             <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-references" class="internal xref">References</a></p>
@@ -1298,6 +1315,9 @@ the Issuer for issuing and verifying Tokens.<a href="#section-3-3.2.1" class="pi
 <p id="section-3-4">Unless otherwise specified, this document encodes protocol messages in TLS
 notation from <span><a href="https://rfc-editor.org/rfc/rfc8446#section-3" class="relref">Section 3</a> of [<a href="#TLS13" class="cite xref">TLS13</a>]</span>. Moreover, all constants are in
 network byte order.<a href="#section-3-4" class="pilcrow">¶</a></p>
+<p id="section-3-5">Encoding an integer to a sequence of bytes in network byte order is described
+using the function encode(n, v), where n is the number of bytes and v is the
+integer value. The function len(x) returns the length in bytes of the byte string x.<a href="#section-3-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="overview">
@@ -1422,7 +1442,7 @@ skI, pkI = SetupServer()
 </div>
 <p id="section-5-3">The Issuer Public Key ID, denoted <code>issuer_key_id</code>, is computed as the
 SHA-256 hash of the Issuer Public Key, i.e., <code>issuer_key_id = SHA-256(pkI_serialized)</code>,
-where <code>pkI_serialized</code> is the serialized version of <code>pkI</code> as described in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01#section-4.1" class="relref">Section 4.1</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-5-3" class="pilcrow">¶</a></p>
+where <code>pkI_serialized</code> is the serialized version of <code>pkI</code> as described in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#section-4.1" class="relref">Section 4.1</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-5-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="token-challenge-requirements">
@@ -1509,26 +1529,30 @@ this protocol to produce a credential are described below.<a href="#section-7-4"
         <h3 id="name-client-to-issuer-request">
 <a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-client-to-issuer-request" class="section-name selfRef">Client-to-Issuer Request</a>
         </h3>
-<p id="section-7.1-1">Given Origin-provided input <code>tokenChallenge</code> and the Issuer Public Key ID <code>issuer_key_id</code>,
-the Client first creates a credential request message using the <code>CredentialRequest</code>
+<p id="section-7.1-1">Given Origin-provided input <code>tokenChallenge</code> and the fixed-length Issuer Public Key ID <code>issuer_key_id</code>,
+the Client first creates a credential request message using the <code>CreateCredentialRequest</code>
 function from <span>[<a href="#ARC" class="cite xref">ARC</a>]</span> as follows:<a href="#section-7.1-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-7.1-2">
 <pre>
-request_context = concat(tokenChallenge.issuer_name,
+request_context = concat(
+  encode(2, len(tokenChallenge.issuer_name)),
+  tokenChallenge.issuer_name,
+  encode(2, len(tokenChallenge.origin_info)),
   tokenChallenge.origin_info,
+  encode(2, len(tokenChallenge.credential_context)),
   tokenChallenge.credential_context,
   issuer_key_id)
-(clientSecrets, request) = CredentialRequest(request_context)
+(clientSecrets, request) = CreateCredentialRequest(request_context)
 </pre><a href="#section-7.1-2" class="pilcrow">¶</a>
 </div>
-<p id="section-7.1-3">The Client then creates a TokenRequest structure as follows:<a href="#section-7.1-3" class="pilcrow">¶</a></p>
+<p id="section-7.1-3">The Client then creates a CredentialRequest structure as follows:<a href="#section-7.1-3" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-7.1-4">
 <pre>
 struct {
   uint16_t token_type = 0xE5AC; /* Type ARC(P-256) */
   uint8_t truncated_issuer_key_id;
   uint8_t encoded_request[Nrequest];
-} TokenRequest;
+} CredentialRequest;
 </pre><a href="#section-7.1-4" class="pilcrow">¶</a>
 </div>
 <p id="section-7.1-5">The structure fields are defined as follows:<a href="#section-7.1-5" class="pilcrow">¶</a></p>
@@ -1545,11 +1569,11 @@ and referenced information for more details.<a href="#section-7.1-6.2.1" class="
 </li>
           <li class="normal" id="section-7.1-6.3">
             <p id="section-7.1-6.3.1">"encoded_request" is the Nrequest-octet request, computed as the serialization
-of the <code>request</code> value as defined in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-7.1-6.3.1" class="pilcrow">¶</a></p>
+of the <code>request</code> value as defined in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-7.1-6.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-7.1-7">The Client then generates an HTTP POST request to send to the Issuer Request URL,
-with the TokenRequest as the content. The media type for this request is
+with the CredentialRequest as the content. The media type for this request is
 "application/private-credential-request". An example request for the Issuer Request URL
 "https://issuer.example.net/request" is shown below.<a href="#section-7.1-7" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-7.1-8">
@@ -1558,9 +1582,9 @@ POST /request HTTP/1.1
 Host: issuer.example.net
 Accept: application/private-credential-response
 Content-Type: application/private-credential-request
-Content-Length: &lt;Length of TokenRequest&gt;
+Content-Length: &lt;Length of CredentialRequest&gt;
 
-&lt;Bytes containing the TokenRequest&gt;
+&lt;Bytes containing the CredentialRequest&gt;
 </pre><a href="#section-7.1-8" class="pilcrow">¶</a>
 </div>
 </section>
@@ -1573,55 +1597,55 @@ Content-Length: &lt;Length of TokenRequest&gt;
 <p id="section-7.2-1">Upon receipt of the request, the Issuer validates the following conditions:<a href="#section-7.2-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-7.2-2.1">
-            <p id="section-7.2-2.1.1">The TokenRequest contains a supported token_type equal to value 0xE5AC.<a href="#section-7.2-2.1.1" class="pilcrow">¶</a></p>
+            <p id="section-7.2-2.1.1">The CredentialRequest contains a supported token_type equal to value 0xE5AC.<a href="#section-7.2-2.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-7.2-2.2">
-            <p id="section-7.2-2.2.1">The TokenRequest.truncated_token_key_id corresponds to the truncated key ID
+            <p id="section-7.2-2.2.1">The CredentialRequest.truncated_token_key_id corresponds to the truncated key ID
 of an Issuer Public Key, with corresponding secret key <code>skI</code>, owned by
 the Issuer.<a href="#section-7.2-2.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-7.2-2.3">
-            <p id="section-7.2-2.3.1">The TokenRequest.encoded_request is of the correct size (<code>Nrequest</code>).<a href="#section-7.2-2.3.1" class="pilcrow">¶</a></p>
+            <p id="section-7.2-2.3.1">The CredentialRequest.encoded_request is of the correct size (<code>Nrequest</code>).<a href="#section-7.2-2.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-7.2-3">If any of these conditions is not met, the Issuer <span class="bcp14">MUST</span> return an HTTP 422
 (Unprocessable Content) error to the client.<a href="#section-7.2-3" class="pilcrow">¶</a></p>
 <p id="section-7.2-4">If these conditions are met, the Issuer then tries to deserialize
-TokenRequest.encoded_request according to <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>, yielding <code>request</code>.
+CredentialRequest.encoded_request according to <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>, yielding <code>request</code>.
 If this fails, the Issuer <span class="bcp14">MUST</span> return an HTTP 422 (Unprocessable Content)
 error to the client. Otherwise, if the Issuer is willing to produce a credential
 for the Client, the Issuer completes the issuance flow by an issuance response
 as follows:<a href="#section-7.2-4" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-7.2-5">
 <pre>
-response = CredentialResponse(skI, pkI, request)
+response = CreateCredentialResponse(skI, pkI, request)
 </pre><a href="#section-7.2-5" class="pilcrow">¶</a>
 </div>
-<p id="section-7.2-6">The Issuer then creates a TokenResponse structured as follows:<a href="#section-7.2-6" class="pilcrow">¶</a></p>
+<p id="section-7.2-6">The Issuer then creates a CredentialResponse structured as follows:<a href="#section-7.2-6" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-7.2-7">
 <pre>
 struct {
    uint8_t encoded_response[Nresponse];
-} TokenResponse;
+} CredentialResponse;
 </pre><a href="#section-7.2-7" class="pilcrow">¶</a>
 </div>
 <p id="section-7.2-8">The structure fields are defined as follows:<a href="#section-7.2-8" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-7.2-9.1">
             <p id="section-7.2-9.1.1">"encoded_response" is the Nresponse-octet encoded issuance response message, computed
-as the serialization of <code>response</code> as specified in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01#section-4.2.2" class="relref">Section 4.2.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-7.2-9.1.1" class="pilcrow">¶</a></p>
+as the serialization of <code>response</code> as specified in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#section-4.2.2" class="relref">Section 4.2.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-7.2-9.1.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-7.2-10">The Issuer generates an HTTP response with status code 200 whose content
-consists of TokenResponse, with the content type set as
+consists of CredentialResponse, with the content type set as
 "application/private-credential-response".<a href="#section-7.2-10" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-7.2-11">
 <pre>
 HTTP/1.1 200 OK
 Content-Type: application/private-credential-response
-Content-Length: &lt;Length of TokenResponse&gt;
+Content-Length: &lt;Length of CredentialResponse&gt;
 
-&lt;Bytes containing the TokenResponse&gt;
+&lt;Bytes containing the CredentialResponse&gt;
 </pre><a href="#section-7.2-11" class="pilcrow">¶</a>
 </div>
 </section>
@@ -1632,7 +1656,7 @@ Content-Length: &lt;Length of TokenResponse&gt;
 <a href="#section-7.3" class="section-number selfRef">7.3. </a><a href="#name-credential-finalization" class="section-name selfRef">Credential Finalization</a>
         </h3>
 <p id="section-7.3-1">Upon receipt, the Client handles the response and, if successful, deserializes
-the content values <code>TokenResponse.encoded_response</code> according to <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01#section-4.2.2" class="relref">Section 4.2.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>
+the content values <code>CredentialResponse.encoded_response</code> according to <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#section-4.2.2" class="relref">Section 4.2.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>
 yielding <code>response</code>. If deserialization fails, the Client aborts the protocol.
 Otherwise, the Client processes the response as follows:<a href="#section-7.3-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-7.3-2">
@@ -1663,16 +1687,20 @@ way, as well as verifying a resulting token, is described in the following secti
 <a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-token-creation" class="section-name selfRef">Token Creation</a>
         </h3>
 <p id="section-8.1-1">Given a TokenChallenge value as input, denoted <code>challenge</code>, a presentation limit,
-denoted <code>presentationLimit</code>, and a previously computed credential that is valid
+denoted <code>presentation_limit</code>, and a previously computed credential that is valid
 for the Issuer identifier in the challenge, denoted <code>credential</code>, Clients compute
 a credential presentation value as follows:<a href="#section-8.1-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-8.1-2">
 <pre>
-presentation_context = concat(tokenChallenge.issuer_name,
-  tokenChallenge.origin_info,
-  tokenChallenge.redemption_context,
+presentation_context = concat(
+  encode(2, len(challenge.issuer_name)),
+  challenge.issuer_name,
+  encode(2, len(challenge.origin_info)),
+  challenge.origin_info,
+  encode(2, len(challenge.redemption_context)),
+  challenge.redemption_context,
   issuer_key_id)
-state = MakePresentationState(credential, presentation_context, presentationLimit)
+state = MakePresentationState(credential, presentation_context, presentation_limit)
 newState, nonce, presentation = Present(state)
 </pre><a href="#section-8.1-2" class="pilcrow">¶</a>
 </div>
@@ -1684,8 +1712,9 @@ see <a href="#security" class="auto internal xref">Section 9</a>.<a href="#secti
 <pre>
 struct {
     uint16_t token_type = 0xE5AC; /* Type ARC(P-256) */
-    uint8_t issuer_key_id[Nid];
     uint32_t presentation_nonce;
+    uint8_t challenge_digest[32];
+    uint8_t issuer_key_id[Nid];
     uint8_t presentation[Npresentation];
 } Token;
 </pre><a href="#section-8.1-5" class="pilcrow">¶</a>
@@ -1696,15 +1725,18 @@ struct {
             <p id="section-8.1-7.1.1">"token_type" is a 2-octet integer, in network byte order, equal to 0xE5AC.<a href="#section-8.1-7.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-8.1-7.2">
-            <p id="section-8.1-7.2.1">"issuer_key_id" is a Nid-octet identifier for the Issuer Public Key, computed
-as defined in <a href="#setup" class="auto internal xref">Section 5</a>.<a href="#section-8.1-7.2.1" class="pilcrow">¶</a></p>
+            <p id="section-8.1-7.2.1">"presentation_nonce" is a 4-octet integer, in network byte order, equal to the nonce output from ARC.<a href="#section-8.1-7.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-8.1-7.3">
-            <p id="section-8.1-7.3.1">"presentation_nonce" is a 32-bit encoding of the nonce output from ARC.<a href="#section-8.1-7.3.1" class="pilcrow">¶</a></p>
+            <p id="section-8.1-7.3.1">"challenge_digest" is a 32-octet value containing the hash of the original TokenChallenge, SHA-256(TokenChallenge).<a href="#section-8.1-7.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-8.1-7.4">
-            <p id="section-8.1-7.4.1">"presentation" is a Npresentation-octet presentation, set to the serialized
-<code>presentation</code> value (see <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01#section-4.3.2" class="relref">Section 4.3.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span> for serialiation details).<a href="#section-8.1-7.4.1" class="pilcrow">¶</a></p>
+            <p id="section-8.1-7.4.1">"issuer_key_id" is a Nid-octet identifier for the Issuer Public Key, computed
+as defined in <a href="#setup" class="auto internal xref">Section 5</a>.<a href="#section-8.1-7.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.1-7.5">
+            <p id="section-8.1-7.5.1">"presentation" is a Npresentation-octet presentation, set to the serialized
+<code>presentation</code> value (see <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#section-4.3.2" class="relref">Section 4.3.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span> for serialiation details).<a href="#section-8.1-7.5.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -1715,29 +1747,48 @@ as defined in <a href="#setup" class="auto internal xref">Section 5</a>.<a href=
 <a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-token-verification" class="section-name selfRef">Token Verification</a>
         </h3>
 <p id="section-8.2-1">Given a deserialized presentation from the token, denoted <code>presentation</code> and
-obtained by deserializing a presentation according to <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01#section-4.3.2" class="relref">Section 4.3.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>,
-a presentation limit, denoted <code>presentation_limit</code>, a presentation nonce
-from a token, denoted <code>nonce</code>, and the digest of a token challenge, denoted
-<code>challenge_digest</code>, verifying a Token requires invoking the VerifyPresentation
-function from <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01#section-4.3.3" class="relref">Section 4.3.3</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span> in the following ways:<a href="#section-8.2-1" class="pilcrow">¶</a></p>
+obtained by deserializing a presentation according to <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#section-4.3.2" class="relref">Section 4.3.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>,
+a presentation limit, denoted <code>presentation_limit</code>, a fixed-length Issuer Public Key
+ID, denoted <code>issuer_key_id</code>, a presentation nonce from a token, denoted <code>nonce</code>, and
+the digest of a token challenge, denoted <code>challenge_digest</code>, verifying a Token
+requires invoking the VerifyPresentation function from <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#section-4.3.3" class="relref">Section 4.3.3</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span> in
+the following ways:<a href="#section-8.2-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-8.2-2">
 <pre>
-request_context = concat(tokenChallenge.issuer_name,
+request_context = concat(
+  encode(2, len(tokenChallenge.issuer_name)),
+  tokenChallenge.issuer_name,
+  encode(2, len(tokenChallenge.origin_info)),
   tokenChallenge.origin_info,
+  encode(2, len(tokenChallenge.credential_context)),
   tokenChallenge.credential_context,
   issuer_key_id)
-presentation_context = concat(tokenChallenge.issuer_name,
+
+presentation_context = concat(
+  encode(2, len(tokenChallenge.issuer_name)),
+  tokenChallenge.issuer_name,
+  encode(2, len(tokenChallenge.origin_info)),
   tokenChallenge.origin_info,
+  encode(2, len(tokenChallenge.redemption_context)),
   tokenChallenge.redemption_context,
   issuer_key_id)
-valid = VerifyPresentation(skI, pkI, request_context, presentation_context, nonce, presentation, presentation_limit)
+
+valid = VerifyPresentation(
+  skI,
+  pkI,
+  request_context,
+  presentation_context,
+  nonce,
+  presentation,
+  presentation_limit)
 </pre><a href="#section-8.2-2" class="pilcrow">¶</a>
 </div>
 <p id="section-8.2-3">This function returns True if the CredentialToken is valid, and False otherwise.<a href="#section-8.2-3" class="pilcrow">¶</a></p>
-<p id="section-8.2-4">Implementation-specific steps: to prevent double spending, the Origin should perform a check that the
-tag (presentation.tag) has not previously been seen. It then stores the tag for use in future double
-spending checks. To reduce the overhead of performing double spend checks, the Origin can store and
-look up the tags corresponding to the associated request_context and presentation_context values.<a href="#section-8.2-4" class="pilcrow">¶</a></p>
+<p id="section-8.2-4">To prevent double spending, the Origin <span class="bcp14">SHOULD</span> perform a check that the tag output
+from VerifyPresentation has not previously been seen. It can do this by checking
+the tag against previously seen tags. To improve double spend performance, the Origin
+can store and look up tags corresponding to the associated request_context and
+presentation_context values.<a href="#section-8.2-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1754,7 +1805,7 @@ requires a joint Origin and Issuer configuration given that it is privately veri
 unlinkability, as described in <span><a href="https://rfc-editor.org/rfc/rfc9576#section-3.3" class="relref">Section 3.3</a> of [<a href="#ARCHITECTURE" class="cite xref">ARCHITECTURE</a>]</span>, with one exception.
 While redemption context unlinkability is achieved by re-randomizing credentials every time
 they are presented as tokens, there is a reduction in the anonymity set in the case of presentation
-nonce collisions, as detailed in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01#section-7.2" class="relref">Section 7.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-9-2" class="pilcrow">¶</a></p>
+nonce collisions, as detailed in <span><a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#section-7.2" class="relref">Section 7.2</a> of [<a href="#ARC" class="cite xref">ARC</a>]</span>.<a href="#section-9-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
@@ -1762,46 +1813,287 @@ nonce collisions, as detailed in <span><a href="https://datatracker.ietf.org/doc
       <h2 id="name-iana-considerations">
 <a href="#section-10" class="section-number selfRef">10. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-10-1">This document updates the "Privacy Pass Token Type" Registry with the
-following entries.<a href="#section-10-1" class="pilcrow">¶</a></p>
+<p id="section-10-1">This section documents IANA registry updates.<a href="#section-10-1" class="pilcrow">¶</a></p>
+<div id="privacy-pass-token-types-registry-updates">
+<section id="section-10.1">
+        <h3 id="name-privacy-pass-token-types-re">
+<a href="#section-10.1" class="section-number selfRef">10.1. </a><a href="#name-privacy-pass-token-types-re" class="section-name selfRef">Privacy Pass Token Types Registry Updates</a>
+        </h3>
+<p id="section-10.1-1">This document updates the "Privacy Pass Token Type" Registry with the
+following entries.<a href="#section-10.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-10-2.1">
-          <p id="section-10-2.1.1">Value: 0xE5AC<a href="#section-10-2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-10.1-2.1">
+            <p id="section-10.1-2.1.1">Value: 0xE5AC<a href="#section-10.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-10-2.2">
-          <p id="section-10-2.2.1">Name: ARC (P-256)<a href="#section-10-2.2.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-10.1-2.2">
+            <p id="section-10.1-2.2.1">Name: ARC (P-256)<a href="#section-10.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-10-2.3">
-          <p id="section-10-2.3.1">Token Structure: As defined in <span><a href="https://rfc-editor.org/rfc/rfc9577#section-2.2" class="relref">Section 2.2</a> of [<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>]</span><a href="#section-10-2.3.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-10.1-2.3">
+            <p id="section-10.1-2.3.1">Token Structure: As defined in <span><a href="https://rfc-editor.org/rfc/rfc9577#section-2.2" class="relref">Section 2.2</a> of [<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>]</span><a href="#section-10.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-10-2.4">
-          <p id="section-10-2.4.1">Token Key Encoding: Serialized as described in <a href="#setup" class="auto internal xref">Section 5</a><a href="#section-10-2.4.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-10.1-2.4">
+            <p id="section-10.1-2.4.1">Token Key Encoding: Serialized as described in <a href="#setup" class="auto internal xref">Section 5</a><a href="#section-10.1-2.4.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-10-2.5">
-          <p id="section-10-2.5.1">TokenChallenge Structure: As defined in <span><a href="https://rfc-editor.org/rfc/rfc9577#section-2.1" class="relref">Section 2.1</a> of [<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>]</span><a href="#section-10-2.5.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-10.1-2.5">
+            <p id="section-10.1-2.5.1">TokenChallenge Structure: As defined in <span><a href="https://rfc-editor.org/rfc/rfc9577#section-2.1" class="relref">Section 2.1</a> of [<a href="#AUTHSCHEME" class="cite xref">AUTHSCHEME</a>]</span><a href="#section-10.1-2.5.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-10-2.6">
-          <p id="section-10-2.6.1">Public Verifiability: N<a href="#section-10-2.6.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-10.1-2.6">
+            <p id="section-10.1-2.6.1">Public Verifiability: N<a href="#section-10.1-2.6.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-10-2.7">
-          <p id="section-10-2.7.1">Public Metadata: N<a href="#section-10-2.7.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-10.1-2.7">
+            <p id="section-10.1-2.7.1">Public Metadata: N<a href="#section-10.1-2.7.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-10-2.8">
-          <p id="section-10-2.8.1">Private Metadata: N<a href="#section-10-2.8.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-10.1-2.8">
+            <p id="section-10.1-2.8.1">Private Metadata: N<a href="#section-10.1-2.8.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-10-2.9">
-          <p id="section-10-2.9.1">Nk: 0 (not applicable)<a href="#section-10-2.9.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-10.1-2.9">
+            <p id="section-10.1-2.9.1">Nk: 0 (not applicable)<a href="#section-10.1-2.9.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-10-2.10">
-          <p id="section-10-2.10.1">Nid: 32<a href="#section-10-2.10.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-10.1-2.10">
+            <p id="section-10.1-2.10.1">Nid: 32<a href="#section-10.1-2.10.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-10-2.11">
-          <p id="section-10-2.11.1">Reference: This document<a href="#section-10-2.11.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-10.1-2.11">
+            <p id="section-10.1-2.11.1">Reference: This document<a href="#section-10.1-2.11.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-10-2.12">
-          <p id="section-10-2.12.1">Notes: None<a href="#section-10-2.12.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-10.1-2.12">
+            <p id="section-10.1-2.12.1">Notes: None<a href="#section-10.1-2.12.1" class="pilcrow">¶</a></p>
 </li>
-      </ul>
+        </ul>
+</section>
+</div>
+<div id="media-types">
+<section id="section-10.2">
+        <h3 id="name-media-types">
+<a href="#section-10.2" class="section-number selfRef">10.2. </a><a href="#name-media-types" class="section-name selfRef">Media Types</a>
+        </h3>
+<p id="section-10.2-1">The following entries should be added to the IANA "media types"
+registry:<a href="#section-10.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-10.2-2.1">
+            <p id="section-10.2-2.1.1">"application/private-credential-request"<a href="#section-10.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-10.2-2.2">
+            <p id="section-10.2-2.2.1">"application/private-credential-response"<a href="#section-10.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-10.2-3">The templates for these entries are listed below and the
+reference should be this RFC.<a href="#section-10.2-3" class="pilcrow">¶</a></p>
+<div id="applicationprivate-credential-request-media-type">
+<section id="section-10.2.1">
+          <h4 id="name-application-private-credent">
+<a href="#section-10.2.1" class="section-number selfRef">10.2.1. </a><a href="#name-application-private-credent" class="section-name selfRef">"application/private-credential-request" media type</a>
+          </h4>
+<span class="break"></span><dl class="dlCompact dlParallel" id="section-10.2.1-1">
+            <dt id="section-10.2.1-1.1">Type name:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.1-1.2">
+              <p id="section-10.2.1-1.2.1">application<a href="#section-10.2.1-1.2.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.1-1.3">Subtype name:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.1-1.4">
+              <p id="section-10.2.1-1.4.1">private-credential-request<a href="#section-10.2.1-1.4.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.1-1.5">Required parameters:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.1-1.6">
+              <p id="section-10.2.1-1.6.1">N/A<a href="#section-10.2.1-1.6.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.1-1.7">Optional parameters:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.1-1.8">
+              <p id="section-10.2.1-1.8.1">N/A<a href="#section-10.2.1-1.8.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.1-1.9">Encoding considerations:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.1-1.10">
+              <p id="section-10.2.1-1.10.1">"binary"<a href="#section-10.2.1-1.10.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.1-1.11">Security considerations:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.1-1.12">
+              <p id="section-10.2.1-1.12.1">see <a href="#security" class="auto internal xref">Section 9</a><a href="#section-10.2.1-1.12.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.1-1.13">Interoperability considerations:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.1-1.14">
+              <p id="section-10.2.1-1.14.1">N/A<a href="#section-10.2.1-1.14.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.1-1.15">Published specification:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.1-1.16">
+              <p id="section-10.2.1-1.16.1">this specification<a href="#section-10.2.1-1.16.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.1-1.17">Applications that use this media type:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.1-1.18">
+              <p id="section-10.2.1-1.18.1">Applications that want to issue or facilitate issuance of Privacy Pass tokens,
+including Privacy Pass issuer applications themselves.<a href="#section-10.2.1-1.18.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.1-1.19">Fragment identifier considerations:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.1-1.20">
+              <p id="section-10.2.1-1.20.1">N/A<a href="#section-10.2.1-1.20.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.1-1.21">Additional information:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.1-1.22">
+              <span class="break"></span><dl class="dlCompact dlParallel" id="section-10.2.1-1.22.1">
+                <dt id="section-10.2.1-1.22.1.1">Magic number(s):</dt>
+                <dd style="margin-left: 1.5em" id="section-10.2.1-1.22.1.2">N/A<a href="#section-10.2.1-1.22.1.2" class="pilcrow">¶</a>
+</dd>
+                <dd class="break"></dd>
+<dt id="section-10.2.1-1.22.1.3">Deprecated alias names for this type:</dt>
+                <dd style="margin-left: 1.5em" id="section-10.2.1-1.22.1.4">N/A<a href="#section-10.2.1-1.22.1.4" class="pilcrow">¶</a>
+</dd>
+                <dd class="break"></dd>
+<dt id="section-10.2.1-1.22.1.5">File extension(s):</dt>
+                <dd style="margin-left: 1.5em" id="section-10.2.1-1.22.1.6">N/A<a href="#section-10.2.1-1.22.1.6" class="pilcrow">¶</a>
+</dd>
+                <dd class="break"></dd>
+<dt id="section-10.2.1-1.22.1.7">Macintosh file type code(s):</dt>
+                <dd style="margin-left: 1.5em" id="section-10.2.1-1.22.1.8">N/A<a href="#section-10.2.1-1.22.1.8" class="pilcrow">¶</a>
+</dd>
+              <dd class="break"></dd>
+</dl>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.1-1.23">Person and email address to contact for further information:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.1-1.24">
+              <p id="section-10.2.1-1.24.1">see Authors' Addresses section<a href="#section-10.2.1-1.24.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.1-1.25">Intended usage:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.1-1.26">
+              <p id="section-10.2.1-1.26.1">COMMON<a href="#section-10.2.1-1.26.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.1-1.27">Restrictions on usage:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.1-1.28">
+              <p id="section-10.2.1-1.28.1">N/A<a href="#section-10.2.1-1.28.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.1-1.29">Author:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.1-1.30">
+              <p id="section-10.2.1-1.30.1">see Authors' Addresses section<a href="#section-10.2.1-1.30.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.1-1.31">Change controller:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.1-1.32">
+              <p id="section-10.2.1-1.32.1">IETF<a href="#section-10.2.1-1.32.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="applicationprivate-credential-response-media-type">
+<section id="section-10.2.2">
+          <h4 id="name-application-private-credenti">
+<a href="#section-10.2.2" class="section-number selfRef">10.2.2. </a><a href="#name-application-private-credenti" class="section-name selfRef">"application/private-credential-response" media type</a>
+          </h4>
+<span class="break"></span><dl class="dlCompact dlParallel" id="section-10.2.2-1">
+            <dt id="section-10.2.2-1.1">Type name:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.2-1.2">
+              <p id="section-10.2.2-1.2.1">application<a href="#section-10.2.2-1.2.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.2-1.3">Subtype name:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.2-1.4">
+              <p id="section-10.2.2-1.4.1">private-credential-response<a href="#section-10.2.2-1.4.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.2-1.5">Required parameters:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.2-1.6">
+              <p id="section-10.2.2-1.6.1">N/A<a href="#section-10.2.2-1.6.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.2-1.7">Optional parameters:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.2-1.8">
+              <p id="section-10.2.2-1.8.1">N/A<a href="#section-10.2.2-1.8.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.2-1.9">Encoding considerations:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.2-1.10">
+              <p id="section-10.2.2-1.10.1">"binary"<a href="#section-10.2.2-1.10.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.2-1.11">Security considerations:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.2-1.12">
+              <p id="section-10.2.2-1.12.1">see <a href="#security" class="auto internal xref">Section 9</a><a href="#section-10.2.2-1.12.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.2-1.13">Interoperability considerations:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.2-1.14">
+              <p id="section-10.2.2-1.14.1">N/A<a href="#section-10.2.2-1.14.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.2-1.15">Published specification:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.2-1.16">
+              <p id="section-10.2.2-1.16.1">this specification<a href="#section-10.2.2-1.16.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.2-1.17">Applications that use this media type:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.2-1.18">
+              <p id="section-10.2.2-1.18.1">Applications that want to issue or facilitate issuance of Privacy Pass tokens,
+including Privacy Pass issuer applications themselves.<a href="#section-10.2.2-1.18.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.2-1.19">Fragment identifier considerations:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.2-1.20">
+              <p id="section-10.2.2-1.20.1">N/A<a href="#section-10.2.2-1.20.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.2-1.21">Additional information:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.2-1.22">
+              <span class="break"></span><dl class="dlCompact dlParallel" id="section-10.2.2-1.22.1">
+                <dt id="section-10.2.2-1.22.1.1">Magic number(s):</dt>
+                <dd style="margin-left: 1.5em" id="section-10.2.2-1.22.1.2">N/A<a href="#section-10.2.2-1.22.1.2" class="pilcrow">¶</a>
+</dd>
+                <dd class="break"></dd>
+<dt id="section-10.2.2-1.22.1.3">Deprecated alias names for this type:</dt>
+                <dd style="margin-left: 1.5em" id="section-10.2.2-1.22.1.4">N/A<a href="#section-10.2.2-1.22.1.4" class="pilcrow">¶</a>
+</dd>
+                <dd class="break"></dd>
+<dt id="section-10.2.2-1.22.1.5">File extension(s):</dt>
+                <dd style="margin-left: 1.5em" id="section-10.2.2-1.22.1.6">N/A<a href="#section-10.2.2-1.22.1.6" class="pilcrow">¶</a>
+</dd>
+                <dd class="break"></dd>
+<dt id="section-10.2.2-1.22.1.7">Macintosh file type code(s):</dt>
+                <dd style="margin-left: 1.5em" id="section-10.2.2-1.22.1.8">N/A<a href="#section-10.2.2-1.22.1.8" class="pilcrow">¶</a>
+</dd>
+              <dd class="break"></dd>
+</dl>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.2-1.23">Person and email address to contact for further information:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.2-1.24">
+              <p id="section-10.2.2-1.24.1">see Authors' Addresses section<a href="#section-10.2.2-1.24.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.2-1.25">Intended usage:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.2-1.26">
+              <p id="section-10.2.2-1.26.1">COMMON<a href="#section-10.2.2-1.26.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.2-1.27">Restrictions on usage:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.2-1.28">
+              <p id="section-10.2.2-1.28.1">N/A<a href="#section-10.2.2-1.28.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.2-1.29">Author:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.2-1.30">
+              <p id="section-10.2.2-1.30.1">see Authors' Addresses section<a href="#section-10.2.2-1.30.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-10.2.2-1.31">Change controller:</dt>
+            <dd style="margin-left: 1.5em" id="section-10.2.2-1.32">
+              <p id="section-10.2.2-1.32.1">IETF<a href="#section-10.2.2-1.32.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
 </section>
 </div>
 <div id="sec-combined-references">
@@ -1817,7 +2109,7 @@ following entries.<a href="#section-10-1" class="pilcrow">¶</a></p>
 <dl class="references">
 <dt id="ARC">[ARC]</dt>
         <dd>
-<span class="refAuthor">Yun, C.</span> and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Anonymous Rate-Limited Credentials"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-yun-cfrg-arc-01</span>, <time datetime="2025-08-06" class="refDate">6 August 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01">https://datatracker.ietf.org/doc/html/draft-yun-cfrg-arc-01</a>&gt;</span>. </dd>
+<span class="refAuthor">Yun, C.</span> and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Anonymous Rate-Limited Credentials"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-yun-privacypass-crypto-arc-00</span>, <time datetime="2025-10-20" class="refDate">20 October 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00">https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="ARCHITECTURE">[ARCHITECTURE]</dt>
         <dd>
