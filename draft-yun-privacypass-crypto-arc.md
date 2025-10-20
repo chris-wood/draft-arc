@@ -3,18 +3,18 @@ title: "Anonymous Rate-Limited Credentials"
 abbrev: "ARC"
 category: info
 
-docname: draft-yun-cfrg-arc-latest
-submissiontype: IRTF
+docname: draft-yun-privacypass-crypto-arc-latest
+submissiontype: IETF
 number:
 date:
-v: 3
+v: 0
 venue:
-  group: "Crypto Forum"
-  type: ""
-  mail: "cfrg@ietf.org"
-  arch: "https://mailarchive.ietf.org/arch/browse/cfrg"
-  github: "chris-wood/draft-arc"
-  latest: "https://chris-wood.github.io/draft-arc/draft-yun-cfrg-arc.html"
+  group: PRIVACYPASS
+  type: Privacy Pass
+  mail: privacy-pass@ietf.org
+  arch: https://mailarchive.ietf.org/arch/browse/privacy-pass
+  github: chris-wood/draft-arc
+  latest: https://chris-wood.github.io/draft-arc/draft-yun-privacypass-crypto-arc.html
 
 author:
  -

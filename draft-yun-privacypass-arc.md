@@ -12,10 +12,10 @@ v: 3
 venue:
   group: PRIVACYPASS
   type: Privacy Pass
-  mail: WG@example.com
-  arch: https://example.com/WG
-  github: USER/REPO
-  latest: https://example.com/LATEST
+  mail: privacy-pass@ietf.org
+  arch: https://mailarchive.ietf.org/arch/browse/privacy-pass
+  github: chris-wood/draft-arc
+  latest: https://chris-wood.github.io/draft-arc/draft-yun-privacypass-arc.html
 
 author:
  -
