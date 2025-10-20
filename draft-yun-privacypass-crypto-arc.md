@@ -3,18 +3,18 @@ title: "Anonymous Rate-Limited Credentials"
 abbrev: "ARC"
 category: info
 
-docname: draft-yun-cfrg-arc-latest
-submissiontype: IRTF
+docname: draft-yun-privacypass-crypto-arc-latest
+submissiontype: IETF
 number:
 date:
-v: 3
+v: 0
 venue:
-  group: "Crypto Forum"
-  type: ""
-  mail: "cfrg@ietf.org"
-  arch: "https://mailarchive.ietf.org/arch/browse/cfrg"
-  github: "chris-wood/draft-arc"
-  latest: "https://chris-wood.github.io/draft-arc/draft-yun-cfrg-arc.html"
+  group: PRIVACYPASS
+  type: Privacy Pass
+  mail: privacy-pass@ietf.org
+  arch: https://mailarchive.ietf.org/arch/browse/privacy-pass
+  github: chris-wood/draft-arc
+  latest: https://chris-wood.github.io/draft-arc/draft-yun-privacypass-crypto-arc.html
 
 author:
  -
@@ -1491,7 +1491,7 @@ contextString is "ARCV1-P256".
   - Identity(): As defined in {{NISTCurves}}.
   - Generator(): As defined in {{NISTCurves}}.
   - RandomScalar(): Implemented by returning a uniformly random Scalar in the range
-    \[0, `G.Order()` - 1\]. Refer to {{random-scalar}} for implementation guidance.
+    \[1, `G.Order()` - 1\]. Refer to {{random-scalar}} for implementation guidance.
   - HashToGroup(x, info): Use hash_to_curve with suite P256_XMD:SHA-256_SSWU_RO\_
     {{!I-D.irtf-cfrg-hash-to-curve}}, input `x`, and DST =
     "HashToGroup-" || contextString || info.
@@ -1519,13 +1519,13 @@ contextString is "ARCV1-P256".
 ## Random Scalar Generation {#random-scalar}
 
 Two popular algorithms for generating a random integer uniformly distributed in
-the range \[0, G.Order() -1\] are as follows:
+the range \[1, G.Order() -1\] are as follows:
 
 ### Rejection Sampling
 
 Generate a random byte array with `Ns` bytes, and attempt to map to a Scalar
-by calling `DeserializeScalar` in constant time. If it succeeds, return the
-result. If it fails, try again with another random byte array, until the
+by calling `DeserializeScalar` in constant time. If it succeeds and is non-zero,
+return the result. Otherwise, try again with another random byte array, until the
 procedure succeeds. Failure to implement `DeserializeScalar` in constant time
 can leak information about the underlying corresponding Scalar.
 
