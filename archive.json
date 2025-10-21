@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-19T00:10:35.468778+00:00",
+  "timestamp": "2025-10-21T00:09:29.352991+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -2530,6 +2530,90 @@
           "body": "LGTM",
           "createdAt": "2025-10-17T19:56:46Z",
           "updatedAt": "2025-10-17T19:56:46Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 43,
+      "id": "PR_kwDONyB6uM6usgCs",
+      "title": "Rename `cfrg` spec to `privacypass-crypto`",
+      "url": "https://github.com/chris-wood/draft-arc/pull/43",
+      "state": "MERGED",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "- Rename `cfrg` spec to `privacypass-crypto`, to reflect that the call for adoption is happening in the Privacy Pass working group (both for the Privacy Pass issuance workflow, and for the crypto protocol).\r\n- Update internal names and links\r\n- Also sneak in a typo fix for the RandomScalar range, to start at 1 instead of 0.\r\n\r\nNote that the privacypass spec does not yet reference the updated name for the crypto spec, because we need to publish that first before updating the privacypass spec reference (or else the build breaks). Will do that as a fast-follow.",
+      "createdAt": "2025-10-20T19:20:44Z",
+      "updatedAt": "2025-10-20T19:22:38Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "83226bde90dae15086315c5140176485acf23bf8",
+      "headRepository": "chris-wood/draft-arc",
+      "headRefName": "cathie/ietf124-cleanup",
+      "headRefOid": "d7e0b7251b1a53fccb0cfe5d29b7e465e1aaf62a",
+      "closedAt": "2025-10-20T19:22:35Z",
+      "mergedAt": "2025-10-20T19:22:35Z",
+      "mergedBy": "cathieyun",
+      "mergeCommit": {
+        "oid": "92eb423bdb0b7275bf97c33219f2c9c2d0aef7f6"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDONyB6uM7IIXlR",
+          "commit": {
+            "abbreviatedOid": "d7e0b72"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-10-20T19:22:16Z",
+          "updatedAt": "2025-10-20T19:22:16Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 44,
+      "id": "PR_kwDONyB6uM6usozP",
+      "title": "Update ARC crypto reference",
+      "url": "https://github.com/chris-wood/draft-arc/pull/44",
+      "state": "MERGED",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Update ARC crypto reference from `cfrg` to `privacypass-crypto`.\r\n\r\nWe couldn't do this in the previous PR because we had not yet pushed the `privacypass-crypto` spec to Datatracker, so making this change would have broken the spec build.",
+      "createdAt": "2025-10-20T19:34:03Z",
+      "updatedAt": "2025-10-20T19:37:15Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "92eb423bdb0b7275bf97c33219f2c9c2d0aef7f6",
+      "headRepository": "chris-wood/draft-arc",
+      "headRefName": "cathie/privacypass-ref",
+      "headRefOid": "357c7260dd68c1e208a2df90a7c483f486f17563",
+      "closedAt": "2025-10-20T19:37:05Z",
+      "mergedAt": "2025-10-20T19:37:05Z",
+      "mergedBy": "cathieyun",
+      "mergeCommit": {
+        "oid": "e77336a8ba75a3f5b02d1fb68d2d9694921c8005"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDONyB6uM7IIgSH",
+          "commit": {
+            "abbreviatedOid": "357c726"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-10-20T19:34:36Z",
+          "updatedAt": "2025-10-20T19:34:36Z",
           "comments": []
         }
       ]
