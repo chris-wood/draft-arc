@@ -132,21 +132,24 @@ presentation. Otherwise, Clients invoke the issuance protocol to obtain a
 credential. This interaction is shown below.
 
 ~~~ aasvg
-                                      +---------------------------+
-+--------+          +----------+      |  +--------+   +--------+  |
-| Client |          | Attester |      |  | Issuer |   | Origin |  |
-+---+----+          +-----+----+      |  +----+---+   +---+----+  |
-    |                     |           +-------|-----------|------ +
-    |                     |                   |           |
-    |--------------------- Request ---------------------->|
-    <----------------- TokenChallenge --------------------+
-    |                     |                   |           |
-    | <== Attestation ==> |                   |           |
-    +----------- CredentialRequest ---------->|           |
-    |<---------- CredentialResponse ----------+           |
-    |                     |                   |           |
-    |----------- Request + Token ------------------------>|
-    |                     |                   |           |
+                                       +------------------------.
+      +--------+        +----------+   |  +--------+ +--------+  |
+      | Client |        | Attester |   |  | Issuer | | Origin |  |
+      +---+----+        +-----+----+   |  +----+---+ +---+----+  |
+          |                   |         `------|---------|------'
+          |                   |                |         |
+          |------------------ Request ------------------>+
+          |<-------------- TokenChallenge ---------------+
+          |                   |                |         |
+          |<== Attestation ==>|                |         |
+          +--------- CredentialRequest ------->|         |
+          |<-------- CredentialResponse -------+         |
+CredentialFinalization                         |         |
+          |                                              |
+CredentialPresentation                                   |
+          +--------------- Request+Token --------------->|
+          |<----------------- Response ------------------+
+          |                                              |
 ~~~
 {: #fig-overview title="Issuance and Redemption Overview"}
 
