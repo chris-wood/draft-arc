@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-21T00:09:29.352991+00:00",
+  "timestamp": "2025-10-26T00:10:15.879400+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -2617,6 +2617,32 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 45,
+      "id": "PR_kwDONyB6uM6vQaIW",
+      "title": "Update diagram to have credential finalisation and presentation",
+      "url": "https://github.com/chris-wood/draft-arc/pull/45",
+      "state": "OPEN",
+      "author": "thibmeu",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Here is the updated diagram\r\n\r\n![credentials](https://github.com/user-attachments/assets/6d97510b-30ac-4e97-a58b-47766ca295eb)\r\n",
+      "createdAt": "2025-10-23T12:35:18Z",
+      "updatedAt": "2025-10-23T12:35:53Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "e77336a8ba75a3f5b02d1fb68d2d9694921c8005",
+      "headRepository": "thibmeu/draft-arc",
+      "headRefName": "main",
+      "headRefOid": "c1807f2a5b2b1e126c00800339f863d044ddafdc",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
