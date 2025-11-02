@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-26T00:10:15.879400+00:00",
+  "timestamp": "2025-11-02T00:10:12.367820+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -126,9 +126,17 @@
       "labels": [],
       "body": "Currently, the ARC protocol is defined in relation to the CMZ14 MAC_GGM protocol. To more clearly illustrate which parts of the protocol are specific to ARC, and which can be generic over any MAC, we should define the ARC protocol over a generic MAC protocol, and then specify that MAC as CMZ14 MAC_GGM in a following section. \n\nThis will make it easier to later introduce different MAC backends, which have different tradeoffs (eg BBS MAC, muCMZ MAC, etc) without changing the protocol itself. \n\nThe initial change (defining the ARC protocol over a generic MAC, and defining CMZ14 MAC_GGM in a different section) will not change the functionality (test vectors will not be affected, for example) and is primarily editorial.",
       "createdAt": "2025-02-22T00:42:00Z",
-      "updatedAt": "2025-02-22T00:42:00Z",
+      "updatedAt": "2025-10-30T18:57:36Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Related work on unifying MAC constructions for anonymous credentials:\nhttps://eprint.iacr.org/2025/1981",
+          "createdAt": "2025-10-30T18:57:36Z",
+          "updatedAt": "2025-10-30T18:57:36Z"
+        }
+      ]
     },
     {
       "number": 10,
@@ -601,6 +609,22 @@
           "updatedAt": "2025-09-17T05:33:25Z"
         }
       ]
+    },
+    {
+      "number": 46,
+      "id": "I_kwDONyB6uM7U6h0o",
+      "title": "Privacy Pass adoption - spec renames",
+      "url": "https://github.com/chris-wood/draft-arc/issues/46",
+      "state": "OPEN",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Following guidance for specs after they have been adopted by working groups:\nhttps://datatracker.ietf.org/doc/rfc7221/\n\nWe should rename the specs accordingly:\n`draft-yun-privacypass-arc` -> `draft-ietf-privacypass-arc`\n`draft-yun-privacypass-crypto-arc` -> `draft-ietf-privacypass-crypto-arc`\nin order to reflect the fact that they have been adopted by the privacy pass working group.\n\n(I'm also open to better names than `privacypass-crypto` for the spec that was formerly the `cfrg` spec).",
+      "createdAt": "2025-10-30T19:00:14Z",
+      "updatedAt": "2025-10-30T19:00:48Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -2122,7 +2146,7 @@
       "labels": [],
       "body": "Add range proofs for ranges within [0,max), where max is an arbitrary number.",
       "createdAt": "2025-09-17T11:34:57Z",
-      "updatedAt": "2025-10-07T22:08:19Z",
+      "updatedAt": "2025-10-30T17:17:02Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "24dac6275c1660a973e03a584fbe07733f54a5a8",
@@ -2168,6 +2192,13 @@
           "body": "Thanks for the feedback, jkatz! This looks good, with the exception that the Sigma / F-S API has changed in the meantime and now the `allocate_scalar` functions (and a few others) have changed in how they need to be called.\r\n\r\nI can take a pass on updating this PR to be in line with those changes. \r\nIn the meantime @chris-wood can you review this?",
           "createdAt": "2025-10-07T22:08:19Z",
           "updatedAt": "2025-10-07T22:08:19Z"
+        },
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Note, this is blocked on the ARC proof of concept moving over to the EC groups defined by the F-S/Sigma proof of concept, as currently they use different EC group definitions. And we don't want to merge this spec in without having a matching implementation in the proof of concept, which should ideally use the F-S/Sigma proof of concept.",
+          "createdAt": "2025-10-30T17:17:02Z",
+          "updatedAt": "2025-10-30T17:17:02Z"
         }
       ],
       "reviews": [
