@@ -43,6 +43,9 @@ informative:
   BBDT17:
     title: Improved Algebraic MACs and Practical Keyed-Verification Anonymous Credentials
     target: https://link.springer.com/chapter/10.1007/978-3-319-69453-5_20
+  BULLETPROOFS:
+    title: "Bulletproofs: Short Proofs for Confidential Transactions and More"
+    target: https://eprint.iacr.org/2017/1066
   NISTCurves: DOI.10.6028/NIST.FIPS.186-5
   SEC1:
     title: "SEC 1: Elliptic Curve Cryptography"
@@ -565,8 +568,14 @@ can be directly compared for equality (via the "tag"). As a result, the process 
 a presentation accepts as input a presentation state and then outputs an updated presentation
 state.
 
+The nonce used in each presentation is hidden from the server using a Pedersen commitment.
+The client proves that the committed nonce is within the valid range `[0, presentationLimit)`
+using a Bulletproof range proof {{BULLETPROOFS}}. This ensures the server can verify
+rate-limiting properties without learning the specific nonce value, improving unlinkability
+properties as described in {{pres-unlinkability}}.
+
 ~~~
-newState, nonce, presentation = Present(state)
+newState, presentation = Present(state)
 
 Inputs:
 state: input PresentationState
@@ -577,12 +586,13 @@ state: input PresentationState
 
 Outputs:
 - newState: updated PresentationState
-- nonce: Integer, the nonce associated with this presentation.
 - presentation:
   - U: Element, re-randomized from the U in the response.
   - UPrimeCommit: Element, a public key to the issued UPrime.
   - m1Commit: Element, a public key to the client secret (m1).
   - tag: Element, the tag element used for enforcing the presentation limit.
+  - nonceCommit: Element, Pedersen commitment to the nonce.
+  - nonceRangeProof: RangeProof, a Bulletproof proving nonce is in [0, presentationLimit).
   - presentationProof: ZKProof, a proof of correct generation of the presentation.
 
 Parameters:
@@ -612,22 +622,27 @@ def Present(state):
     state.presentationLimit, state.presentationNonceSet)
   state.presentationNonceSet.add(nonce)
 
+  rNonce = G.RandomScalar()
+  nonceCommit = nonce * generatorG + rNonce * generatorH
+
   generatorT = G.HashToGroup(presentationContext, "Tag")
   tag = (credential.m1 + nonce)^(-1) * generatorT
   V = z * credential.X1 - r * generatorG
-  m1Tag = state.credential.m1 * tag
 
-  presentationProof = MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, credential, V, r, z, nonce, m1Tag)
+  nonceRangeProof = MakeRangeProof(nonce, rNonce, nonceCommit, state.presentationLimit)
 
-  presentation = (U, UPrimeCommit, m1Commit, tag, presentationProof)
+  presentationProof = MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, credential, V, r, z, nonce, rNonce, nonceCommit)
 
-  return state, nonce, presentation
+  presentation = (U, UPrimeCommit, m1Commit, tag, nonceCommit, nonceRangeProof, presentationProof)
+
+  return state, presentation
 ~~~
 
 OPEN ISSUE: should the tag also fold in the presentation limit?
 
 The resulting presentation can be serialized as follows. See {{presentation-proof}}
-for more details on the generation of the presentation proof.
+for more details on the generation of the presentation proof, and {{nonce-range-proof}}
+for details on the range proof.
 
 ~~~
 struct {
@@ -635,20 +650,24 @@ struct {
   uint8 UPrimeCommit[Ne];
   uint8 m1Commit[Ne];
   uint8 tag[Ne];
+  uint8 nonceCommit[Ne];
+  uint8 nonceRangeProof[NrangeProof];
   uint8 challenge[Ns];
   uint8 response0[Ns];
   uint8 response1[Ns];
   uint8 response2[Ns];
   uint8 response3[Ns];
+  uint8 response4[Ns];
 } Presentation
 ~~~
 
-The length of this structure is `Npresentation = 4*Ne + 5*Ns`.
+The length of this structure is `Npresentation = 5*Ne + 6*Ns + NrangeProof`.
 
 ### Presentation Verification
 
-The server processes the presentation by verifying the presentation proof against server-computed
-values, and performing a check that the presentation conforms to the presentation limit.
+The server processes the presentation by verifying the range proof to ensure the nonce
+is within the valid range, verifying the presentation proof against server-computed
+values, and performing double-spend checks using the tag.
 
 ~~~
 validity, tag = VerifyPresentation(
@@ -656,7 +675,6 @@ validity, tag = VerifyPresentation(
   serverPublicKey,
   requestContext,
   presentationContext,
-  nonce,
   presentation,
   presentationLimit)
 
@@ -672,12 +690,13 @@ Inputs:
   - X2: Element, server public key 2.
 - requestContext: Data, context for the credential request.
 - presentationContext: Data (public), used for presentation tag computation.
-- nonce: Integer, the nonce associated with this presentation.
 - presentation:
   - U: Element, re-randomized from the U in the response.
   - UPrimeCommit: Element, a public key to the issued UPrime.
   - m1Commit: Element, a public key to the client secret (m1).
   - tag: Element, the tag element used for enforcing the presentation limit.
+  - nonceCommit: Element, Pedersen commitment to the nonce.
+  - nonceRangeProof: RangeProof, a Bulletproof proving nonce is in [0, presentationLimit).
   - presentationProof: ZKProof, a proof of correct generation of the presentation.
 - presentationLimit: Integer, the fixed presentation limit.
 
@@ -691,30 +710,30 @@ Parameters:
 - generatorH: Element, equivalent to G.GeneratorH()
 
 Exceptions:
-- InvalidNonceError, raised when the nonce associated with the presentation is invalid
+- InvalidRangeProofError, raised when the range proof is invalid
 
 def VerifyPresentation(
   serverPrivateKey,
   serverPublicKey,
   requestContext,
   presentationContext,
-  nonce,
   presentation,
   presentationLimit):
 
-  if nonce < 0 or nonce > presentationLimit:
-    raise InvalidNonceError
+  if presentationLimit < 1 or presentationLimit > 2^32:
+    raise InvalidRangeProofError
+
+  if VerifyRangeProof(presentation.nonceCommit, presentation.nonceRangeProof, presentationLimit) == false:
+    raise InvalidRangeProofError
 
   generatorT = G.HashToGroup(presentationContext, "Tag")
-  m1Tag = generatorT - (nonce * presentation.tag)
 
   validity = VerifyPresentationProof(
     serverPrivateKey,
     serverPublicKey,
     requestContext,
     presentationContext,
-    presentation,
-    m1Tag)
+    presentation)
 
   return validity, presentation.tag
 ~~~
@@ -1294,21 +1313,32 @@ def VerifyCredentialResponseProof(serverPublicKey, response, request):
 
 ## Presentation Proof {#presentation-proof}
 
-The presentation proof is a proof of knowledge of (m1, r, z) used in the presentation, and a proof that the nonce used to make the tag is in the range of [0, presentationLimit).
+The presentation proof is a proof of knowledge of (m1, r, z, nonce, rNonce) used in
+the presentation. The nonce value is hidden from the server using commitments, and the range
+constraint is proven separately using a Bulletproof (see {{nonce-range-proof}}).
 
 Statements to prove:
 
 ~~~
 1. m1Commit = m1 * U + z * generatorH
 2. V = z * X1 - r * generatorG
-3. G.HashToGroup(presentationContext, "Tag") = m1 * tag + nonce * tag
-4. m1Tag = m1 * tag
+3. nonceCommit = nonce * generatorG + rNonce * generatorH
+4. generatorT = m1 * tag + nonce * tag
 ~~~
+
+Statement 1 binds m1 to the re-randomized credential, enabling MAC verification.
+
+Statement 2 ensures the blinding factors used in m1Commit and UPrimeCommit are consistent.
+
+Statement 3 binds the hidden nonce to its Pedersen commitment for range proof verification.
+
+Statement 4 proves the tag is correctly formed as `(m1 + nonce)^(-1) * generatorT`, ensuring
+each (credential, nonce) pair produces a unique tag for double-spend detection.
 
 ### Presentation Proof Creation
 
 ~~~
-presentationProof = MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, credential, V, r, z, nonce, m1Tag)
+presentationProof = MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, credential, V, r, z, nonce, rNonce, nonceCommit)
 
 Inputs:
 - U: Element, re-randomized from the U in the response.
@@ -1324,8 +1354,9 @@ Inputs:
 - V: Element, a proof helper element.
 - r: Scalar (private), a randomly generated element used in presentation.
 - z: Scalar (private), a randomly generated element used in presentation.
-- nonce: Int, the nonce associated with the presentation.
-- m1Tag: Element, helper element for the proof.
+- nonce: Scalar (private), the nonce associated with the presentation.
+- rNonce: Scalar (private), blinding factor for nonceCommit.
+- nonceCommit: Element, Pedersen commitment to the nonce.
 
 Outputs:
 - proof: ZKProof
@@ -1334,6 +1365,7 @@ Outputs:
   - response1: Scalar, the response corresponding to z.
   - response2: Scalar, the response corresponding to -r.
   - response3: Scalar, the response corresponding to nonce.
+  - response4: Scalar, the response corresponding to rNonce.
 
 Parameters:
 - G: Group
@@ -1341,13 +1373,15 @@ Parameters:
 - generatorH: Element, equivalent to G.GeneratorH()
 - contextString: public input
 
-def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, presentationContext, credential, V, r, z, nonce, m1Tag)
+def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, presentationContext,
+    credential, V, r, z, nonce, rNonce, nonceCommit):
   prover = Prover(contextString + "CredentialPresentation")
 
   m1Var = prover.AppendScalar("m1", credential.m1)
   zVar = prover.AppendScalar("z", z)
   rNegVar = prover.AppendScalar("-r", -r)
   nonceVar = prover.AppendScalar("nonce", nonce)
+  rNonceVar = prover.AppendScalar("rNonce", rNonce)
 
   genGVar = prover.AppendElement("genG", generatorG)
   genHVar = prover.AppendElement("genH", generatorH)
@@ -1358,16 +1392,16 @@ def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, presentati
   X1Var = prover.AppendElement("X1", credential.X1)
   tagVar = prover.AppendElement("tag", tag)
   genTVar = prover.AppendElement("genT", generatorT)
-  m1TagVar = prover.AppendElement("m1Tag", m1Tag)
+  nonceCommitVar = prover.AppendElement("nonceCommit", nonceCommit)
 
   # 1. m1Commit = m1 * U + z * generatorH
   prover.Constrain(m1CommitVar, [(m1Var, UVar), (zVar, genHVar)])
   # 2. V = z * X1 - r * generatorG
   prover.Constrain(VVar, [(zVar, X1Var), (rNegVar, genGVar)])
-  # 3. G.HashToGroup(presentationContext, "Tag") = m1 * tag + nonce * tag
+  # 3. nonceCommit = nonce * generatorG + rNonce * generatorH
+  prover.Constrain(nonceCommitVar, [(nonceVar, genGVar), (rNonceVar, genHVar)])
+  # 4. generatorT = m1 * tag + nonce * tag
   prover.Constrain(genTVar, [(m1Var, tagVar), (nonceVar, tagVar)])
-  # 4. m1Tag = m1 * tag
-  prover.Constrain(m1TagVar, [(m1Var, tagVar)])
 
   return prover.Prove()
 ~~~
@@ -1380,8 +1414,7 @@ validity = VerifyPresentationProof(
   serverPublicKey,
   requestContext,
   presentationContext,
-  presentation,
-  m1Tag)
+  presentation)
 
 Inputs:
 - serverPrivateKey:
@@ -1400,13 +1433,15 @@ Inputs:
   - UPrimeCommit: Element, a public key to the issued UPrime.
   - m1Commit: Element, a public key to the client secret (m1).
   - tag: Element, the tag element used for enforcing the presentation limit.
+  - nonceCommit: Element, Pedersen commitment to the nonce.
+  - nonceRangeProof: RangeProof, a Bulletproof proving nonce is in [0, presentationLimit).
   - presentationProof: ZKProof, a proof of correct generation of the presentation.
     - challenge: Scalar, the challenge used in the proof of valid presentation.
     - response0: Scalar, the response corresponding to m1.
     - response1: Scalar, the response corresponding to z.
     - response2: Scalar, the response corresponding to -r.
     - response3: Scalar, the response corresponding to nonce.
-- m1Tag: Element, helper to validate the presentation proof.
+    - response4: Scalar, the response corresponding to rNonce.
 
 Outputs:
 - validity: Boolean, True if the proof verifies correctly, False otherwise.
@@ -1422,8 +1457,7 @@ def VerifyPresentationProof(
   serverPublicKey,
   requestContext,
   presentationContext,
-  presentation,
-  m1Tag):
+  presentation):
 
   m2 = G.HashToScalar(requestContext, "requestContext")
   V = serverPrivateKey.x0 * presentation.U + serverPrivateKey.x1 * presentation.m1Commit + serverPrivateKey.x2 * m2 * presentation.U - presentation.UPrimeCommit
@@ -1435,29 +1469,220 @@ def VerifyPresentationProof(
   zVar = verifier.AppendScalar("z")
   rNegVar = verifier.AppendScalar("-r")
   nonceVar = verifier.AppendScalar("nonce")
+  rNonceVar = verifier.AppendScalar("rNonce")
 
   genGVar = verifier.AppendElement("genG", generatorG)
   genHVar = verifier.AppendElement("genH", generatorH)
   UVar = verifier.AppendElement("U", presentation.U)
   _ = verifier.AppendElement("UPrimeCommit", presentation.UPrimeCommit)
   m1CommitVar = verifier.AppendElement("m1Commit", presentation.m1Commit)
-  VVar = verifier.AppendElement("V", presentation.V)
+  VVar = verifier.AppendElement("V", V)
   X1Var = verifier.AppendElement("X1", serverPublicKey.X1)
-  tagVar = prover.AppendElement("tag", presentation.tag)
+  tagVar = verifier.AppendElement("tag", presentation.tag)
   genTVar = verifier.AppendElement("genT", generatorT)
-  m1TagVar = prover.AppendElement("m1Tag", m1Tag)
+  nonceCommitVar = verifier.AppendElement("nonceCommit", presentation.nonceCommit)
 
   # 1. m1Commit = m1 * U + z * generatorH
   verifier.Constrain(m1CommitVar, [(m1Var, UVar), (zVar, genHVar)])
   # 2. V = z * X1 - r * generatorG
   verifier.Constrain(VVar, [(zVar, X1Var), (rNegVar, genGVar)])
-  # 3. G.HashToGroup(presentationContext, "Tag") = m1 * tag + nonceVar * tag
+  # 3. nonceCommit = nonce * generatorG + rNonce * generatorH
+  verifier.Constrain(nonceCommitVar, [(nonceVar, genGVar), (rNonceVar, genHVar)])
+  # 4. generatorT = m1 * tag + nonce * tag
   verifier.Constrain(genTVar, [(m1Var, tagVar), (nonceVar, tagVar)])
-  # 4. m1Tag = m1 * tag
-  prover.Constrain(m1TagVar, [(m1Var, tagVar)])
 
   return verifier.Verify(presentation.proof)
 ~~~
+
+## Nonce Range Proof {#nonce-range-proof}
+
+This section describes the Bulletproof range proof used to prove that the committed
+nonce is within the valid range `[0, presentationLimit)` without revealing the nonce
+value. The range proof is based on {{BULLETPROOFS}}.
+
+### Range Proof Overview
+
+A Bulletproof range proof allows a prover to demonstrate that a committed value
+lies within a range `[0, 2^n)` without revealing the value. To prove membership
+in an arbitrary range `[0, presentationLimit)`, we must prove two conditions:
+
+1. `nonce >= 0` colloquially (more precisely, `nonce ∈ [0, 2^n)`)
+2. `nonce < presentationLimit` (equivalently, `nonceComplement = presentationLimit - 1 - nonce ∈ [0, 2^n)`)
+
+The two range proofs are aggregated into a single proof using the Bulletproofs
+aggregation technique, which is more efficient than two separate proofs.
+
+The commitment to `nonceComplement` is derived from `nonceCommit`:
+
+~~~
+complementCommit = (presentationLimit - 1) * generatorG - nonceCommit
+                 = (presentationLimit - 1) * generatorG - (nonce * generatorG + rNonce * generatorH)
+                 = (presentationLimit - 1 - nonce) * generatorG + (-rNonce) * generatorH
+                 = nonceComplement * generatorG + (-rNonce) * generatorH
+~~~
+
+The verifier can compute `complementCommit` from the public `nonceCommit` and
+`presentationLimit`, then verify the aggregated range proof against both commitments.
+
+The `presentationLimit` MUST be at least 1 and MUST NOT exceed `2^32`. Implementations
+MUST reject configurations where `presentationLimit < 1` or `presentationLimit > 2^32`.
+
+### Range Proof Structure
+
+The range proof consists of the following elements:
+
+~~~
+struct {
+  uint8 A[Ne];
+  uint8 S[Ne];
+  uint8 T_1[Ne];
+  uint8 T_2[Ne];
+  uint8 t_x[Ns];
+  uint8 t_x_blinding[Ns];
+  uint8 e_blinding[Ns];
+
+  // Components of the inner product proof
+  uint8 L[k][Ne];
+  uint8 R[k][Ne];
+  uint8 a[Ns];
+  uint8 b[Ns];
+} RangeProof
+~~~
+
+where `k` is the number of rounds in the inner product argument. With `n = 32`
+and `m = 2`, `k = ceil(log2(m * n)) = ceil(log2(64)) = 6`.
+
+The total size of the range proof is:
+`NrangeProof = 16 * Ne + 5 * Ns`
+
+### Range Proof Creation
+
+The range proof aggregates two proofs: one for `nonce ∈ [0, 2^n)` and one for
+`nonceComplement ∈ [0, 2^n)`. The aggregation follows Section 4.3 of {{BULLETPROOFS}}.
+
+~~~
+nonceRangeProof = MakeRangeProof(nonce, rNonce, nonceCommit, presentationLimit)
+
+Inputs:
+- nonce: Scalar, the nonce value to prove is in range.
+- rNonce: Scalar, the blinding factor used in nonceCommit.
+- nonceCommit: Element, the Pedersen commitment to nonce.
+- presentationLimit: Integer, the upper bound of the range.
+
+Outputs:
+- nonceRangeProof: RangeProof, the Bulletproof range proof.
+
+Parameters:
+- G: Group
+- generatorG: Element, equivalent to G.GeneratorG()
+- generatorH: Element, equivalent to G.GeneratorH()
+- contextString: public input
+- n = 32: Fixed bit length for range proofs.
+- m = 2: Number of aggregated values (nonce and nonceComplement).
+
+def MakeRangeProof(nonce, rNonce, nonceCommit, presentationLimit):
+  # Compute complement value: nonceComplement = presentationLimit - 1 - nonce
+  # with blinding factor rComplement = -rNonce
+  nonceComplement = presentationLimit - 1 - nonce
+  rComplement = -rNonce
+
+  # Derive complementCommit from public values
+  complementCommit = (presentationLimit - 1) * generatorG - nonceCommit
+
+  # Aggregate the two values for the range proof
+  values = [nonce, nonceComplement]
+  blindings = [rNonce, rComplement]
+
+  # Generate range proof generators (fixed for the ciphersuite)
+  G_vec = [G.HashToGroup(contextString + "RangeProofG" + I2OSP(i, 4), "")
+           for i in range(m * n)]
+  H_vec = [G.HashToGroup(contextString + "RangeProofH" + I2OSP(i, 4), "")
+           for i in range(m * n)]
+
+  # Construct the Fiat-Shamir transcript
+  transcript = contextString + "RangeProof"
+  transcript += I2OSP(presentationLimit, 8)
+  transcript += G.SerializeElement(nonceCommit)
+  transcript += G.SerializeElement(complementCommit)
+
+  # Execute the aggregated range proof protocol from Section 4.3 of [BULLETPROOFS]
+  return BulletproofRangeProve(
+    G_vec, H_vec,
+    generatorG, generatorH,
+    transcript,
+    values,
+    blindings
+  )
+~~~
+
+The `BulletproofRangeProve` function implements the aggregated range proof protocol
+from Section 4.3 of {{BULLETPROOFS}}. It performs bit decomposition of the values,
+constructs the blinded polynomial commitments (A, S, T1, T2), generates challenges
+via the Fiat-Shamir heuristic, and executes the inner product argument from
+Section 3 of {{BULLETPROOFS}} to produce the final proof.
+
+### Range Proof Verification
+
+The verifier checks the aggregated range proof against both `nonceCommit` (proving
+`nonce ∈ [0, 2^n)`) and the derived `complementCommit` (proving `nonceComplement ∈ [0, 2^n)`).
+Together, these ensure `nonce ∈ [0, presentationLimit)`.
+
+~~~
+validity = VerifyRangeProof(nonceCommit, nonceRangeProof, presentationLimit)
+
+Inputs:
+- nonceCommit: Element, the Pedersen commitment to the nonce.
+- nonceRangeProof: RangeProof, the Bulletproof range proof.
+- presentationLimit: Integer, the upper bound of the range.
+
+Outputs:
+- validity: Boolean, True if the range proof is valid, False otherwise.
+
+Parameters:
+- G: Group
+- generatorG: Element, equivalent to G.GeneratorG()
+- generatorH: Element, equivalent to G.GeneratorH()
+- contextString: public input
+- n = 32: Fixed bit length for range proofs.
+- m = 2: Number of aggregated values.
+- k = ceil(log2(m * n)): Number of inner product argument rounds (k = 6 for m=2, n=32).
+
+def VerifyRangeProof(nonceCommit, nonceRangeProof, presentationLimit):
+  # Check proof structure
+  if len(nonceRangeProof.L) != k or len(nonceRangeProof.R) != k:
+    return false
+
+  # Derive complementCommit from public values
+  complementCommit = (presentationLimit - 1) * generatorG - nonceCommit
+
+  # Generate range proof generators (fixed for the ciphersuite)
+  G_vec = [G.HashToGroup(contextString + "RangeProofG" + I2OSP(i, 4), "")
+           for i in range(m * n)]
+  H_vec = [G.HashToGroup(contextString + "RangeProofH" + I2OSP(i, 4), "")
+           for i in range(m * n)]
+
+  # Reconstruct the Fiat-Shamir transcript
+  transcript = contextString + "RangeProof"
+  transcript += I2OSP(presentationLimit, 8)
+  transcript += G.SerializeElement(nonceCommit)
+  transcript += G.SerializeElement(complementCommit)
+
+  # Execute the aggregated range proof verification from Section 4.3 of [BULLETPROOFS]
+  valueCommitments = [nonceCommit, complementCommit]
+  return BulletproofRangeVerify(
+    nonceRangeProof,
+    G_vec, H_vec,
+    generatorG, generatorH,
+    transcript,
+    valueCommitments
+  )
+~~~
+
+The `BulletproofRangeVerify` function implements the verification procedure from
+Section 4 of {{BULLETPROOFS}}. It reconstructs challenges from the transcript,
+verifies the polynomial commitment relation, and verifies the inner product argument
+using Protocol 2 from Section 3 of {{BULLETPROOFS}}. The verification can be optimized
+into a single multi-exponentiation as described in Section 3.1 of {{BULLETPROOFS}}.
 
 # Ciphersuites {#ciphersuites}
 
@@ -1568,11 +1793,31 @@ Client credential presentations are constructed so that all presentations are in
 
 The indistinguishability set for these presentation elements is `sum_{i=0}^c(p_i)`, where `c` is the number of credentials issued with the same server keys, and `p_i` is the number of presentations made for each of those credentials.
 
-The presentation elements `[tag, nonce, presentationContext, presentationProof]` are indistinguishable from all presentations made from credentials issued with the same server keys for that presentationContext, with the exception of presentations with the same nonce (since those presentations can be ascertained as being generated from different credentials, as long as the presentation tag is unique).
+### Hidden Nonces
 
-The indistinguishability set for those presentation elements is `sum_{i=0}^c(p_i[presentationContext]) - k[presentationContext]`, where `c` is the number of credentials issued with the same server keys, `p_i[presentationContext]` is the number of presentations made for each of those credentials with the same presentationContext, and `k` is the number of presentations with the same nonce for that presentationContext. As long as the nonces are generated randomly from the range defined by the presentation limit, `k[presentationContext]` should be roughly equal to `sum_{i=0}^c(p_i[presentationContext]) / n`, where `n` is the presentation limit. Therefore, the indistinguishability set can be represented as `sum_{i=0}^c(p_i[presentationContext])(1 - 1/n)`, where a larger presentation limit results in a larger indistinguishability set and therefore stronger unlinkability properties.
+The nonce used in each presentation is hidden from the server through a Pedersen commitment (`nonceCommit`). The server only learns that the nonce is within the valid range `[0, presentationLimit)` through the Bulletproof range proof, but does not learn the specific nonce value. This provides stronger unlinkability guarantees compared to revealing nonces directly.
 
-OPEN ISSUE: hide the nonce and replace the tag proof with a range proof built from something like Bulletproofs.
+With hidden nonces, the presentation elements `[tag, nonceCommit, nonceRangeProof, presentationContext, presentationProof]` are indistinguishable from all presentations made from credentials issued with the same server keys for that presentationContext. The server cannot distinguish presentations based on their nonce values; it can only observe unique tags for double-spend detection.
+
+The indistinguishability set for presentations is `sum_{i=0}^c(p_i[presentationContext])`, where `c` is the number of credentials issued with the same server keys and `p_i[presentationContext]` is the number of presentations made for each credential with the same presentationContext. This represents a significant improvement over the previous design where nonces were revealed, as presentations with the same nonce could previously be linked.
+
+### Tag-based Double-Spend Detection
+
+While the nonce is hidden, the tag element remains visible and is used for double-spend detection. The tag is computed as `tag = (m1 + nonce)^(-1) * generatorT`, where both `m1` and `nonce` are hidden. Two presentations from different credentials with the same nonce will have different tags (since they have different `m1` values), so they cannot be linked based on tags alone.
+
+Two presentations from the same credential with the same nonce would produce the same tag, but this is prevented by the client-side state management that ensures nonces are not reused within the same credential's presentation context. If a client violates this constraint and reuses a nonce, the server will detect the duplicate tag during double-spend checks.
+
+### Range Proof Security
+
+The Bulletproof range proof provides the following security properties:
+
+1. **Soundness**: A malicious prover cannot convince the verifier that a committed value is in range if it is not. This ensures that clients cannot use nonces outside the valid range `[0, presentationLimit)`.
+
+2. **Zero-knowledge**: The proof reveals nothing about the nonce value beyond the fact that it is in the valid range. This is achieved through the use of blinding factors in commitments and the Bulletproof protocol structure.
+
+3. **Binding**: The range proof is bound to the same nonce used in the tag computation through the shared commitment `nonceCommit` and the Schnorr proof constraint that uses the same nonce variable in both the commitment opening (Statement 3) and the tag relation (Statement 4).
+
+The security of the range proof relies on the discrete logarithm assumption in the underlying group, consistent with the security assumptions for the rest of the ARC protocol.
 
 ## Timing Leaks
 
@@ -1602,4 +1847,3 @@ This section contains test vectors for the ARC ciphersuites specified in this do
 The authors would like to acknowledge helpful conversations with Tommy Pauly about rate limiting and Privacy Pass integration.
 
 --- back
-
