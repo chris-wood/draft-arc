@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-12-04T00:10:11.820310+00:00",
+  "timestamp": "2026-01-11T00:11:53.162660+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -631,15 +631,15 @@
       "id": "I_kwDONyB6uM7ZQ-mC",
       "title": "Proposal: Range Proofs for Credential Validity Timestamps in ARC",
       "url": "https://github.com/chris-wood/draft-arc/issues/47",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "mike-marcacci",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "Firstly, thank you all for your incredible work on these specs.\n\n## Summary\n\nI'm building a privacy-preserving access control system for cloud services and have identified a need for zero-knowledge range proofs on credential validity timestamps (both `valid_from` and `valid_until`) within the ARC protocol. This would enable flexible credential expiration without revealing specific timestamps that could shrink anonymity sets.\n\n## Use Case\n\nMy architecture separates concerns across three layers:\n\n- **Client layer**: End-user software that holds credentials and payment methods\n- **Service layer**: Cloud services (search, AI inference, data sync) that must not know user identity\n- **Payment layer**: Issues credentials when users purchase access (e.g., \"$15 for one month of service\")\n\nThe design goal is that the service layer cannot correlate activity with the payment layer or between different requests.\n\n## Current Limitation\n\nARC provides excellent unlinkability properties for rate-limited access, but credential validity must currently be managed by encoding validity in the request context:\n\n```\nrequestContext = \"payment-session:xyz:expires:2025-01\"\n```\n\nThis value is available in the clear with each presentation, and is therefore at a high risk of leaking correlating information. To ensure a sufficiently large anonymity set, credential expirations must align to fixed calendar boundaries.\n\nIn smaller scale services and whenever the cost of a credential is high (paying $20 as opposed to simply passing a captcha) the number of credentials will be small, and the fixed interval must be wide to ensure adequate privacy.\n\nAdopting a large \"common epoch\" like calendar months has many consequences:\n- Proration is required for new mid-month users.\n- New credentials for immediate use are constrained to the number of days remaining this month.\n- It's impossible to reliably offer credentials with shorter lifespans (1 week, etc).\n- A single limit cannot span multiple months.\n\nIn deployments that can support a small \"common epoch\" like days without privacy concerns, the use of such small windows imposes its own constraints. Breaking a subscription for \"3000 requests per month\" into 30 credentials supporting \"100 requests per day\" meaningfully changes the supported for irregular usage patterns.\n\n## Desired Capability\n\nI'd like the client to be able to prove:\n\n```\nvalid_from <= current_time <= valid_until\n```\n\nWithout revealing the actual values of `valid_from` or `valid_until`.\n\nThis would require:\n\n1. **Credential attributes for timestamps**: The credential would include `valid_from` and `valid_until` as hidden attributes (similar to how the balance is hidden in ACT)\n2. **Range proofs during presentation**: The client proves the current timestamp falls within the validity window using a zero-knowledge range proof\n3. **Unlinkability preservation**: Different credentials with different validity windows remain indistinguishable to the verifier\n\n## Technical Considerations\n\n### Timestamp representation\n\nTimestamps could be represented as Unix epoch seconds (or milliseconds), fitting within the scalar field. A 64-bit timestamp provides sufficient range and precision.\n\n### Range proof construction\n\nThe existing open issue mentions Bulletproofs for hiding the nonce:\n\n> [[OPEN ISSUE: hide the nonce and replace the tag proof with a range proof built from something like Bulletproofs.]]\n\nSimilar techniques could apply to timestamp bounds. The client would prove:\n- `current_time - valid_from >= 0` (credential has started)\n- `valid_until - current_time >= 0` (credential hasn't expired)\n\n### Clock synchronization\n\nPractical deployments would need to handle clock skew between client and server. The server could:\n- Accept a small tolerance (e.g., \u00b160 seconds)\n\n## Benefits\n\n1. **Flexible validity periods**: Users can purchase arbitrary durations without aligning to calendar boundaries\n2. **Seamless renewal**: Users can purchase overlapping credentials without complexity\n3. **Preserved anonymity**: No timestamps revealed that could fingerprint users\n4. **Simplified tag management**: Server can still use course epochs for tag storage cleanup, but credential validity is decoupled from these operational concerns\n\n## Questions for the Working Group\n\n1. Is this functionality in scope for ARC, or would it be better suited as a separate extension?\n2. Are there performance concerns with adding two range proofs (for both bounds) to each presentation?\n3. How should clock synchronization be handled between client and server?\n4. Are there existing constructions or implementations that could be referenced for this? \n5. Would this interact with the existing open issue around hiding the nonce with Bulletproofs, or are these orthogonal concerns?\n\n(Note: A related discussion exists at\u00a0[https://github.com/SamuelSchlesinger/draft-act/issues/7](https://github.com/SamuelSchlesinger/draft-act/issues/7))\n## More About My Use Case\n\nI'm designing a commercial cloud service where privacy is a core feature. Users pay for access through a separate payment layer, then access services without those services knowing their identity. The current ARC design works adequately for my immediate needs using monthly epochs, but timestamp range proofs would significantly improve flexibility and user experience.\n\nI know that this isn't the primary use-case of the Privacy Pass project, but it appears deeply compatible in its goals and implementation. Using Privacy Pass as a privacy-preserving \"proof of purchase\" mechanism is a very interesting general use-case.\n\nI'm happy to provide additional details about the use case or discuss implementation considerations. While my cryptographic knowledge is fairly rudimentary, I'm willing to contribute wherever I can be helpful, particularly to testing or implementation work.\n",
       "createdAt": "2025-11-20T02:08:13Z",
-      "updatedAt": "2025-12-03T18:25:57Z",
-      "closedAt": null,
+      "updatedAt": "2026-01-08T05:17:33Z",
+      "closedAt": "2026-01-08T05:17:33Z",
       "comments": [
         {
           "author": "mike-marcacci",
@@ -647,6 +647,13 @@
           "body": "Hi team! I just wanted to follow up about this and confirm that GitHub Issues is an appropriate place for its discussion. I'm happy to send an email to the IETF group instead, but this felt more collaborative.\n\nGiven that in the first iteration of my project I play the roles of both issuer and verifier, I don't really _need_ my implementation to follow any standard. However, my needs seem quite generalized and highly congruent with the existing goals of the Privacy Pass project. I'd love to know if this feels well aligned or categorically out of scope for ARC.",
           "createdAt": "2025-12-03T18:25:57Z",
           "updatedAt": "2025-12-03T18:25:57Z"
+        },
+        {
+          "author": "mike-marcacci",
+          "authorAssociation": "NONE",
+          "body": "While working on #48 I found some flaws in my understanding of ARC, and I no longer find this necessary. More specifically, my use-case requires `presentationLimit` be set during issuance, which is very intentionally not the flow in ARC. I'm going to close this.\n\nTimestamp validity ranges might be valuable for other use-cases. If they're to be defined adjacent the `presentationContext` rather than the issuance `requestContext`, #48 provides excellent machinery to efficiently add them. But that's for a new issue.",
+          "createdAt": "2026-01-08T05:17:33Z",
+          "updatedAt": "2026-01-08T05:17:33Z"
         }
       ]
     }
@@ -2698,6 +2705,107 @@
       "mergeCommit": null,
       "comments": [],
       "reviews": []
+    },
+    {
+      "number": 48,
+      "id": "PR_kwDONyB6uM68CJvA",
+      "title": "Add nonce hiding with range proofs",
+      "url": "https://github.com/chris-wood/draft-arc/pull/48",
+      "state": "OPEN",
+      "author": "mike-marcacci",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "This proposes a change to the spec that address one of the open issues in the current draft:\r\n\r\n> OPEN ISSUE: hide the nonce and replace the tag proof with a range proof built from something like Bulletproofs.\r\n\r\nThis change:\r\n\r\n- Hides the nonce value in a Pedersen commitment (nonceCommit)\r\n- Uses Bulletproofs to prove nonce is in \\[0, presentationLimit)\r\n\r\n---\r\n\r\nI began working on this as a prerequisite for #47, and through it discovered that my use-case isn't a great fit for ARC on some deeper levels. (I'll close out that issue shortly.)\r\n\r\nI figured my sunk effort might as well go to good use, so I finished up this PR.\r\n\r\nDisclaimer: I am *not* a cryptographer, and needed to do a LOT of reading to assemble this. Every line of this is my work, but I used lots and lots of AI to answer questions, to make sure I understood the concepts thoroughly, and to find flaws in each of my many attempts at this \u2013 so don't let a lack of superficial mistakes hide any fundamental flaws that I may have made.\r\n\r\nThat said, I am reasonably confident in this and happy to walk through it on a call if anyone would find that helpful.\r\n\r\n",
+      "createdAt": "2026-01-08T04:37:35Z",
+      "updatedAt": "2026-01-08T17:56:23Z",
+      "baseRepository": "chris-wood/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "e77336a8ba75a3f5b02d1fb68d2d9694921c8005",
+      "headRepository": "mike-marcacci/draft-arc",
+      "headRefName": "nonce-hiding",
+      "headRefOid": "a7dd5818de28fe37bb377d6c0b3a5ea33f4cdb47",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDONyB6uM7Y0bIe",
+          "commit": {
+            "abbreviatedOid": "a7dd581"
+          },
+          "author": "mike-marcacci",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "At one point I had much more normative text on Bulletproofs themselves. However, I felt that cluttered this spec, introduced more opportunities for mistakes, and ultimately was unnecessary.\r\n\r\nInstead I used the interface of popular libraries as the cutoff for omitting \"internal\" details.\r\n\r\nThe Bulletproofs paper is _not_ a normative spec, so this might not be an acceptable approach.",
+          "createdAt": "2026-01-08T04:40:49Z",
+          "updatedAt": "2026-01-08T17:56:23Z",
+          "comments": [
+            {
+              "originalPosition": 190,
+              "body": "This might not be appropriate for a spec since the statements are already unambiguously defined. However, I needed this written out to easily follow the logic as I iterated, and thought it was helpful to keep.\r\n\r\nIf it stays, it needs to be vetted for perfect accuracy.",
+              "createdAt": "2026-01-08T04:40:49Z",
+              "updatedAt": "2026-01-08T05:23:37Z"
+            },
+            {
+              "originalPosition": 343,
+              "body": "The >=, < colloquialisms can probably be omitted, but I started off thinking in these terms.\r\n\r\n`nonce \u2208 [0, 2^n)` is in fact stricter than `nonce >= 0`, so this holds true but might add more potential for confusion than it clarifies.",
+              "createdAt": "2026-01-08T04:43:22Z",
+              "updatedAt": "2026-01-08T05:24:10Z"
+            },
+            {
+              "originalPosition": 361,
+              "body": "I chose u32 for `presentationLimit` because the nonce is already constrained as:\n\nhttps://github.com/chris-wood/draft-arc/blob/e77336a8ba75a3f5b02d1fb68d2d9694921c8005/draft-yun-privacypass-arc.md?plain=1#L403",
+              "createdAt": "2026-01-08T04:46:08Z",
+              "updatedAt": "2026-01-08T05:11:36Z"
+            },
+            {
+              "originalPosition": 375,
+              "body": "I borrowed the naming conventions directly from [the rust implementation's RangeProof](https://github.com/dalek-cryptography/bulletproofs/blob/be67b6d5f5ad1c1f54d5511b52e6d645a1313d07/src/range_proof/mod.rs#L60-L75).",
+              "createdAt": "2026-01-08T04:48:54Z",
+              "updatedAt": "2026-01-08T05:11:36Z"
+            },
+            {
+              "originalPosition": 381,
+              "body": "And similarly from [the rust implementation's InnerProductProof](https://github.com/dalek-cryptography/bulletproofs/blob/be67b6d5f5ad1c1f54d5511b52e6d645a1313d07/src/inner_product_proof.rs#L20-L23).",
+              "createdAt": "2026-01-08T04:49:40Z",
+              "updatedAt": "2026-01-08T05:11:36Z"
+            },
+            {
+              "originalPosition": 389,
+              "body": "I left size calculations parameterized all the way up to make them more traceable, but we could simply put this, since both m and n (and therefore k) are static.",
+              "createdAt": "2026-01-08T04:51:36Z",
+              "updatedAt": "2026-01-08T05:25:31Z"
+            },
+            {
+              "originalPosition": 56,
+              "body": "The dependance on `nonceCommit` by both proofs ensures that the same value of nonce is used, even though the presentationProof does not bind the range proof.",
+              "createdAt": "2026-01-08T04:54:11Z",
+              "updatedAt": "2026-01-08T05:11:36Z"
+            },
+            {
+              "originalPosition": 511,
+              "body": "This roughly follows the [verify_multiple signature](https://doc.dalek.rs/bulletproofs/struct.RangeProof.html#method.verify_multiple) in the rust implementation.",
+              "createdAt": "2026-01-08T04:58:27Z",
+              "updatedAt": "2026-01-08T05:11:36Z"
+            },
+            {
+              "originalPosition": 448,
+              "body": "This roughly follows the [prove_multiple signature](https://doc.dalek.rs/bulletproofs/struct.RangeProof.html#method.prove_multiple) in the rust implementation.",
+              "createdAt": "2026-01-08T04:58:51Z",
+              "updatedAt": "2026-01-08T05:11:36Z"
+            },
+            {
+              "originalPosition": 554,
+              "body": "We should probably consider the susceptibility of this proposal to quantum threats.\r\n\r\nIn [the IETF 124 video](https://www.youtube.com/watch?v=3ncPvxEUMUA&t=2617s) @cathieyun noted that ARC's current PQ status is:\r\n- Unlinkability between issuance and presentation is preserved\r\n- Unlinkability between two presentations is broken\r\n\r\nBinding/unforgeability is entirely broken of course, but less concerning as this doesn't open \"store now decrypt later\" vulnerabilities.\r\n\r\nIt's my understanding that bulletproofs are in isolation still perfectly hiding (Pedersen commitments), but I haven't walked through the ramifications of their introduction on ARC as a whole.",
+              "createdAt": "2026-01-08T05:03:59Z",
+              "updatedAt": "2026-01-08T05:26:54Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
