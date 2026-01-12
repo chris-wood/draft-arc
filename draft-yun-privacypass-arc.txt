@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Standards Track                             Apple, Inc.
-Expires: 23 April 2026                                   20 October 2025
+Expires: 16 July 2026                                    12 January 2026
 
 
  Privacy Pass Issuance Protocol for Anonymous Rate-Limited Credentials
@@ -48,11 +48,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 23 April 2026.
+   This Internet-Draft will expire on 16 July 2026.
 
 Copyright Notice
 
-   Copyright (c) 2025 IETF Trust and the persons identified as the
+   Copyright (c) 2026 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -190,21 +190,24 @@ Table of Contents
    Otherwise, Clients invoke the issuance protocol to obtain a
    credential.  This interaction is shown below.
 
-                                         +---------------------------+
-   +--------+          +----------+      |  +--------+   +--------+  |
-   | Client |          | Attester |      |  | Issuer |   | Origin |  |
-   +---+----+          +-----+----+      |  +----+---+   +---+----+  |
-       |                     |           +-------|-----------|------ +
-       |                     |                   |           |
-       |--------------------- Request ---------------------->|
-       <----------------- TokenChallenge --------------------+
-       |                     |                   |           |
-       | <== Attestation ==> |                   |           |
-       +----------- CredentialRequest ---------->|           |
-       |<---------- CredentialResponse ----------+           |
-       |                     |                   |           |
-       |----------- Request + Token ------------------------>|
-       |                     |                   |           |
+                                          +------------------------.
+         +--------+        +----------+   |  +--------+ +--------+  |
+         | Client |        | Attester |   |  | Issuer | | Origin |  |
+         +---+----+        +-----+----+   |  +----+---+ +---+----+  |
+             |                   |         `------|---------|------'
+             |                   |                |         |
+             |------------------ Request ------------------>+
+             |<-------------- TokenChallenge ---------------+
+             |                   |                |         |
+             |<== Attestation ==>|                |         |
+             +--------- CredentialRequest ------->|         |
+             |<-------- CredentialResponse -------+         |
+   CredentialFinalization                         |         |
+             |                                              |
+   CredentialPresentation                                   |
+             +--------------- Request+Token --------------->|
+             |<----------------- Response ------------------+
+             |                                              |
 
                  Figure 1: Issuance and Redemption Overview
 
