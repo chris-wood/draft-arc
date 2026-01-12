@@ -1264,6 +1264,9 @@ rate-limit access from anonymous clients.<a href="#section-abstract-1" class="pi
 </li>
                 </ul>
 </li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.5">
+                <p id="section-toc.1-1.5.2.5.1"><a href="#section-5.5" class="auto internal xref">5.5</a>.  <a href="#name-range-proof-for-arbitrary-v" class="internal xref">Range Proof for Arbitrary Values</a></p>
+</li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
@@ -2950,6 +2953,173 @@ def VerifyPresentationProof(
 </div>
 </section>
 </div>
+<div id="range-proof-for-arbitrary-values">
+<section id="section-5.5">
+        <h3 id="name-range-proof-for-arbitrary-v">
+<a href="#section-5.5" class="section-number selfRef">5.5. </a><a href="#name-range-proof-for-arbitrary-v" class="section-name selfRef">Range Proof for Arbitrary Values</a>
+        </h3>
+<p id="section-5.5-1">This section specifies a range proof in the framework of
+<span>[<a href="#SIGMA" class="cite xref">SIGMA</a>]</span> to prove a secret value <code>v</code> lies
+in an arbitrary interval <code>[0,upper_bound)</code>. Before specifying the proof system, we first
+give a brief overview of how it works. For simplicity, assume that <code>upper_bound</code> is a
+power of two, that is, <code>upper_bound == 2^k</code> for some <code>k</code>.<a href="#section-5.5-1" class="pilcrow">¶</a></p>
+<p id="section-5.5-2">To prove a value lies in <code>[0,(2^k)-1)</code>, we prove it has a valid <code>k</code>-bit representation.
+This is proven by committing to the full value <code>v</code>, then all bits of the bit decomposition
+<code>b</code> of the value <code>v</code>, and then proving each coefficient of the bit decomposition is
+actually <code>0</code> or <code>1</code> and that the sum of the bits amounts to the full value <code>v</code>.  This involves the following steps:<a href="#section-5.5-2" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5.5-3">
+<li id="section-5.5-3.1">
+            <p id="section-5.5-3.1.1">Commit to the bits of <code>v</code>. That is, for each bit <code>b[i]</code> of the bit decomposition of <code>v</code>, let
+<code>D[i] = b[i] * generatorG + s[i] * generatorH</code>, where <code>s[i]</code> is a blinding scalar.<a href="#section-5.5-3.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-5.5-3.2">
+            <p id="section-5.5-3.2.1">Prove that <code>b[i]</code> is in <code>{0,1}</code> by computing proving the algebraic relation <code>b[i] *
+(b[i]-1) == 0</code> holds. This quadratic relation can be linearized by
+adding an auxilary witness <code>s2[i]</code> and adding the linear relation
+<code>D[i] == b[i] * D[i] + s2[i] * generatorH</code> to the equation system. A valid witness <code>s2[i]</code> can only
+be computed by the prover if <code>b[i]</code> is in <code>{0,1}</code>. Successfully computing a witness for
+any other value requires the prover to break the discrete logarithm problem.<a href="#section-5.5-3.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-5.5-3.3">
+            <p id="section-5.5-3.3.1">Having verified the proof the above relation, the verifier checks the sum by computing<a href="#section-5.5-3.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+<div class="alignLeft art-text artwork" id="section-5.5-4">
+<pre>
+C == D[0] * 2^0 + D[1] * 2^1 + D[2] * 2^2 + ... + D[k-1] * 2^{k-1}
+</pre><a href="#section-5.5-4" class="pilcrow">¶</a>
+</div>
+<p id="section-5.5-5">The third step is verified outside of the proof by adding the commitments
+homomorphically.<a href="#section-5.5-5" class="pilcrow">¶</a></p>
+<p id="section-5.5-6">To support the general case, where <code>upper_bound</code> is not necessarily a power of two,
+we extend the range proof for arbitrary ranges by decomposing the range
+up to the second highest power of two and adding an additional, non-binary range that
+covers the remaining range. This is detailed in <code>ComputeBases</code> below.<a href="#section-5.5-6" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.5-7">
+<pre>
+def ComputeBases(upper_bound):
+
+Inputs:
+
+- upper_bound: the maximum value of the range (exclusive), as integer.
+
+Outputs:
+
+- bases: an array of Scalar bases to represent elements, sorted in descending order. A base is
+  either a power of two or a unique remainder that can be used to represent any integer
+  in [0, upper_bound).
+
+# compute bases to express the commitment as a linear combination of the bit decomposition
+remainder=upper_bound
+bases=[]
+# Generate all but the last power-of-two base.
+for i in range(ceil(log2(upper_bound)) - 1):
+    base = 2 ** i
+    remainder -= base
+    bases.append((G.Scalar(base))
+bases.append(remainder - 1)
+
+# call sorted on array to ensure the additional base is in correct order
+return sorted(bases, reverse=True)
+</pre><a href="#section-5.5-7" class="pilcrow">¶</a>
+</div>
+<p id="section-5.5-8">Using the bases from <code>ComputeBases</code>, the function <code>ComputeStatementAndWitnesses</code>
+represents the secret value <code>v</code> as a linear combination of the bases, using the resulting
+bit representation to generate the cryptographic commitments and witness values for the
+range proof.<a href="#section-5.5-8" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.5-9">
+<pre>
+def ComputeStatementAndWitnesses(v, upper_bound):
+
+Inputs:
+
+- v: the scalar we want to prove is in range [0, upper_bound)
+- r: randomness for commitment to v
+- upper_bound: the maximum integer value of the range
+
+Outputs:
+
+- statement: proof statement for the relation
+- [s,s2]: the witness for the equations appended to the statement (the bit
+  decomposition, the secret shares of r, and the auxiliary witness s2. Each s2[i] is either zero when
+b[i] is set) or s[i] when b[i] is zero.
+- C: the commitment to v
+- D: the commitments to the bit decomposition of v
+
+Parameters:
+- G: group
+- generatorG: Element, equivalent to G.GeneratorG()
+- generatorH: Element, equivalent to G.GeneratorH()
+
+Exceptions:
+- NumberTooBigError, raised when v is out of range
+
+if G.ScalarToInt(v) &gt;= upper_bound:
+    raise NumberTooBigError
+
+bases = ComputeBases(upper_bound)
+
+# Compute bit decomposition of v.
+b = []
+v_remainder = G.ScalarToInt(v)
+for base in bases:
+    # Implementation note: In order to avoid leaking v via a timing channel, this code should be written to be constant time.
+    if v_remainder &gt;= base:
+        v_remainder -= G.ScalarToInt(base)
+        b.append(G.Scalar(1))
+    else:
+        b.append(G.Scalar(0))
+
+# array of group elements where the i-th element corresponds to b[i] * generatorG + s * generatorH
+D = []
+# blinding elements for Pedersen commitment, secret shares of r
+s = []
+# complementing blinders for proof of bit-ness
+s2 = []
+partial_sum = G.Scalar(0)
+for i in range(len(bases) - 1):
+    s.append(G.random_scalar())
+    partial_sum += bases[i] * s[i]
+    s2.append((G.Scalar(1) - b[i]) * s[i])
+    D.append(b[i] * generatorG + s[i] * generatorH)
+idx = len(bases) - 1
+s[idx] = r - partial_sum
+s2.append((G.Scalar(1) - b[idx]) * s[idx])
+D.append(b[idx] * generatorG + s[idx] * generatorH)
+
+# Compute the Pedersen commitment to the full value of v, using the provided r.
+C = v * generatorG + r * generatorH
+
+# start computing the linear relation
+statement = LinearRelation(G)
+
+[var_G, var_H, var_C] = statement.allocate_elements(3)
+
+# allocate variables for decomposed statements
+vars_b = statement.allocate_scalars(len(b))
+# allocate blinding elements for Pedersen commitment
+vars_s = statement.allocateScalars(len(b))
+# allocate complementing blinders for proof of bit-ness
+vars_s2 = statement.allocateScalars(len(b))
+# allocate bit commitment values
+vars_D = statement.allocateElements(len(b))
+
+# Add equations proving each b[i] is in {0,1}
+# For each base, we prove:
+#   D[i] = b[i] * generatorG + s[i] * generatorH      (b[i] is committed in D[i])
+#   b[i] * (b[i] - 1) = 0       (b[i] is 0 or 1)
+for i in range(len(b)):
+        statement.set_elements([(vars_D[i], D[i])])
+        # add Pedersen commitment to the ith bit.
+        statement.append_equation(vars_D[i], [(vars_b[i], var_G), (vars_s[i], var_H)])
+        # add statement that b[i] is in {0,1}
+        statement.append_equation(vars_D[i], [(vars_b[i], vars_D[i]), (vars_s2[i], var_H)])
+
+return (statement, [r, v, b, s, s2], [C,D])
+</pre><a href="#section-5.5-9" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
 </section>
 </div>
 <div id="ciphersuites">
@@ -3344,8 +3514,12 @@ ec3cc3f1939198a80acb78b7f90b3bff769cab890f33e4d69b7c302d21ad35ec457d
 <span class="refAuthor">Barker, E.</span>, <span class="refAuthor">Chen, L.</span>, <span class="refAuthor">Roginsky, A.</span>, <span class="refAuthor">Vassilev, A.</span>, and <span class="refAuthor">R. Davis</span>, <span class="refTitle">"Recommendation for pair-wise key-establishment schemes using discrete logarithm cryptography"</span>, <span class="refContent">National Institute of Standards and Technology</span>, <span class="seriesInfo">DOI 10.6028/nist.sp.800-56ar3</span>, <time datetime="2018-04" class="refDate">April 2018</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.sp.800-56ar3">https://doi.org/10.6028/nist.sp.800-56ar3</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8017">[RFC8017]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Moriarty, K., Ed.</span>, <span class="refAuthor">Kaliski, B.</span>, <span class="refAuthor">Jonsson, J.</span>, and <span class="refAuthor">A. Rusch</span>, <span class="refTitle">"PKCS #1: RSA Cryptography Specifications Version 2.2"</span>, <span class="seriesInfo">RFC 8017</span>, <span class="seriesInfo">DOI 10.17487/RFC8017</span>, <time datetime="2016-11" class="refDate">November 2016</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8017">https://www.rfc-editor.org/rfc/rfc8017</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="SIGMA">[SIGMA]</dt>
+      <dd>
+<span class="refAuthor">Orrù, M.</span> and <span class="refAuthor">C. Yun</span>, <span class="refTitle">"Interactive Sigma Proofs"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-irtf-cfrg-sigma-protocols-00</span>, <time datetime="2025-08-08" class="refDate">8 August 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-sigma-protocols-00">https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-sigma-protocols-00</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
