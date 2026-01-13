@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-01-11T00:11:53.162660+00:00",
+  "timestamp": "2026-01-13T00:08:51.048648+00:00",
   "repo": "chris-wood/draft-arc",
   "labels": [
     {
@@ -638,7 +638,7 @@
       "labels": [],
       "body": "Firstly, thank you all for your incredible work on these specs.\n\n## Summary\n\nI'm building a privacy-preserving access control system for cloud services and have identified a need for zero-knowledge range proofs on credential validity timestamps (both `valid_from` and `valid_until`) within the ARC protocol. This would enable flexible credential expiration without revealing specific timestamps that could shrink anonymity sets.\n\n## Use Case\n\nMy architecture separates concerns across three layers:\n\n- **Client layer**: End-user software that holds credentials and payment methods\n- **Service layer**: Cloud services (search, AI inference, data sync) that must not know user identity\n- **Payment layer**: Issues credentials when users purchase access (e.g., \"$15 for one month of service\")\n\nThe design goal is that the service layer cannot correlate activity with the payment layer or between different requests.\n\n## Current Limitation\n\nARC provides excellent unlinkability properties for rate-limited access, but credential validity must currently be managed by encoding validity in the request context:\n\n```\nrequestContext = \"payment-session:xyz:expires:2025-01\"\n```\n\nThis value is available in the clear with each presentation, and is therefore at a high risk of leaking correlating information. To ensure a sufficiently large anonymity set, credential expirations must align to fixed calendar boundaries.\n\nIn smaller scale services and whenever the cost of a credential is high (paying $20 as opposed to simply passing a captcha) the number of credentials will be small, and the fixed interval must be wide to ensure adequate privacy.\n\nAdopting a large \"common epoch\" like calendar months has many consequences:\n- Proration is required for new mid-month users.\n- New credentials for immediate use are constrained to the number of days remaining this month.\n- It's impossible to reliably offer credentials with shorter lifespans (1 week, etc).\n- A single limit cannot span multiple months.\n\nIn deployments that can support a small \"common epoch\" like days without privacy concerns, the use of such small windows imposes its own constraints. Breaking a subscription for \"3000 requests per month\" into 30 credentials supporting \"100 requests per day\" meaningfully changes the supported for irregular usage patterns.\n\n## Desired Capability\n\nI'd like the client to be able to prove:\n\n```\nvalid_from <= current_time <= valid_until\n```\n\nWithout revealing the actual values of `valid_from` or `valid_until`.\n\nThis would require:\n\n1. **Credential attributes for timestamps**: The credential would include `valid_from` and `valid_until` as hidden attributes (similar to how the balance is hidden in ACT)\n2. **Range proofs during presentation**: The client proves the current timestamp falls within the validity window using a zero-knowledge range proof\n3. **Unlinkability preservation**: Different credentials with different validity windows remain indistinguishable to the verifier\n\n## Technical Considerations\n\n### Timestamp representation\n\nTimestamps could be represented as Unix epoch seconds (or milliseconds), fitting within the scalar field. A 64-bit timestamp provides sufficient range and precision.\n\n### Range proof construction\n\nThe existing open issue mentions Bulletproofs for hiding the nonce:\n\n> [[OPEN ISSUE: hide the nonce and replace the tag proof with a range proof built from something like Bulletproofs.]]\n\nSimilar techniques could apply to timestamp bounds. The client would prove:\n- `current_time - valid_from >= 0` (credential has started)\n- `valid_until - current_time >= 0` (credential hasn't expired)\n\n### Clock synchronization\n\nPractical deployments would need to handle clock skew between client and server. The server could:\n- Accept a small tolerance (e.g., \u00b160 seconds)\n\n## Benefits\n\n1. **Flexible validity periods**: Users can purchase arbitrary durations without aligning to calendar boundaries\n2. **Seamless renewal**: Users can purchase overlapping credentials without complexity\n3. **Preserved anonymity**: No timestamps revealed that could fingerprint users\n4. **Simplified tag management**: Server can still use course epochs for tag storage cleanup, but credential validity is decoupled from these operational concerns\n\n## Questions for the Working Group\n\n1. Is this functionality in scope for ARC, or would it be better suited as a separate extension?\n2. Are there performance concerns with adding two range proofs (for both bounds) to each presentation?\n3. How should clock synchronization be handled between client and server?\n4. Are there existing constructions or implementations that could be referenced for this? \n5. Would this interact with the existing open issue around hiding the nonce with Bulletproofs, or are these orthogonal concerns?\n\n(Note: A related discussion exists at\u00a0[https://github.com/SamuelSchlesinger/draft-act/issues/7](https://github.com/SamuelSchlesinger/draft-act/issues/7))\n## More About My Use Case\n\nI'm designing a commercial cloud service where privacy is a core feature. Users pay for access through a separate payment layer, then access services without those services knowing their identity. The current ARC design works adequately for my immediate needs using monthly epochs, but timestamp range proofs would significantly improve flexibility and user experience.\n\nI know that this isn't the primary use-case of the Privacy Pass project, but it appears deeply compatible in its goals and implementation. Using Privacy Pass as a privacy-preserving \"proof of purchase\" mechanism is a very interesting general use-case.\n\nI'm happy to provide additional details about the use case or discuss implementation considerations. While my cryptographic knowledge is fairly rudimentary, I'm willing to contribute wherever I can be helpful, particularly to testing or implementation work.\n",
       "createdAt": "2025-11-20T02:08:13Z",
-      "updatedAt": "2026-01-08T05:17:33Z",
+      "updatedAt": "2026-01-12T06:43:16Z",
       "closedAt": "2026-01-08T05:17:33Z",
       "comments": [
         {
@@ -654,6 +654,37 @@
           "body": "While working on #48 I found some flaws in my understanding of ARC, and I no longer find this necessary. More specifically, my use-case requires `presentationLimit` be set during issuance, which is very intentionally not the flow in ARC. I'm going to close this.\n\nTimestamp validity ranges might be valuable for other use-cases. If they're to be defined adjacent the `presentationContext` rather than the issuance `requestContext`, #48 provides excellent machinery to efficiently add them. But that's for a new issue.",
           "createdAt": "2026-01-08T05:17:33Z",
           "updatedAt": "2026-01-08T05:17:33Z"
+        },
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Sorry for missing this issue until now! (I'll blame https://github.com/orgs/community/discussions/176383 for my inability to update my settings to get emailed about new issues/PRs... hoping that gets resolved, but in the meantime I will check manually more often!)\n\nIn case it's still helpful, here are some responses. I do still think your solution is workable, if you are willing to accept the complexity and performance overheads (which may be significant, depending on your timestamp granularity and some other considerations.)\n\n1. Is this functionality in scope for ARC, or would it be better suited as a separate extension?\nI think this would be better as a separate extension, due to the performance overhead - wouldn't want to make all ARC adopters have to incur that performance hit if they don't need fine-grained expiration bounds.\n\n2. Are there performance concerns with adding two range proofs (for both bounds) to each presentation?\nYes - depending on your granularity of timestamp, and how large of a range you will allow for each of these to be >= 0:\n`current_time - valid_from >= 0` (credential has started)\n`valid_until - current_time >= 0` (credential hasn't expired)\nBecause you can't just prove that they're >= 0... you have to proof that they are in some range `[0, n)` and the larger `n` is, the more expensive the range proof is.\n\n3. How should clock synchronization be handled between client and server?\nI don't actually see why this question is relevant - to my understanding, the current time would be sent in the clear, so the server can just see how much that differs from its own timestamp when it has received it, and if the gap is too large then it can choose to discard it.\n\n4. Are there existing constructions or implementations that could be referenced for this?\nNot that I'm aware of, but this could be a good questions for the IETF privacy pass group - they're a great source of knowledge :)\n\n5. Would this interact with the existing open issue around hiding the nonce with Bulletproofs, or are these orthogonal concerns?\nThese are orthogonal. The nonce hiding is a for rate limiting within the credential validity bounds, whereas you are discussing how to determine the credential validity bounds.\n\n> While working on https://github.com/chris-wood/draft-arc/pull/48 I found some flaws in my understanding of ARC, and I no longer find this necessary. More specifically, my use-case requires presentationLimit be set during issuance, which is very intentionally not the flow in ARC. I'm going to close this.\n\nI'm curious what you mean by \"presentationLimit must be set during issuance\"? Because you can set the expected rate limit in the tokenChallenge (which is bound to the credential) in the `redemption_context` field. Then during presentation, you have to encode `redemption_context` in the `presentation_context`, which is sent in the clear and bound to the presentation:\n```\npresentation_context = concat(\n  encode(2, len(challenge.issuer_name)),\n  challenge.issuer_name,\n  encode(2, len(challenge.origin_info)),\n  challenge.origin_info,\n  encode(2, len(challenge.redemption_context)),\n  challenge.redemption_context,\n  issuer_key_id)\n```\nThe verifier could check that the value set in redemption_context matches the presentation limit it expects (or just set presentation limit to that value). This forces the presentation_limit to be bound to the credential at the time of issuance.\n\nAlso if that's too complex, you can just hardcode a presentation limit for a given issuance/verification key.\n\nBoth of these approaches work if you don't expect there to be too many different presentation limits (eg a \"free\" vs \"paid\" tier). But if you expect every user to have a different presentation limit, for some reason, then these approaches which reveal the presentation limit at the time of presentation will not work, and you'd have to do something more complex which hides the presentation limit (possible, but yet another layer of complexity).",
+          "createdAt": "2026-01-12T06:43:16Z",
+          "updatedAt": "2026-01-12T06:43:16Z"
+        }
+      ]
+    },
+    {
+      "number": 49,
+      "id": "I_kwDONyB6uM7i0Jy3",
+      "title": "design: Simplify definition of u in MAC",
+      "url": "https://github.com/chris-wood/draft-arc/issues/49",
+      "state": "OPEN",
+      "author": "armfazh",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "During definition of MAC, the `u` element is chosen at random from the group.\n\n<img width=\"1981\" height=\"454\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/2860ac6d-4be9-458d-b836-471575145a14\" />\n\n---\n\nIn the implementation, [the spec](https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#name-credential-response) performs this step as:\n\n```python\n  b = G.RandomScalar()\n  U = b * generatorG\n```\n\nand then the parameter `b` appears in most of the [constraint equations](https://datatracker.ietf.org/doc/html/draft-yun-privacypass-crypto-arc-00#name-credentialresponse-proof-cr) to compute the issuer's proof.\n\nI suggested for analysis the following changes: \n\n1) Not to enforce `b` in the constraints because this is an ephemeral value. This can help reduce the number of linear constraints.\n\n2) Instead of perfoming a scalar multiplication for defining `u`, we can use a hash-to-group function as:\n\n```python\n  b = random_bytes(32)\n  U = G.HashToGroup(b)\n```\n\nIn practice, hashing to group is around 25% the cost of a scalar multiplication improving the execution time for issuers.\n\n",
+      "createdAt": "2026-01-12T17:40:56Z",
+      "updatedAt": "2026-01-12T20:41:25Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thanks Armando! This is a great catch.\n\nNote that we can do (1) and re-define the constraints to be in terms of `U` rather than `b`, without necessarily doing (2). But both are improvements worth doing.",
+          "createdAt": "2026-01-12T20:41:25Z",
+          "updatedAt": "2026-01-12T20:41:25Z"
         }
       ]
     }
@@ -1770,10 +1801,10 @@
       "labels": [],
       "body": "Removes the Schnorr proof compiler section from the ARC spec, and replaces it with the Sigma and Fiat-Shamir specs instead. Updates the proof creation and verification to use the APIs from the Sigma and Fiat-Shamir specs.\r\n\r\nTo-dos:\r\n- Pass in an rng for the prover, since `NISigmaProtocol` needs it an rng to generate a proof. This is currently missing.\r\n- Update the poc to also use the sigma protocol / fiat-shamir poc for generating proofs, and update the test vectors accordingly. \r\n  - This may involve some difficulty, as the sigma/f-s poc uses its own definition of groups that is not the same, and possibly is not compatible with, the current ARC definition of groups (which is the IETF \"boilerplate\" group definition). See this issue for more discussion on the topic: https://github.com/mmaker/draft-irtf-cfrg-sigma-protocols/issues/71#issuecomment-3288847813\r\n  - Due to the difficulties caused by the group incompatibilities, I may tackle this in a future PR once the group incompatibilities have been addressed.\r\n\r\nDone:\r\n- Check if we need to define a codec for `NISigmaProtocol`? It seems like `NISigmaProtocol` needs a codec defined, but there is nowhere to define it (see section 5 in https://datatracker.ietf.org/doc/draft-irtf-cfrg-fiat-shamir/). Maybe it is set to `LinearMapCodec` by default, but I don't see that specified in the spec. -> This is fixed in https://github.com/mmaker/draft-irtf-cfrg-sigma-protocols/pull/79\r\n\r\nThis also closes this issue, as it fixes the `RandomScalar()` typo: https://github.com/chris-wood/draft-arc/issues/36",
       "createdAt": "2025-09-14T05:18:21Z",
-      "updatedAt": "2025-10-18T03:26:05Z",
+      "updatedAt": "2026-01-12T08:28:06Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
-      "baseRefOid": "24dac6275c1660a973e03a584fbe07733f54a5a8",
+      "baseRefOid": "778792362b04b13ff283db6caf245f6f7f453ecb",
       "headRepository": "chris-wood/draft-arc",
       "headRefName": "cathie/sigma",
       "headRefOid": "d9a485c3f33ec092dca1476b73bae78d2f455149",
@@ -1832,7 +1863,7 @@
             "abbreviatedOid": "376a5fa"
           },
           "author": "cjpatton",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "Nice work! This looks correct to me, just some minor comments in line.\r\n\r\nOne high level one: Generally speaking, \"artwork\" in drafts (i.e., pseudocode contained in `~~~`) should only be 70 columns wide. Otherwise, the artwork doesn't render very well in PDF or TXT. I think a lot of drafts ignore this, and I'm not aware of an instance of the RFC editor complaining about it.",
           "createdAt": "2025-09-15T14:48:44Z",
@@ -1936,7 +1967,7 @@
             "abbreviatedOid": "376a5fa"
           },
           "author": "cjpatton",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2025-09-15T20:24:57Z",
@@ -1976,7 +2007,7 @@
             "abbreviatedOid": "376a5fa"
           },
           "author": "cjpatton",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2025-09-15T21:52:19Z",
@@ -1996,7 +2027,7 @@
             "abbreviatedOid": "376a5fa"
           },
           "author": "cjpatton",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2025-09-15T21:53:34Z",
@@ -2016,7 +2047,7 @@
             "abbreviatedOid": "376a5fa"
           },
           "author": "cjpatton",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2025-09-15T23:15:46Z",
@@ -2076,7 +2107,7 @@
             "abbreviatedOid": "0c1d73b"
           },
           "author": "cjpatton",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2025-09-16T19:00:45Z",
@@ -2129,7 +2160,7 @@
             "abbreviatedOid": "7a783c8"
           },
           "author": "cjpatton",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2025-09-17T19:37:27Z",
@@ -2170,24 +2201,26 @@
       "id": "PR_kwDONyB6uM6pDhqW",
       "title": "Adding range proofs for arbitrary ranges",
       "url": "https://github.com/chris-wood/draft-arc/pull/38",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "meyira",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "Add range proofs for ranges within [0,max), where max is an arbitrary number.",
       "createdAt": "2025-09-17T11:34:57Z",
-      "updatedAt": "2025-10-30T17:17:02Z",
+      "updatedAt": "2026-01-12T08:25:51Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
-      "baseRefOid": "24dac6275c1660a973e03a584fbe07733f54a5a8",
+      "baseRefOid": "178815ff3601f65cb04edcef11f6b4b33d1f349d",
       "headRepository": "meyira/draft-arc",
       "headRefName": "main",
       "headRefOid": "8a90767dc9177d4825ac05ba4bba213212881b5a",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-01-12T08:25:51Z",
+      "mergedAt": "2026-01-12T08:25:51Z",
+      "mergedBy": "cathieyun",
+      "mergeCommit": {
+        "oid": "b92e4d3c6ac48fd59683b433145d84b29b1b5978"
+      },
       "comments": [
         {
           "author": "cathieyun",
@@ -2227,9 +2260,9 @@
         {
           "author": "cathieyun",
           "authorAssociation": "COLLABORATOR",
-          "body": "Note, this is blocked on the ARC proof of concept moving over to the EC groups defined by the F-S/Sigma proof of concept, as currently they use different EC group definitions. And we don't want to merge this spec in without having a matching implementation in the proof of concept, which should ideally use the F-S/Sigma proof of concept.",
-          "createdAt": "2025-10-30T17:17:02Z",
-          "updatedAt": "2025-10-30T17:17:02Z"
+          "body": "Currently, the range proof addition is \"free floating\" as it is not called by the ARC spec.\r\n\r\nWill merge this in, to unblock progress on defining nonce hiding in the ARC spec.\r\nAs for the matching reference implementation, we can do that along with the nonce hiding changes.\r\n",
+          "createdAt": "2026-01-12T07:32:53Z",
+          "updatedAt": "2026-01-12T07:32:53Z"
         }
       ],
       "reviews": [
@@ -2279,7 +2312,7 @@
             "abbreviatedOid": "8c0c0da"
           },
           "author": "cjpatton",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2025-09-29T16:04:50Z",
@@ -2319,7 +2352,7 @@
             "abbreviatedOid": "8c0c0da"
           },
           "author": "cjpatton",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2025-09-29T16:18:04Z",
@@ -2412,6 +2445,19 @@
               "updatedAt": "2025-09-30T11:24:18Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDONyB6uM7ZhlEh",
+          "commit": {
+            "abbreviatedOid": "8a90767"
+          },
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-01-12T07:33:17Z",
+          "updatedAt": "2026-01-12T07:33:17Z",
+          "comments": []
         }
       ]
     },
@@ -2685,24 +2731,26 @@
       "id": "PR_kwDONyB6uM6vQaIW",
       "title": "Update diagram to have credential finalisation and presentation",
       "url": "https://github.com/chris-wood/draft-arc/pull/45",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "thibmeu",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Here is the updated diagram\r\n\r\n![credentials](https://github.com/user-attachments/assets/6d97510b-30ac-4e97-a58b-47766ca295eb)\r\n",
       "createdAt": "2025-10-23T12:35:18Z",
-      "updatedAt": "2025-10-23T12:35:53Z",
+      "updatedAt": "2026-01-12T06:49:37Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "e77336a8ba75a3f5b02d1fb68d2d9694921c8005",
       "headRepository": "thibmeu/draft-arc",
       "headRefName": "main",
       "headRefOid": "c1807f2a5b2b1e126c00800339f863d044ddafdc",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-01-12T06:49:37Z",
+      "mergedAt": "2026-01-12T06:49:37Z",
+      "mergedBy": "cathieyun",
+      "mergeCommit": {
+        "oid": "178815ff3601f65cb04edcef11f6b4b33d1f349d"
+      },
       "comments": [],
       "reviews": []
     },
@@ -2711,25 +2759,47 @@
       "id": "PR_kwDONyB6uM68CJvA",
       "title": "Add nonce hiding with range proofs",
       "url": "https://github.com/chris-wood/draft-arc/pull/48",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "mike-marcacci",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "This proposes a change to the spec that address one of the open issues in the current draft:\r\n\r\n> OPEN ISSUE: hide the nonce and replace the tag proof with a range proof built from something like Bulletproofs.\r\n\r\nThis change:\r\n\r\n- Hides the nonce value in a Pedersen commitment (nonceCommit)\r\n- Uses Bulletproofs to prove nonce is in \\[0, presentationLimit)\r\n\r\n---\r\n\r\nI began working on this as a prerequisite for #47, and through it discovered that my use-case isn't a great fit for ARC on some deeper levels. (I'll close out that issue shortly.)\r\n\r\nI figured my sunk effort might as well go to good use, so I finished up this PR.\r\n\r\nDisclaimer: I am *not* a cryptographer, and needed to do a LOT of reading to assemble this. Every line of this is my work, but I used lots and lots of AI to answer questions, to make sure I understood the concepts thoroughly, and to find flaws in each of my many attempts at this \u2013 so don't let a lack of superficial mistakes hide any fundamental flaws that I may have made.\r\n\r\nThat said, I am reasonably confident in this and happy to walk through it on a call if anyone would find that helpful.\r\n\r\n",
       "createdAt": "2026-01-08T04:37:35Z",
-      "updatedAt": "2026-01-08T17:56:23Z",
+      "updatedAt": "2026-01-12T23:31:12Z",
       "baseRepository": "chris-wood/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "e77336a8ba75a3f5b02d1fb68d2d9694921c8005",
       "headRepository": "mike-marcacci/draft-arc",
       "headRefName": "nonce-hiding",
       "headRefOid": "a7dd5818de28fe37bb377d6c0b3a5ea33f4cdb47",
-      "closedAt": null,
+      "closedAt": "2026-01-12T06:51:04Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thanks for your contribution! I'm taking a look now.\r\nSorry for missing your issue https://github.com/chris-wood/draft-arc/issues/47 until now - I've left some comments there as well, in case it helps.",
+          "createdAt": "2026-01-12T06:22:22Z",
+          "updatedAt": "2026-01-12T06:22:22Z"
+        },
+        {
+          "author": "cathieyun",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This is very helpful, but one problem with this approach is that bulletproofs has not been specified in a standard yet. In order to use it in an IETF spec, we either have to specify it in the ARC spec itself, or call into an existing specification.\r\n\r\nUsing sigma proofs is less efficient (due to the lack of compression from the Bulletproofs inner product), but for our purposes it is preferable to use something that is adopted as a standard. It also has less complexity than Bulletproofs.\r\nhttps://datatracker.ietf.org/doc/draft-irtf-cfrg-sigma-protocols/\r\nWe are working on defining a range proof using sigma protocols here:\r\nhttps://github.com/chris-wood/draft-arc/pull/38\r\n\r\nSo I'll close this PR, as it doesn't take the approach that we think is best for standardization purposes. Thanks for your contribution though!",
+          "createdAt": "2026-01-12T06:51:04Z",
+          "updatedAt": "2026-01-12T06:51:04Z"
+        },
+        {
+          "author": "mike-marcacci",
+          "authorAssociation": "NONE",
+          "body": "Thanks for the review @cathieyun! Using sigma proofs makes far more sense given the work being done to formalize it.",
+          "createdAt": "2026-01-12T23:31:11Z",
+          "updatedAt": "2026-01-12T23:31:11Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDONyB6uM7Y0bIe",
