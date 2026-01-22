@@ -7,7 +7,7 @@ docname: draft-privacypass-arc-crypto-latest
 submissiontype: IETF
 number:
 date:
-v: 0
+v: 3
 venue:
   group: PRIVACYPASS
   type: Privacy Pass
