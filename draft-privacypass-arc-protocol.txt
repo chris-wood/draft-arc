@@ -5,25 +5,26 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Standards Track                             Apple, Inc.
-Expires: 16 July 2026                                    12 January 2026
+Expires: 27 July 2026                                    23 January 2026
 
 
  Privacy Pass Issuance Protocol for Anonymous Rate-Limited Credentials
-                    draft-yun-privacypass-arc-latest
+                 draft-privacypass-arc-protocol-latest
 
 Abstract
 
    This document specifies the issuance and redemption protocols for
-   tokens based on the Anonymous Rate-Limited Credential (ARC) protocol.
+   tokens based on the Anonymous Rate-Limited Credential (ARC)
+   cryptographic protocol.
 
 About This Document
 
    This note is to be removed before publishing as an RFC.
 
-   The latest revision of this draft can be found at https://chris-
-   wood.github.io/draft-arc/draft-yun-privacypass-arc.html.  Status
-   information for this document may be found at
-   https://datatracker.ietf.org/doc/draft-yun-privacypass-arc/.
+   The latest revision of this draft can be found at https://ietf-wg-
+   privacypass.github.io/draft-arc/draft-privacypass-arc-issuance.html.
+   Status information for this document may be found at
+   https://datatracker.ietf.org/doc/draft-privacypass-arc-protocol/.
 
    Discussion of this document takes place on the PRIVACYPASS Privacy
    Pass mailing list (mailto:privacy-pass@ietf.org), which is archived
@@ -31,7 +32,7 @@ About This Document
    at https://www.ietf.org/mailman/listinfo/privacy-pass/.
 
    Source for this draft and an issue tracker can be found at
-   https://github.com/chris-wood/draft-arc.
+   https://github.com/ietf-wg-privacypass/draft-arc.
 
 Status of This Memo
 
@@ -48,7 +49,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 16 July 2026.
+   This Internet-Draft will expire on 27 July 2026.
 
 Copyright Notice
 
@@ -107,12 +108,13 @@ Table of Contents
    to limit access to a given user, e.g., for the purposes of throttling
    or rate limiting them, must issue one token for each redemption.
 
-   The Anonymous Rate-Limited Credential (ARC) protocol, as specified in
-   [ARC], offers a more scalable approach to rate limiting.  In
-   particular, ARC credentials can be issued once and then presented (or
-   redeemed) up to some fixed-amount of time for distinct, per-origin
-   presentation contexts.  This means that a Client will only be able to
-   present a limited number of tokens associated with a given context.
+   The Anonymous Rate-Limited Credential (ARC) cryptographic protocol,
+   as specified in [ARC], offers a more scalable approach to rate
+   limiting.  In particular, ARC credentials can be issued once and then
+   presented (or redeemed) up to some fixed-amount of time for distinct,
+   per-origin presentation contexts.  This means that a Client will only
+   be able to present a limited number of tokens associated with a given
+   context.
 
    This document specifies the issuance and redemption protocols for
    ARC.  Section 2 describes motivation for this new type of token,
