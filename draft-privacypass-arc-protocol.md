@@ -3,7 +3,7 @@ title: "Privacy Pass Issuance Protocol for Anonymous Rate-Limited Credentials"
 abbrev: "Privacy Pass Issuance Protocol for ARC"
 category: std
 
-docname: draft-yun-privacypass-arc-latest
+docname: draft-privacypass-arc-protocol-latest
 submissiontype: IETF
 consensus: true
 number:
@@ -14,8 +14,8 @@ venue:
   type: Privacy Pass
   mail: privacy-pass@ietf.org
   arch: https://mailarchive.ietf.org/arch/browse/privacy-pass
-  github: chris-wood/draft-arc
-  latest: https://chris-wood.github.io/draft-arc/draft-yun-privacypass-arc.html
+  github: ietf-wg-privacypass/draft-arc
+  latest: https://ietf-wg-privacypass.github.io/draft-arc/draft-privacypass-arc-issuance.html
 
 author:
  -
@@ -40,7 +40,7 @@ informative:
 --- abstract
 
 This document specifies the issuance and redemption protocols for
-tokens based on the Anonymous Rate-Limited Credential (ARC) protocol.
+tokens based on the Anonymous Rate-Limited Credential (ARC) cryptographic protocol.
 
 --- middle
 
@@ -60,7 +60,7 @@ This means that applications which wish to limit access to a given user, e.g.,
 for the purposes of throttling or rate limiting them, must issue one token
 for each redemption.
 
-The Anonymous Rate-Limited Credential (ARC) protocol, as specified in {{ARC}},
+The Anonymous Rate-Limited Credential (ARC) cryptographic protocol, as specified in {{ARC}},
 offers a more scalable approach to rate limiting. In particular, ARC credentials
 can be issued once and then presented (or redeemed) up to some fixed-amount
 of time for distinct, per-origin presentation contexts. This means that a Client
@@ -163,8 +163,7 @@ of attestation are outside the scope of the issuance protocol; see
 {{Section 4 of ARCHITECTURE}} for information about how attestation can
 be implemented in each of the relevant deployment models.
 
-The issuance and redemption protocols in this document are built on
-{{ARC}}.
+The issuance and redemption protocols in this document are built on {{ARC}}.
 
 # Configuration {#setup}
 

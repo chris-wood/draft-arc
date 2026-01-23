@@ -1,20 +1,20 @@
 ---
-title: "Anonymous Rate-Limited Credentials"
-abbrev: "ARC"
+title: "Anonymous Rate-Limited Credentials Cryptography"
+abbrev: "ARC Cryptography"
 category: info
 
-docname: draft-yun-privacypass-crypto-arc-latest
+docname: draft-privacypass-arc-crypto-latest
 submissiontype: IETF
 number:
 date:
-v: 0
+v: 3
 venue:
   group: PRIVACYPASS
   type: Privacy Pass
   mail: privacy-pass@ietf.org
   arch: https://mailarchive.ietf.org/arch/browse/privacy-pass
-  github: chris-wood/draft-arc
-  latest: https://chris-wood.github.io/draft-arc/draft-yun-privacypass-crypto-arc.html
+  github: ietf-wg-privacypass/draft-arc
+  latest: https://ietf-wg-privacypass.github.io/draft-arc/draft-privacypass-arc-crypto.html
 
 author:
  -
