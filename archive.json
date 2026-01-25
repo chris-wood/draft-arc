@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-01-22T00:11:22.446462+00:00",
+  "timestamp": "2026-01-25T01:14:18.306249+00:00",
   "repo": "ietf-wg-privacypass/draft-arc",
   "labels": [
     {
@@ -2896,24 +2896,26 @@
       "id": "PR_kwDONyB6uM6-Xp7n",
       "title": "Update draft names to reflect adoption",
       "url": "https://github.com/ietf-wg-privacypass/draft-arc/pull/50",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "cathieyun",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Now that ARC has been adopted by privacy pass, this PR updates the draft names and pointers to privacy pass working group (as opposed to `yun-...`). It also updates some links to reflect that the repo has moved to the `ietf-wg-privacypass` working group.\r\n\r\nAfter this change, I will need to push updated tags to datatracker with the new names. Then, I will open another PR to update the datatracker and ID links to the new datatracker links.",
       "createdAt": "2026-01-21T05:46:18Z",
-      "updatedAt": "2026-01-21T06:23:25Z",
+      "updatedAt": "2026-01-23T21:09:55Z",
       "baseRepository": "ietf-wg-privacypass/draft-arc",
       "baseRefName": "main",
       "baseRefOid": "778792362b04b13ff283db6caf245f6f7f453ecb",
       "headRepository": "ietf-wg-privacypass/draft-arc",
       "headRefName": "adoption-update",
-      "headRefOid": "a4053d7b379b038f0ecda8e6a51692f483e8bfa0",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "4f2347fabc2a32e3c72535ca198c31e418600067",
+      "closedAt": "2026-01-23T20:14:05Z",
+      "mergedAt": "2026-01-23T20:14:05Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "0a48cfdd6c81ac194e80957c9d1d6f74239acb70"
+      },
       "comments": [],
       "reviews": []
     }
