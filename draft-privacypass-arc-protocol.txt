@@ -666,10 +666,10 @@ newState, nonce, presentation = Present(state)
 11.1.  Normative References
 
    [ARC]      Yun, C. and C. A. Wood, "Anonymous Rate-Limited
-              Credentials", Work in Progress, Internet-Draft, draft-yun-
-              privacypass-crypto-arc-00, 20 October 2025,
-              <https://datatracker.ietf.org/doc/html/draft-yun-
-              privacypass-crypto-arc-00>.
+              Credentials Cryptography", Work in Progress, Internet-
+              Draft, draft-privacypass-arc-crypto-00, 25 January 2026,
+              <https://datatracker.ietf.org/doc/html/draft-privacypass-
+              arc-crypto-00>.
 
    [ARCHITECTURE]
               Davidson, A., Iyengar, J., and C. A. Wood, "The Privacy
