@@ -30,7 +30,7 @@ author:
     email: caw@heapingbits.net
 
 normative:
-  ARC: I-D.draft-yun-privacypass-crypto-arc
+  ARC: I-D.draft-privacypass-arc-crypto
   ARCHITECTURE: RFC9576
   AUTHSCHEME: RFC9577
   ISSUANCE: RFC9578
