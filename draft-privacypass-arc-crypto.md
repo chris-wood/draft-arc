@@ -27,6 +27,11 @@ author:
     name: Christopher A. Wood
     org: Apple, Inc.
     email: caw@heapingbits.net
+ -
+    ins: A. Faz-Hernandez
+    name: Armando Faz-Hernandez
+    org: Cloudflare
+    email: armfazh@cloudflare.com
 
 normative:
 
