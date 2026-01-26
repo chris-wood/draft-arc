@@ -5,7 +5,9 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Informational                               Apple, Inc.
-Expires: 27 July 2026                                    23 January 2026
+Expires: 30 July 2026                                   A. Faz-Hernandez
+                                                              Cloudflare
+                                                         26 January 2026
 
 
             Anonymous Rate-Limited Credentials Cryptography
@@ -55,7 +57,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 27 July 2026.
+   This Internet-Draft will expire on 30 July 2026.
 
 Copyright Notice
 
@@ -2182,3 +2184,8 @@ Authors' Addresses
    Christopher A. Wood
    Apple, Inc.
    Email: caw@heapingbits.net
+
+
+   Armando Faz-Hernandez
+   Cloudflare
+   Email: armfazh@cloudflare.com
