@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-01-25T01:14:18.306249+00:00",
+  "timestamp": "2026-01-27T01:12:01.884960+00:00",
   "repo": "ietf-wg-privacypass/draft-arc",
   "labels": [
     {
@@ -2916,6 +2916,116 @@
       "mergeCommit": {
         "oid": "0a48cfdd6c81ac194e80957c9d1d6f74239acb70"
       },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 51,
+      "id": "PR_kwDONyB6uM6_SeLp",
+      "title": "Update datatracker links to point to privacypass-arc-crypto",
+      "url": "https://github.com/ietf-wg-privacypass/draft-arc/pull/51",
+      "state": "MERGED",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Now that we have added the `draft-privacypass-arc-crypto-00` tag, we have a datatracker ID to point to!\r\nThis updates the links to point to the right place.\r\nThere should no longer be any mention of `draft-yun-*` named drafts now.",
+      "createdAt": "2026-01-26T04:11:40Z",
+      "updatedAt": "2026-01-26T14:57:34Z",
+      "baseRepository": "ietf-wg-privacypass/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "0a48cfdd6c81ac194e80957c9d1d6f74239acb70",
+      "headRepository": "ietf-wg-privacypass/draft-arc",
+      "headRefName": "update-links",
+      "headRefOid": "614d8c8e3ad0a7a9f3a5970d725191f33b3f3550",
+      "closedAt": "2026-01-26T14:57:34Z",
+      "mergedAt": "2026-01-26T14:57:34Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "565b8f63f17b8889fb169b1e9536b062059dec99"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDONyB6uM7c65Ak",
+          "commit": {
+            "abbreviatedOid": "614d8c8"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-01-26T14:57:29Z",
+          "updatedAt": "2026-01-26T14:57:29Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 52,
+      "id": "PR_kwDONyB6uM6_Sekl",
+      "title": "Add Armando to coauthors list",
+      "url": "https://github.com/ietf-wg-privacypass/draft-arc/pull/52",
+      "state": "MERGED",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Adding Armando, as he has been contributing to and implementing the ARC spec!",
+      "createdAt": "2026-01-26T04:12:40Z",
+      "updatedAt": "2026-01-26T16:21:48Z",
+      "baseRepository": "ietf-wg-privacypass/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "0a48cfdd6c81ac194e80957c9d1d6f74239acb70",
+      "headRepository": "ietf-wg-privacypass/draft-arc",
+      "headRefName": "add-coauthor",
+      "headRefOid": "640a7816d98c8baf4dc50eb92d88ac8e3e9ec767",
+      "closedAt": "2026-01-26T14:57:17Z",
+      "mergedAt": "2026-01-26T14:57:17Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "17c811039fb94221a3df73805b645a4148aa755b"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDONyB6uM7c64sH",
+          "commit": {
+            "abbreviatedOid": "640a781"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-01-26T14:57:12Z",
+          "updatedAt": "2026-01-26T14:57:12Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 53,
+      "id": "PR_kwDONyB6uM6_UCOy",
+      "title": "Update spec to hide nonces using a range proof",
+      "url": "https://github.com/ietf-wg-privacypass/draft-arc/pull/53",
+      "state": "OPEN",
+      "author": "cathieyun",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "WIP - ready for discussion, but not in a state to merge!\r\n\r\nTO DO - spec\r\n- [ ] Define `MakeRangeProof` function from `ComputeStatementAndWitnesses`\r\n- [ ] Define `VerifyRangeProof` function from `ComputeStatementAndWitnesses`\r\n- [ ] Update `ComputeStatementAndWitnesses` to use the same terminology as the rest of the draft (eg nonce, nonceBlinding, nonceCommit, presentationLimit)\r\n- [ ] Credit Lena for Range Proof work\r\n\r\nTO DO - proof of concept\r\n- [ ] Implement the range proof in the proof of concept code\r\n- [ ] Update ARC proof of concept code to be in line with these spec changes.\r\n- [ ] (potentially in another PR) - move the spec to use the sigma/f-s spec and proof of concept code.\r\n\r\nTO DISCUSS:\r\nSlack thread here: https://ietf.slack.com/archives/C09ASPV0C49/p1769196560907949?thread_ts=1769196164.769419&cid=C09ASPV0C49\r\nFor nonce hiding, we are adding a range proof to prove that the nonce is within the rate limit. I can either send this as a separate proof in addition to the presentation proof, or smash both of those into one big proof.\r\n- In favor of smashing: only one proof to verify (harder to \"forget\" to verify one), you save one scalar element (the challenge).\r\n- In favor of keeping separate: makes it easier to treat the range proof as its own \"modular\" proof, increased clarity. For instance if someone was to just implement a standalone range proof verifier, you could just send the range proof to that verifier and it would work. It feels neater?\r\n- This PR takes the second approach currently.",
+      "createdAt": "2026-01-26T08:14:20Z",
+      "updatedAt": "2026-01-26T16:27:39Z",
+      "baseRepository": "ietf-wg-privacypass/draft-arc",
+      "baseRefName": "main",
+      "baseRefOid": "0a48cfdd6c81ac194e80957c9d1d6f74239acb70",
+      "headRepository": "ietf-wg-privacypass/draft-arc",
+      "headRefName": "nonce-hiding",
+      "headRefOid": "3bdd415f84f0a4863d67cb272f9a447cf9fb8225",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
       "comments": [],
       "reviews": []
     }
