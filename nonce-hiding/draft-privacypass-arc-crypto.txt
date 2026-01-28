@@ -5,7 +5,7 @@
 Network Working Group                                             C. Yun
 Internet-Draft                                                C. A. Wood
 Intended status: Informational                               Apple, Inc.
-Expires: 30 July 2026                                    26 January 2026
+Expires: 1 August 2026                                   28 January 2026
 
 
             Anonymous Rate-Limited Credentials Cryptography
@@ -59,7 +59,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 30 July 2026.
+   This Internet-Draft will expire on 1 August 2026.
 
 Copyright Notice
 
@@ -106,6 +106,8 @@ Table of Contents
        5.4.1.  Presentation Proof Creation
        5.4.2.  Presentation Proof Verification
      5.5.  Range Proof for Arbitrary Values
+       5.5.1.  Range Proof Creation
+       5.5.2.  Range Proof Verification
    6.  Ciphersuites
      6.1.  ARC(P-256)
      6.2.  Random Scalar Generation
@@ -758,13 +760,16 @@ def Present(state):
    struct {
      uint8 challenge[Ns];
      // Variable length based on number of bits in presentationLimit
-     uint8 responses[ceil(log2(presentationLimit)) * Ns];
+     uint8 responses[ceil(log2(presentationLimit))][Ns];
+     // Array of commitments to the bit decomposition
+     uint8 D[ceil(log2(presentationLimit))][Ne];
    } RangeProof
 
    The length of the Presentation structure is Npresentation = 5*Ne +
-   6*Ns + Nrangeproof.  Nrangeproof = (1 +
-   ceil(log2(presentationLimit))) * Ns, as it depends on the number of
-   bits needed to represent presentationLimit.
+   6*Ns + Nrangeproof.  Nrangeproof = Ns + ceil(log2(presentationLimit))
+   * Ns + ceil(log2(presentationLimit)) * Ne, which includes the
+   challenge (Ns), the response scalars (ceil(log2(presentationLimit)) *
+   Ns), and the D commitments (ceil(log2(presentationLimit)) * Ne).
 
 4.3.3.  Presentation Verification
 
@@ -1664,98 +1669,165 @@ bases.append(remainder - 1)
 # call sorted on array to ensure the additional base is in correct order
 return sorted(bases, reverse=True)
 
-   Using the bases from ComputeBases, the function
-   ComputeStatementAndWitnesses represents the secret value v as a
-   linear combination of the bases, using the resulting bit
-   representation to generate the cryptographic commitments and witness
-   values for the range proof.
+5.5.1.  Range Proof Creation
 
-def ComputeStatementAndWitnesses(v, r, upper_bound):
+   Using the bases from ComputeBases, the function MakeRangeProof
+   represents the secret nonce as a linear combination of the bases,
+   using the resulting bit representation to generate the cryptographic
+   commitments and witness values for the range proof.
+
+rangeProof = MakeRangeProof(nonce, nonceBlinding, nonceCommit, presentationLimit)
 
 Inputs:
-
-- v: the scalar we want to prove is in range [0, upper_bound)
-- r: randomness for commitment to v
-- upper_bound: the maximum integer value of the range
+- nonce: Integer, the nonce value to prove is in range
+- nonceBlinding: Scalar, the blinding factor for the nonce commitment
+- nonceCommit: Element, the Pedersen commitment to the nonce
+- presentationLimit: Integer, the upper bound of the range (exclusive)
 
 Outputs:
-
-- statement: proof statement for the relation
-- s: a vector for the blinding scalars for the secret shares of r.
-- s2: a vector for the complementing blinding scalars for the secret shares of r. Each s2[i] is either zero (when b[i] is set) or s[i] (when b[i] is zero).
-- C: the commitment to v
-- D: the commitments to the bit decomposition of v
+- proof: ZKProof (RangeProof structure)
+  - challenge: Scalar, the challenge used in the proof
+  - responses: [Scalar], array of response scalars for each bit in the decomposition
+  - D: [Element], array of commitments to the bit decomposition
 
 Parameters:
-- G: group
+- G: Group
 - generatorG: Element, equivalent to G.GeneratorG()
 - generatorH: Element, equivalent to G.GeneratorH()
+- contextString: public input
 
-Exceptions:
-- NumberTooBigError, raised when v is out of range
+def MakeRangeProof(nonce, nonceBlinding, nonceCommit, presentationLimit):
+  prover = Prover(contextString + "RangeProof")
 
-if G.ScalarToInt(v) >= upper_bound:
-    raise NumberTooBigError
+  # Compute bit decomposition and commitments
+  bases = ComputeBases(presentationLimit)
 
-bases = ComputeBases(upper_bound)
-
-# Compute bit decomposition of v.
-b = []
-v_remainder = G.ScalarToInt(v)
-for base in bases:
-    # Implementation note: In order to avoid leaking v via a timing channel, this code should be written to be constant time.
-    if v_remainder >= base:
-        v_remainder -= G.ScalarToInt(base)
-        b.append(G.Scalar(1))
+  # Compute bit decomposition of nonce
+  b = []
+  v_remainder = nonce
+  for base in bases:
+    if v_remainder >= G.ScalarToInt(base):
+      v_remainder -= G.ScalarToInt(base)
+      b.append(G.Scalar(1))
     else:
-        b.append(G.Scalar(0))
+      b.append(G.Scalar(0))
 
-# array of group elements where the i-th element corresponds to b[i] * generatorG + s * generatorH
-D = []
-# blinding elements for Pedersen commitment, secret shares of r
-s = []
-# complementing blinders for proof of bit-ness
-s2 = []
-partial_sum = G.Scalar(0)
-for i in range(len(bases) - 1):
+  # Compute commitments to bits
+  D = []
+  s = []
+  s2 = []
+  partial_sum = G.Scalar(0)
+  for i in range(len(bases) - 1):
     s.append(G.RandomScalar())
     partial_sum += bases[i] * s[i]
     s2.append((G.Scalar(1) - b[i]) * s[i])
     D.append(b[i] * generatorG + s[i] * generatorH)
-idx = len(bases) - 1
-s[idx] = r - partial_sum
-s2.append((G.Scalar(1) - b[idx]) * s[idx])
-D.append(b[idx] * generatorG + s[idx] * generatorH)
+  idx = len(bases) - 1
+  s.append(G.ScalarInverse(bases[idx]) * (nonceBlinding - partial_sum))
+  s2.append((G.Scalar(1) - b[idx]) * s[idx])
+  D.append(b[idx] * generatorG + s[idx] * generatorH)
 
-# Compute the Pedersen commitment to the full value of v, using the provided r.
-C = v * generatorG + r * generatorH
+  # Append scalar variables with witness values
+  vars_b = []
+  for i in range(len(b)):
+    vars_b.append(prover.AppendScalar("b" + str(i), b[i]))
 
-# start computing the linear relation
-statement = LinearRelation(G)
+  vars_s = []
+  for i in range(len(s)):
+    vars_s.append(prover.AppendScalar("s" + str(i), s[i]))
 
-[var_G, var_H, var_C] = statement.allocate_elements(3)
+  vars_s2 = []
+  for i in range(len(s2)):
+    vars_s2.append(prover.AppendScalar("s2" + str(i), s2[i]))
 
-# allocate variables for decomposed statements
-vars_b = statement.allocate_scalars(len(b))
-# allocate blinding elements for Pedersen commitment
-vars_s = statement.allocate_scalars(len(b))
-# allocate complementing blinders for proof of bit-ness
-vars_s2 = statement.allocate_scalars(len(b))
-# allocate bit commitment values
-vars_D = statement.allocate_elements(len(b))
+  # Append element variables
+  genGVar = prover.AppendElement("genG", generatorG)
+  genHVar = prover.AppendElement("genH", generatorH)
 
-# Add equations proving each b[i] is in {0,1}
-# For each base, we prove:
-#   D[i] = b[i] * generatorG + s[i] * generatorH      (b[i] is committed in D[i])
-#   b[i] * (b[i] - 1) = 0       (b[i] is 0 or 1)
-for i in range(len(b)):
-        statement.set_elements([(vars_D[i], D[i])])
-        # add Pedersen commitment to the ith bit.
-        statement.append_equation(vars_D[i], [(vars_b[i], var_G), (vars_s[i], var_H)])
-        # add statement that b[i] is in {0,1}
-        statement.append_equation(vars_D[i], [(vars_b[i], vars_D[i]), (vars_s2[i], var_H)])
+  vars_D = []
+  for i in range(len(D)):
+    vars_D.append(prover.AppendElement("D" + str(i), D[i]))
 
-return (statement, s, s2, C,D)
+  # Add constraints proving each b[i] is in {0,1}
+  for i in range(len(b)):
+    # D[i] = b[i] * generatorG + s[i] * generatorH
+    prover.Constrain(vars_D[i], [(vars_b[i], genGVar), (vars_s[i], genHVar)])
+    # D[i] = b[i] * D[i] + s2[i] * generatorH (proves b[i] is in {0,1})
+    prover.Constrain(vars_D[i], [(vars_b[i], vars_D[i]), (vars_s2[i], genHVar)])
+
+  zkProof = prover.Prove()
+  # Return proof with D commitments
+  return RangeProof(zkProof.challenge, zkProof.responses, D)
+
+5.5.2.  Range Proof Verification
+
+validity = VerifyRangeProof(nonceCommit, rangeProof, presentationLimit)
+
+Inputs:
+- nonceCommit: Element, the Pedersen commitment to the nonce
+- rangeProof: RangeProof
+  - challenge: Scalar, the challenge used in the proof
+  - responses: [Scalar], array of response scalars
+  - D: [Element], array of commitments to the bit decomposition
+- presentationLimit: Integer, the upper bound of the range (exclusive)
+
+Outputs:
+- validity: Boolean, True if the range proof is valid, False otherwise
+
+Parameters:
+- G: Group
+- generatorG: Element, equivalent to G.GeneratorG()
+- generatorH: Element, equivalent to G.GeneratorH()
+- contextString: public input
+
+def VerifyRangeProof(nonceCommit, rangeProof, presentationLimit):
+  verifier = Verifier(contextString + "RangeProof")
+
+  bases = ComputeBases(presentationLimit)
+  num_bits = len(bases)
+  D = rangeProof.D
+
+  # Append scalar variables without witness values
+  vars_b = []
+  for i in range(num_bits):
+    vars_b.append(verifier.AppendScalar("b" + str(i)))
+
+  vars_s = []
+  for i in range(num_bits):
+    vars_s.append(verifier.AppendScalar("s" + str(i)))
+
+  vars_s2 = []
+  for i in range(num_bits):
+    vars_s2.append(verifier.AppendScalar("s2" + str(i)))
+
+  # Append element variables
+  genGVar = verifier.AppendElement("genG", generatorG)
+  genHVar = verifier.AppendElement("genH", generatorH)
+
+  # Use the D commitments from the range proof
+  vars_D = []
+  for i in range(num_bits):
+    vars_D.append(verifier.AppendElement("D" + str(i), D[i]))
+
+  # Add the same constraints as the prover
+  for i in range(num_bits):
+    # D[i] = b[i] * generatorG + s[i] * generatorH
+    verifier.Constrain(vars_D[i], [(vars_b[i], genGVar), (vars_s[i], genHVar)])
+    # D[i] = b[i] * D[i] + s2[i] * generatorH
+    verifier.Constrain(vars_D[i], [(vars_b[i], vars_D[i]), (vars_s2[i], genHVar)])
+
+  # Verify the ZK proof
+  zkValid = verifier.Verify(rangeProof)
+  if not zkValid:
+    return False
+
+  # Verify the sum check: nonceCommit == sum(bases[i] * D[i])
+  # This is done outside the ZK proof by computing the sum homomorphically
+  sum_D = G.Identity()
+  for i in range(len(bases)):
+    sum_D = sum_D + bases[i] * D[i]
+
+  return sum_D == nonceCommit
 
 6.  Ciphersuites
 

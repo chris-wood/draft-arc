@@ -1057,7 +1057,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Yun &amp; Wood</td>
-<td class="center">Expires 30 July 2026</td>
+<td class="center">Expires 1 August 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1070,12 +1070,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-privacypass-arc-crypto-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-01-26" class="published">26 January 2026</time>
+<time datetime="2026-01-28" class="published">28 January 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-07-30">30 July 2026</time></dd>
+<dd class="expires"><time datetime="2026-08-01">1 August 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1138,7 +1138,7 @@ a server needs to throttle or rate-limit access from anonymous clients.<a href="
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 30 July 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 1 August 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1271,6 +1271,14 @@ a server needs to throttle or rate-limit access from anonymous clients.<a href="
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.5">
                 <p id="section-toc.1-1.5.2.5.1"><a href="#section-5.5" class="auto internal xref">5.5</a>.  <a href="#name-range-proof-for-arbitrary-v" class="internal xref">Range Proof for Arbitrary Values</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.5.2.1">
+                    <p id="section-toc.1-1.5.2.5.2.1.1"><a href="#section-5.5.1" class="auto internal xref">5.5.1</a>.  <a href="#name-range-proof-creation" class="internal xref">Range Proof Creation</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.5.2.2">
+                    <p id="section-toc.1-1.5.2.5.2.2.1"><a href="#section-5.5.2" class="auto internal xref">5.5.2</a>.  <a href="#name-range-proof-verification" class="internal xref">Range Proof Verification</a></p>
+</li>
+                </ul>
 </li>
             </ul>
 </li>
@@ -2029,12 +2037,14 @@ struct {
 struct {
   uint8 challenge[Ns];
   // Variable length based on number of bits in presentationLimit
-  uint8 responses[ceil(log2(presentationLimit)) * Ns];
+  uint8 responses[ceil(log2(presentationLimit))][Ns];
+  // Array of commitments to the bit decomposition
+  uint8 D[ceil(log2(presentationLimit))][Ne];
 } RangeProof
 </pre><a href="#section-4.3.2-5" class="pilcrow">¶</a>
 </div>
 <p id="section-4.3.2-6">The length of the Presentation structure is <code>Npresentation = 5*Ne + 6*Ns + Nrangeproof</code>.
-<code>Nrangeproof = (1 + ceil(log2(presentationLimit))) * Ns</code>, as it depends on the number of bits needed to represent <code>presentationLimit</code>.<a href="#section-4.3.2-6" class="pilcrow">¶</a></p>
+<code>Nrangeproof = Ns + ceil(log2(presentationLimit)) * Ns + ceil(log2(presentationLimit)) * Ne</code>, which includes the challenge (Ns), the response scalars (ceil(log2(presentationLimit)) * Ns), and the D commitments (ceil(log2(presentationLimit)) * Ne).<a href="#section-4.3.2-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="presentation-verification">
@@ -3060,99 +3070,180 @@ bases.append(remainder - 1)
 return sorted(bases, reverse=True)
 </pre><a href="#section-5.5-7" class="pilcrow">¶</a>
 </div>
-<p id="section-5.5-8">Using the bases from <code>ComputeBases</code>, the function <code>ComputeStatementAndWitnesses</code>
-represents the secret value <code>v</code> as a linear combination of the bases, using the resulting
+<div id="range-proof-creation">
+<section id="section-5.5.1">
+          <h4 id="name-range-proof-creation">
+<a href="#section-5.5.1" class="section-number selfRef">5.5.1. </a><a href="#name-range-proof-creation" class="section-name selfRef">Range Proof Creation</a>
+          </h4>
+<p id="section-5.5.1-1">Using the bases from <code>ComputeBases</code>, the function <code>MakeRangeProof</code>
+represents the secret <code>nonce</code> as a linear combination of the bases, using the resulting
 bit representation to generate the cryptographic commitments and witness values for the
-range proof.<a href="#section-5.5-8" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.5-9">
+range proof.<a href="#section-5.5.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.5.1-2">
 <pre>
-def ComputeStatementAndWitnesses(v, r, upper_bound):
+rangeProof = MakeRangeProof(nonce, nonceBlinding, nonceCommit, presentationLimit)
 
 Inputs:
-
-- v: the scalar we want to prove is in range [0, upper_bound)
-- r: randomness for commitment to v
-- upper_bound: the maximum integer value of the range
+- nonce: Integer, the nonce value to prove is in range
+- nonceBlinding: Scalar, the blinding factor for the nonce commitment
+- nonceCommit: Element, the Pedersen commitment to the nonce
+- presentationLimit: Integer, the upper bound of the range (exclusive)
 
 Outputs:
-
-- statement: proof statement for the relation
-- s: a vector for the blinding scalars for the secret shares of r.
-- s2: a vector for the complementing blinding scalars for the secret shares of r. Each s2[i] is either zero (when b[i] is set) or s[i] (when b[i] is zero).
-- C: the commitment to v
-- D: the commitments to the bit decomposition of v
+- proof: ZKProof (RangeProof structure)
+  - challenge: Scalar, the challenge used in the proof
+  - responses: [Scalar], array of response scalars for each bit in the decomposition
+  - D: [Element], array of commitments to the bit decomposition
 
 Parameters:
-- G: group
+- G: Group
 - generatorG: Element, equivalent to G.GeneratorG()
 - generatorH: Element, equivalent to G.GeneratorH()
+- contextString: public input
 
-Exceptions:
-- NumberTooBigError, raised when v is out of range
+def MakeRangeProof(nonce, nonceBlinding, nonceCommit, presentationLimit):
+  prover = Prover(contextString + "RangeProof")
 
-if G.ScalarToInt(v) &gt;= upper_bound:
-    raise NumberTooBigError
+  # Compute bit decomposition and commitments
+  bases = ComputeBases(presentationLimit)
 
-bases = ComputeBases(upper_bound)
-
-# Compute bit decomposition of v.
-b = []
-v_remainder = G.ScalarToInt(v)
-for base in bases:
-    # Implementation note: In order to avoid leaking v via a timing channel, this code should be written to be constant time.
-    if v_remainder &gt;= base:
-        v_remainder -= G.ScalarToInt(base)
-        b.append(G.Scalar(1))
+  # Compute bit decomposition of nonce
+  b = []
+  v_remainder = nonce
+  for base in bases:
+    if v_remainder &gt;= G.ScalarToInt(base):
+      v_remainder -= G.ScalarToInt(base)
+      b.append(G.Scalar(1))
     else:
-        b.append(G.Scalar(0))
+      b.append(G.Scalar(0))
 
-# array of group elements where the i-th element corresponds to b[i] * generatorG + s * generatorH
-D = []
-# blinding elements for Pedersen commitment, secret shares of r
-s = []
-# complementing blinders for proof of bit-ness
-s2 = []
-partial_sum = G.Scalar(0)
-for i in range(len(bases) - 1):
+  # Compute commitments to bits
+  D = []
+  s = []
+  s2 = []
+  partial_sum = G.Scalar(0)
+  for i in range(len(bases) - 1):
     s.append(G.RandomScalar())
     partial_sum += bases[i] * s[i]
     s2.append((G.Scalar(1) - b[i]) * s[i])
     D.append(b[i] * generatorG + s[i] * generatorH)
-idx = len(bases) - 1
-s[idx] = r - partial_sum
-s2.append((G.Scalar(1) - b[idx]) * s[idx])
-D.append(b[idx] * generatorG + s[idx] * generatorH)
+  idx = len(bases) - 1
+  s.append(G.ScalarInverse(bases[idx]) * (nonceBlinding - partial_sum))
+  s2.append((G.Scalar(1) - b[idx]) * s[idx])
+  D.append(b[idx] * generatorG + s[idx] * generatorH)
 
-# Compute the Pedersen commitment to the full value of v, using the provided r.
-C = v * generatorG + r * generatorH
+  # Append scalar variables with witness values
+  vars_b = []
+  for i in range(len(b)):
+    vars_b.append(prover.AppendScalar("b" + str(i), b[i]))
 
-# start computing the linear relation
-statement = LinearRelation(G)
+  vars_s = []
+  for i in range(len(s)):
+    vars_s.append(prover.AppendScalar("s" + str(i), s[i]))
 
-[var_G, var_H, var_C] = statement.allocate_elements(3)
+  vars_s2 = []
+  for i in range(len(s2)):
+    vars_s2.append(prover.AppendScalar("s2" + str(i), s2[i]))
 
-# allocate variables for decomposed statements
-vars_b = statement.allocate_scalars(len(b))
-# allocate blinding elements for Pedersen commitment
-vars_s = statement.allocate_scalars(len(b))
-# allocate complementing blinders for proof of bit-ness
-vars_s2 = statement.allocate_scalars(len(b))
-# allocate bit commitment values
-vars_D = statement.allocate_elements(len(b))
+  # Append element variables
+  genGVar = prover.AppendElement("genG", generatorG)
+  genHVar = prover.AppendElement("genH", generatorH)
 
-# Add equations proving each b[i] is in {0,1}
-# For each base, we prove:
-#   D[i] = b[i] * generatorG + s[i] * generatorH      (b[i] is committed in D[i])
-#   b[i] * (b[i] - 1) = 0       (b[i] is 0 or 1)
-for i in range(len(b)):
-        statement.set_elements([(vars_D[i], D[i])])
-        # add Pedersen commitment to the ith bit.
-        statement.append_equation(vars_D[i], [(vars_b[i], var_G), (vars_s[i], var_H)])
-        # add statement that b[i] is in {0,1}
-        statement.append_equation(vars_D[i], [(vars_b[i], vars_D[i]), (vars_s2[i], var_H)])
+  vars_D = []
+  for i in range(len(D)):
+    vars_D.append(prover.AppendElement("D" + str(i), D[i]))
 
-return (statement, s, s2, C,D)
-</pre><a href="#section-5.5-9" class="pilcrow">¶</a>
+  # Add constraints proving each b[i] is in {0,1}
+  for i in range(len(b)):
+    # D[i] = b[i] * generatorG + s[i] * generatorH
+    prover.Constrain(vars_D[i], [(vars_b[i], genGVar), (vars_s[i], genHVar)])
+    # D[i] = b[i] * D[i] + s2[i] * generatorH (proves b[i] is in {0,1})
+    prover.Constrain(vars_D[i], [(vars_b[i], vars_D[i]), (vars_s2[i], genHVar)])
+
+  zkProof = prover.Prove()
+  # Return proof with D commitments
+  return RangeProof(zkProof.challenge, zkProof.responses, D)
+</pre><a href="#section-5.5.1-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="range-proof-verification">
+<section id="section-5.5.2">
+          <h4 id="name-range-proof-verification">
+<a href="#section-5.5.2" class="section-number selfRef">5.5.2. </a><a href="#name-range-proof-verification" class="section-name selfRef">Range Proof Verification</a>
+          </h4>
+<div class="alignLeft art-text artwork" id="section-5.5.2-1">
+<pre>
+validity = VerifyRangeProof(nonceCommit, rangeProof, presentationLimit)
+
+Inputs:
+- nonceCommit: Element, the Pedersen commitment to the nonce
+- rangeProof: RangeProof
+  - challenge: Scalar, the challenge used in the proof
+  - responses: [Scalar], array of response scalars
+  - D: [Element], array of commitments to the bit decomposition
+- presentationLimit: Integer, the upper bound of the range (exclusive)
+
+Outputs:
+- validity: Boolean, True if the range proof is valid, False otherwise
+
+Parameters:
+- G: Group
+- generatorG: Element, equivalent to G.GeneratorG()
+- generatorH: Element, equivalent to G.GeneratorH()
+- contextString: public input
+
+def VerifyRangeProof(nonceCommit, rangeProof, presentationLimit):
+  verifier = Verifier(contextString + "RangeProof")
+
+  bases = ComputeBases(presentationLimit)
+  num_bits = len(bases)
+  D = rangeProof.D
+
+  # Append scalar variables without witness values
+  vars_b = []
+  for i in range(num_bits):
+    vars_b.append(verifier.AppendScalar("b" + str(i)))
+
+  vars_s = []
+  for i in range(num_bits):
+    vars_s.append(verifier.AppendScalar("s" + str(i)))
+
+  vars_s2 = []
+  for i in range(num_bits):
+    vars_s2.append(verifier.AppendScalar("s2" + str(i)))
+
+  # Append element variables
+  genGVar = verifier.AppendElement("genG", generatorG)
+  genHVar = verifier.AppendElement("genH", generatorH)
+
+  # Use the D commitments from the range proof
+  vars_D = []
+  for i in range(num_bits):
+    vars_D.append(verifier.AppendElement("D" + str(i), D[i]))
+
+  # Add the same constraints as the prover
+  for i in range(num_bits):
+    # D[i] = b[i] * generatorG + s[i] * generatorH
+    verifier.Constrain(vars_D[i], [(vars_b[i], genGVar), (vars_s[i], genHVar)])
+    # D[i] = b[i] * D[i] + s2[i] * generatorH
+    verifier.Constrain(vars_D[i], [(vars_b[i], vars_D[i]), (vars_s2[i], genHVar)])
+
+  # Verify the ZK proof
+  zkValid = verifier.Verify(rangeProof)
+  if not zkValid:
+    return False
+
+  # Verify the sum check: nonceCommit == sum(bases[i] * D[i])
+  # This is done outside the ZK proof by computing the sum homomorphically
+  sum_D = G.Identity()
+  for i in range(len(bases)):
+    sum_D = sum_D + bases[i] * D[i]
+
+  return sum_D == nonceCommit
+</pre><a href="#section-5.5.2-1" class="pilcrow">¶</a>
+</div>
+</section>
 </div>
 </section>
 </div>
