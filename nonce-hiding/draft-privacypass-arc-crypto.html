@@ -1995,7 +1995,7 @@ def Present(state):
   nonceBlinding = G.RandomScalar()
   nonceCommit = G.Scalar(nonce) * generatorG + nonceBlinding * generatorH
 
-  generatorT = G.HashToGroup(presentationContext, "Tag")
+  generatorT = G.HashToGroup(state.presentationContext, "Tag")
   tag = (state.credential.m1 + nonce)^(-1) * generatorT
   V = z * state.credential.X1 - r * generatorG
 
@@ -2868,7 +2868,7 @@ Parameters:
 - generatorH: Element, equivalent to G.GeneratorH()
 - contextString: public input
 
-def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, credential, V, r, z, nonce, nonceBlinding, nonceCommit)
+def MakePresentationProof(U, UPrimeCommit, m1Commit, tag, generatorT, credential, V, r, z, nonce, nonceBlinding, nonceCommit):
   prover = Prover(contextString + "CredentialPresentation")
 
   m1Var = prover.AppendScalar("m1", credential.m1)
