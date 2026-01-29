@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-01-27T01:12:01.884960+00:00",
+  "timestamp": "2026-01-29T01:17:36.042478+00:00",
   "repo": "ietf-wg-privacypass/draft-arc",
   "labels": [
     {
@@ -3011,17 +3011,19 @@
       "state": "OPEN",
       "author": "cathieyun",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "cathieyun"
+      ],
       "labels": [],
-      "body": "WIP - ready for discussion, but not in a state to merge!\r\n\r\nTO DO - spec\r\n- [ ] Define `MakeRangeProof` function from `ComputeStatementAndWitnesses`\r\n- [ ] Define `VerifyRangeProof` function from `ComputeStatementAndWitnesses`\r\n- [ ] Update `ComputeStatementAndWitnesses` to use the same terminology as the rest of the draft (eg nonce, nonceBlinding, nonceCommit, presentationLimit)\r\n- [ ] Credit Lena for Range Proof work\r\n\r\nTO DO - proof of concept\r\n- [ ] Implement the range proof in the proof of concept code\r\n- [ ] Update ARC proof of concept code to be in line with these spec changes.\r\n- [ ] (potentially in another PR) - move the spec to use the sigma/f-s spec and proof of concept code.\r\n\r\nTO DISCUSS:\r\nSlack thread here: https://ietf.slack.com/archives/C09ASPV0C49/p1769196560907949?thread_ts=1769196164.769419&cid=C09ASPV0C49\r\nFor nonce hiding, we are adding a range proof to prove that the nonce is within the rate limit. I can either send this as a separate proof in addition to the presentation proof, or smash both of those into one big proof.\r\n- In favor of smashing: only one proof to verify (harder to \"forget\" to verify one), you save one scalar element (the challenge).\r\n- In favor of keeping separate: makes it easier to treat the range proof as its own \"modular\" proof, increased clarity. For instance if someone was to just implement a standalone range proof verifier, you could just send the range proof to that verifier and it would work. It feels neater?\r\n- This PR takes the second approach currently.",
+      "body": "WIP - ready for discussion, but not in a state to merge!\r\n\r\nTO DO - spec\r\n- [x] Define `MakeRangeProof` function from `ComputeStatementAndWitnesses`\r\n- [x] Define `VerifyRangeProof` function from `ComputeStatementAndWitnesses`\r\n- [x] Update `ComputeStatementAndWitnesses` to use the same terminology as the rest of the draft (eg nonce, nonceBlinding, nonceCommit, presentationLimit) -\r\n   - actually I just removed the `ComputeStatementAndWitnesses` function altogether, in favor of computing the statement and witnesses in `MakeRangeProof` and `VerifyRangeProof` directly.\r\n- [x] Credit Lena for Range Proof work\r\n- [x] Update `MakeRangeProof` and `VerifyRangeProof` to be \"proof helpers\", so they add variables and constraints to the statement but don't generate the proof itself. That way, the range proof can be part of the presentation proof.\r\n\r\nTO DO - proof of concept\r\n- [ ] Implement the range proof in the proof of concept code\r\n- [ ] Update ARC proof of concept code to be in line with these spec changes.\r\n\r\npotentially in another PR:\r\n- [ ] move the spec to use the sigma/f-s spec, and the poc to use the sigma/f-s poc code.\r\n\r\nTO DISCUSS:\r\nSlack thread here: https://ietf.slack.com/archives/C09ASPV0C49/p1769196560907949?thread_ts=1769196164.769419&cid=C09ASPV0C49\r\nFor nonce hiding, we are adding a range proof to prove that the nonce is within the rate limit. I can either send this as a separate proof in addition to the presentation proof, or smash both of those into one big proof.\r\n- In favor of smashing: only one proof to verify (harder to \"forget\" to verify one), you save one scalar element (the challenge).\r\n- In favor of keeping separate: makes it easier to treat the range proof as its own \"modular\" proof, increased clarity. For instance if someone was to just implement a standalone range proof verifier, you could just send the range proof to that verifier and it would work. It feels neater?\r\n- This PR takes the second approach currently.",
       "createdAt": "2026-01-26T08:14:20Z",
-      "updatedAt": "2026-01-26T16:27:39Z",
+      "updatedAt": "2026-01-28T07:24:37Z",
       "baseRepository": "ietf-wg-privacypass/draft-arc",
       "baseRefName": "main",
-      "baseRefOid": "0a48cfdd6c81ac194e80957c9d1d6f74239acb70",
+      "baseRefOid": "565b8f63f17b8889fb169b1e9536b062059dec99",
       "headRepository": "ietf-wg-privacypass/draft-arc",
       "headRefName": "nonce-hiding",
-      "headRefOid": "3bdd415f84f0a4863d67cb272f9a447cf9fb8225",
+      "headRefOid": "bf946d6b1eedb46acdc45b4a00ce5330d4254843",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
