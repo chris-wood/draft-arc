@@ -4,6 +4,8 @@ PYFILES := $(addprefix sagelib/, $(addsuffix .py,$(SAGEFILES)))
 
 .PHONY: pyfiles
 pyfiles: sagelib/__init__.py $(PYFILES)
+	@echo "Creating vectors folder"
+	@mkdir -p vectors
 
 sagelib/__init__.py:
 	mkdir -p sagelib
@@ -20,10 +22,6 @@ test: pyfiles
 	sage test_arc_negative.sage
 
 vectors: pyfiles
-	@echo "Removing vectors folder, if present"
-	@rm -rf vectors
-	@echo "Creating vectors folder"
-	@mkdir -p vectors
 	sage test_arc.sage
 
 .PHONY: clean
