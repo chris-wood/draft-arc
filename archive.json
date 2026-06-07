@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-04-16T01:55:30.690554+00:00",
+  "timestamp": "2026-06-07T02:45:12.261439+00:00",
   "repo": "ietf-wg-privacypass/draft-arc",
   "labels": [
     {
@@ -904,6 +904,22 @@
       "createdAt": "2026-02-27T07:14:05Z",
       "updatedAt": "2026-03-02T22:08:38Z",
       "closedAt": "2026-03-02T22:08:38Z",
+      "comments": []
+    },
+    {
+      "number": 68,
+      "id": "I_kwDONyB6uM8AAAABEXXLBw",
+      "title": "\u00a710.2 ARC(P-256) proof-blob test vectors don't reconcile with the pinned Sigma POC",
+      "url": "https://github.com/ietf-wg-privacypass/draft-arc/issues/68",
+      "state": "OPEN",
+      "author": "NubsCarson",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "While building an independent Rust implementation of `draft-ietf-privacypass-arc-crypto` (no shared code with the sage POC), I found that the **arithmetic** test vectors in \u00a710.2 / `poc/vectors/allVectors.json` reproduce **byte-for-byte**, but the **zero-knowledge proof blobs** (`CredentialRequest.proof`, `CredentialResponse.proof`, `Presentation{1,2}.proof`) do not.\n\n### Reproduced exactly (arithmetic)\n\nServer public keys `X0/X1/X2`, `HashToScalar(requestContext)`, `m1Enc`/`m2Enc`, `U`, `encUPrime`, all `*Aux` points, the finalized `UPrime`, and every presentation commitment + tag \u2014 all byte-identical. So the group, hash-to-curve/scalar, issuance, and presentation arithmetic in \u00a710.2 are internally consistent and correct.\n\n### Does not reproduce (proofs)\n\nThe committed `ARCV1-P256.CredentialRequest.proof` begins with the challenge scalar `2a088673e302502a3dc80d6100a1bb70\u2026f9a7c52e7cfeaa2ea3`. Recomputing that challenge from the public statement \u2014 using a Fiat-Shamir transcript that reproduces the **authoritative** `draft-irtf-cfrg-sigma-protocols` `sigma-proofs_Shake128_P256` vectors (`discrete_logarithm`, `dleq`) byte-for-byte \u2014 yields a different value at **every** squeeze length I tried (32 / 48 / 64 bytes), and a sweep over session-string, session-id-derivation, and `protocol_id` variants produced no match.\n\n### Likely cause\n\n`poc/sigma` (the pinned submodule) and the current Sigma POC HEAD differ in `codec.sage`'s challenge squeeze \u2014 `scalar_byte_length() + 16` (48 bytes) vs `+ 32` (64 bytes). The committed `allVectors.json` proof blobs appear to straddle that codec change, i.e. they predate the transcript wiring the pinned toolchain now produces. (The arithmetic is stable across that change, which is why it still matches.)\n\n### Why I believe the negative is authoritative, not an implementation bug\n\nThe same transcript machinery reproduces the official Sigma `discrete_logarithm` and `dleq` vectors byte-for-byte and rejects tampered ones \u2014 so the \u03a3 / Fiat-Shamir port is correct; only the ARC proof blobs are out of sync.\n\n### Ask\n\nRegenerate the \u00a710.2 / `allVectors.json` proof blobs against the current `draft-irtf-cfrg-sigma-protocols` POC (and bump the pinned `poc/sigma` submodule), so independent implementers can validate the proof layer against ARC's own KATs.\n\n### Reproduction / environment\n\nIndependent Rust implementation, no shared code with the sage POC. Full write-up \u2014 including the per-squeeze-length recomputations and the transcript-variant sweep \u2014 is here: https://github.com/NubsCarson/tessera/blob/main/docs/ARC_PROOF_VECTOR_DISCREPANCY.md . Happy to provide a minimal standalone reproduction on request.\n",
+      "createdAt": "2026-06-04T10:25:02Z",
+      "updatedAt": "2026-06-04T10:25:02Z",
+      "closedAt": null,
       "comments": []
     }
   ],
